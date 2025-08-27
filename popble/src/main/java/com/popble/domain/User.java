@@ -21,7 +21,7 @@ public class User {
 
     @Id
     @Column(name = "user_id")
-    private Integer userId;
+    private Integer id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)

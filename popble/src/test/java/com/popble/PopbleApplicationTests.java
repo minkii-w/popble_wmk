@@ -16,13 +16,13 @@ class PopbleApplicationTests {
 	void contextLoads() {
 		
 		User user = User.builder()
-			    .userId(1)
-			    .role(Role.MEMBER)
-			    .loginId("testuser")
-			    .password("1234")
-			    .email("test@example.com")
-			    .name("홍길동")
-			    .phonenumber("010-1111-2222")
+			    .id(2)
+			    .role(Role.COMPANY)
+			    .loginId("testuser3")
+			    .password("12345")
+			    .email("tes3t@example.com")
+			    .name("기업1")
+			    .phonenumber("011-1111-2222")
 			    .build();
 		 
 
