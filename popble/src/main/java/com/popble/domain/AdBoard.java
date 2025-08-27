@@ -8,5 +8,6 @@ public class AdBoard extends Board {
 	//팝업스토어 번호
 	private PopupStore storeId;
 	
+	private String add;
 	
 }
