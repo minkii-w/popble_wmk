@@ -1,7 +1,20 @@
 package com.popble.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class UserProfile {
 
@@ -14,9 +27,10 @@ public class UserProfile {
 	
 	
 	//닉네임
+	@Column(name = "nickname", nullable = false)
 	private String nickName;
-	
-	
+
 	//이미지파일(나중에 image타입으로 변환)
+	@Column(name = "photo")
 	private String profileImg;
 }
