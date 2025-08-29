@@ -2,20 +2,46 @@ package com.popble.domain;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "reply")
 public class Reply {
 
 	//댓글 고유키
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "reply_id")
 	private Long id;
 	
 	//내용
+	@Column(name = "content")
 	private String content;
 	
 	//작성시간
+	
 	private LocalDateTime createTime;
 	
 	//회원번호
+	@ManyToOne
+	@JoinColumn(name = "user_id")
 	private UserProfile userId;
 	
 	//게시판 번호
+	@ManyToOne
+	@JoinColumn(name = "board_id")
 	private Board boardId;
 }

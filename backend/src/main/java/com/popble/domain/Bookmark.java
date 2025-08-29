@@ -2,17 +2,40 @@ package com.popble.domain;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Bookmark {
 
 	//북마크 아이디
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "bookmark_id")
 	private Long id;
 	
+	@ManyToOne
 	//스토어 번호
 	private PopupStore popupId;
 	
+	@ManyToOne
 	//회원번호
 	private UserProfile userId;
 	
+	@CreatedDate
+	@Column(name = "create_date")
 	//북마크 시간
 	private LocalDateTime createDate;
 }

@@ -7,20 +7,24 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "board")
 @Getter
 @Setter
-
+@NoArgsConstructor
 public abstract class Board {
 
 	public enum Type{
@@ -45,6 +49,7 @@ public abstract class Board {
 	
 	//게시판 종류
 	@Column(name = "type", nullable = false)
+	@Enumerated(EnumType.STRING)
 	private Type type;
 	
 	//제목 길이 설정
