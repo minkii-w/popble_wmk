@@ -1,6 +1,8 @@
 package com.popble.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -17,6 +19,11 @@ import lombok.Setter;
 @Table(name = "popup_category")
 public class PopupCategory {
 
+	//아이디 추가
+	@Id
+	@Column(name = "popup_category_id")
+	private Long id;
+	
 	//카테고리 번호
 	@ManyToOne
 	@JoinColumn(name = "category_id")
