@@ -46,6 +46,6 @@ public class ChatMessage {
 	
 	//메시지 내용(나중에 수정)
 	//Column어노테이션에 TEXT가 뭔지 다시 확인
-	@Column(name = "content")
+	@Column(name = "content", columnDefinition = "TEXT")
 	private String content;
 }

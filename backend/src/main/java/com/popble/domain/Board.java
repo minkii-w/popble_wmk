@@ -1,18 +1,26 @@
 package com.popble.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -25,6 +33,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
+@EntityListeners(AuditingEntityListener.class)
 public abstract class Board {
 
 	public enum Type{
@@ -39,15 +49,18 @@ public abstract class Board {
 	
 	
 	//프로필 유저 연결
-	@OneToOne
+	//Nullable할지 말지 고민
+	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private UserProfile userId;
 	
 	//권한
+	//Nullable할지 말지 고민
 	@Column(name = "role", nullable = false)
 	private Role role;
 	
 	//게시판 종류
+	//Nullable할지 말지 고민
 	@Column(name = "type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Type type;
@@ -62,14 +75,14 @@ public abstract class Board {
 	
 	
 	//작성 시간
-	@Column(name = "createTime", nullable = false)
+	@Column(name = "create_time", nullable = false)
 	@CreatedDate
-	private LocalDate createTime;
+	private LocalDateTime createTime;
 	
 	//수정 시간
-	@Column(name = "modifyTime", nullable = false)
+	@Column(name = "modify_time", nullable = false)
 	@LastModifiedDate
-	private LocalDate modifyTime;
+	private LocalDateTime modifyTime;
 	
 	
 	//작성자(이거 빼던지 확인해야할듯)

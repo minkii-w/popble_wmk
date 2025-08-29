@@ -3,13 +3,18 @@ package com.popble.domain;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +23,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "bookmark")
 public class Bookmark {
 
 	//북마크 아이디
@@ -27,10 +34,12 @@ public class Bookmark {
 	private Long id;
 	
 	@ManyToOne
+	@JoinColumn(name = "poppup_id")
 	//스토어 번호
 	private PopupStore popupId;
 	
 	@ManyToOne
+	@JoinColumn(name = "user_id")
 	//회원번호
 	private UserProfile userId;
 	

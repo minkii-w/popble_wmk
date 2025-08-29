@@ -2,8 +2,12 @@ package com.popble.domain;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,6 +23,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table(name = "reply")
+@EntityListeners(AuditingEntityListener.class)
 public class Reply {
 
 	//댓글 고유키
@@ -32,7 +37,8 @@ public class Reply {
 	private String content;
 	
 	//작성시간
-	
+	@Column(name = "create_time")
+	@CreatedDate
 	private LocalDateTime createTime;
 	
 	//회원번호
