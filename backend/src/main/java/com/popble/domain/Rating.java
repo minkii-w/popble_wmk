@@ -10,4 +10,7 @@ public class Rating {
 	
 	//회원번호
 	private UserProfile userId;
+	
+	//별점 점수
+	private Integer score;
 }

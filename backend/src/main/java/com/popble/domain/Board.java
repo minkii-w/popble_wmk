@@ -2,12 +2,29 @@ package com.popble.domain;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "board")
+@Getter
+@Setter
+
 public abstract class Board {
 
 	public enum Type{
 		NOTICE, GENERAL, QNA, AD, REVIEW
 	}
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "board_id")
 	//게시판 고유id
 	private Long id;
 	

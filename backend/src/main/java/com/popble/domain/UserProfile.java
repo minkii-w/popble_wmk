@@ -1,9 +1,15 @@
 package com.popble.domain;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+
 public class UserProfile {
 
+	
 	//user에 연결된 아이디(Mapping 하면서 바꿀것)
 	//id, column join?
+	@OneToOne
+	@JoinColumn(name = "user_id")
 	private int userId;
 	
 	
