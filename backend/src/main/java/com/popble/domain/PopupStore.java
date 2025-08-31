@@ -71,4 +71,6 @@ public class PopupStore {
 	//추천수
 	@Column(name = "recommend")
 	private Integer recommend;
+	
+	//UserProfile과 연결해야할지 말지 고민...
 }

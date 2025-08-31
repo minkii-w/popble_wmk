@@ -2,7 +2,9 @@ package com.popble.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PopupCategoryRepository extends JpaRepository<PopupCategoryRepository, Long>{
+import com.popble.domain.PopupCategory;
+
+public interface PopupCategoryRepository extends JpaRepository<PopupCategory, Long>{
 
 	
 }

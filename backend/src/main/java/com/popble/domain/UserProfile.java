@@ -2,6 +2,8 @@ package com.popble.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
@@ -18,17 +20,21 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "profile")
+@Table(name = "user_profile")
 public class UserProfile {
 
 	
 	//user에 연결된 아이디(Mapping 하면서 바꿀것)
 	//id, column join?
+//  에러남..
 	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "user_id")
-	private User userId;
+	private Users user;
 	
 	
 	//닉네임
