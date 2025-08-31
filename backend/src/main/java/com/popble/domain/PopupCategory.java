@@ -30,10 +30,10 @@ public class PopupCategory {
 	//카테고리 번호
 	@ManyToOne
 	@JoinColumn(name = "category_id")
-	private Category categoryId;
+	private Category category;
 	
 	//스토어 번호
 	@ManyToOne
 	@JoinColumn(name = "popup_id")
-	private PopupStore popupId;
+	private PopupStore popupStore;
 }

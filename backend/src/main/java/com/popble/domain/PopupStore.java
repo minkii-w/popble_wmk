@@ -1,6 +1,8 @@
 package com.popble.domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -71,6 +74,10 @@ public class PopupStore {
 	//추천수
 	@Column(name = "recommend")
 	private Integer recommend;
+	
+	//카테고리연결
+	@OneToMany(mappedBy = "popupStore")
+	private List<PopupCategory> categories = new ArrayList<>();
 	
 	//UserProfile과 연결해야할지 말지 고민...
 }
