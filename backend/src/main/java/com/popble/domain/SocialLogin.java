@@ -17,8 +17,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
+
 //Oauth 2 사용 소셜 로그인
 public class SocialLogin {
 

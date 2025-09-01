@@ -15,8 +15,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "image")
 public class Image {

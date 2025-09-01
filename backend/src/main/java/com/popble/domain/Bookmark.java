@@ -34,7 +34,7 @@ public class Bookmark {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "poppup_id")
+	@JoinColumn(name = "popup_id")
 	//스토어 번호
 	private PopupStore popupId;
 	
