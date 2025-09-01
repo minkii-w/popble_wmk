@@ -75,9 +75,28 @@ public class PopupStore {
 	@Column(name = "recommend")
 	private Integer recommend;
 	
+	//최대 인원수
+	private Integer maxCount;
+	
+	//예약시간 오전/오후 기업이 나눌수 있게
+	@OneToMany(mappedBy = "popupStore")
+	private List<ReservationTime> reservationTimes = new ArrayList<>();
+	
+	//예약
+	@OneToMany(mappedBy = "popupStore")
+	private List<Reservation> reservations = new ArrayList<>();
+	
+	//지점 추가?
+	
+	//소프트 삭제(1달? 3달 6달? 팝업 소프트삭제)
+	@Column(name = "deleted", nullable = false)
+	private boolean deleted = false;
+	
 	//카테고리연결
 	@OneToMany(mappedBy = "popupStore")
 	private List<PopupCategory> categories = new ArrayList<>();
+	
+	//
 	
 	//UserProfile과 연결해야할지 말지 고민...
 }

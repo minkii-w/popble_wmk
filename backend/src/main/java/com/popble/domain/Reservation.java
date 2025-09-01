@@ -34,12 +34,12 @@ public class Reservation {
 	//팝업 번호
 	@ManyToOne
 	@JoinColumn(name = "popup_id")
-	private PopupStore popupId;
+	private PopupStore popupStore;
 	
 	//회원 번호
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private UserProfile userId;
+	private UserProfile userProfile;
 	
 	//예약번호(이거 난수로 만들어야함 20250829001)이런식으로
 	//그래서 숫자를 +로 합쳐야하니까 Integer, Long보다는 String이 더 적합할것같음
@@ -51,6 +51,11 @@ public class Reservation {
 	@Column(name = "reservation_date")
 	private LocalDateTime reservationDate;
 	
+	//예약시간
+	@ManyToOne
+	@JoinColumn(name = "reservation_time_id")
+	private ReservationTime reservationTime;
+	
 	//가격
 	@Column(name = "price")
 	private int price;
@@ -59,8 +64,8 @@ public class Reservation {
 	@Column(name = "reservation_count")
 	private int reservationCount;
 	
-	//예약 시간(예약 당시 시간?) 예약 타이밍이라면 String, VARCHAR로 바꾸어야할듯
-	private LocalDateTime reservationTime;
+	//예약 성공한 시간
+	private LocalDateTime createTime;
 	
 	
 }

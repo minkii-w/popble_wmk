@@ -34,7 +34,7 @@ public class UserProfile {
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "user_id")
-	private Users user;
+	private Users users;
 	
 	
 	//닉네임

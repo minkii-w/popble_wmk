@@ -50,6 +50,6 @@ public class Users{
     private String phonenumber;
 
     //UserProfile과 관계 mapping
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL)
     private UserProfile userProfile;
 }
