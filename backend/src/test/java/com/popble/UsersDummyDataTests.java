@@ -83,7 +83,7 @@ public class UsersDummyDataTests {
 			userRepository.save(user1);
 			userRepository.save(user2);
 			
-		//2.프로필 생성
+		//2.프로필 생성?
 		
 		
 	}
