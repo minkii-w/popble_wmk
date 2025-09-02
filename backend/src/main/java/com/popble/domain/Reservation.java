@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,7 +38,7 @@ public class Reservation {
 	private PopupStore popupStore;
 	
 	//회원 번호
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private UserProfile userProfile;
 	
@@ -52,7 +53,7 @@ public class Reservation {
 	private LocalDateTime reservationDate;
 	
 	//예약시간
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reservation_time_id")
 	private ReservationTime reservationTime;
 	

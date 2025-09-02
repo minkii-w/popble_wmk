@@ -9,5 +9,6 @@ import java.util.List;
 
 
 public interface GeneralBoardRepository extends JpaRepository<GeneralBoard, Long>{
-	List<GeneralBoard> findByUserId(UserProfile userId);
+	//사용자로 게시글 찾기
+	List<GeneralBoard> findByUserProfile(UserProfile userProfile);
 }

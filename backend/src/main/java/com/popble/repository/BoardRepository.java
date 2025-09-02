@@ -14,7 +14,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 	//타입별
 	List<Board> findByType(Board.Type type);
 	//최신순
-	List<Board> findByTypeOrderByCreateTime(Board.Type type, LocalDateTime createTime);
+	List<Board> findByTypeOrderByCreateTime(Board.Type type);
 	//조회순
 	
 	//추천순

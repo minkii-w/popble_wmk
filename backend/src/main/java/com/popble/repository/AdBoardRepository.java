@@ -11,5 +11,5 @@ import java.util.List;
 public interface AdBoardRepository extends JpaRepository<AdBoard, Long> {
 
 	//기업이 작성한 AD 게시글
-	List<AdBoard> findByUserId(UserProfile userId);
+	List<AdBoard> findByUserProfile(UserProfile userProfile);
 }

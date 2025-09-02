@@ -87,6 +87,7 @@ public class PopupStore {
 	private List<ReservationTime> reservationTimes = new ArrayList<>();
 	
 	//예약
+	//미사용시 삭제할것(reservation에서 popupstore로 조회가능)
 	@OneToMany(mappedBy = "popupStore")
 	private List<Reservation> reservations = new ArrayList<>();
 	
