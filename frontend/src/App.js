@@ -28,7 +28,7 @@ function App() {
         <h1>subButtonColor</h1>
       </div>
       <div className="text-5xl bg-subButtonAccentColor">
-        <h1>subButtonAccentColor</h1>
+        <h1>subButtonAccentColor.</h1>
       </div>
       <div>
         <img src={san1} height='200px' width='200px'></img>
