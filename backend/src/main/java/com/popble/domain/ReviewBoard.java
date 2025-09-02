@@ -2,6 +2,7 @@ package com.popble.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -21,7 +22,7 @@ public class ReviewBoard extends Board {
 //	private Board boardId;
 	
 	//팝업스토어 번호
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "popup_id")
-	private PopupStore popupId;
+	private PopupStore popupStore;
 }

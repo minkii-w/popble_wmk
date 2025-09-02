@@ -28,7 +28,7 @@ public class MapApi {
 	@ManyToOne
 	@JoinColumn(name = "popup_id")
 	//팝업 id
-	private PopupStore popupId;
+	private PopupStore popupStore;
 	
 	@Column(name = "pop_location")
 	//팝업 위치

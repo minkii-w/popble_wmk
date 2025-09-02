@@ -30,7 +30,7 @@ public class ChatRoom {
 	//회원번호
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private UserProfile userId;
+	private UserProfile userProfile;
 	
 	@Column(name = "chat_start_time")
 	private LocalDateTime chatStartTime;

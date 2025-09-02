@@ -24,7 +24,7 @@ public class Image {
 	private Long id;
 	
 	@ManyToOne
-	private Board boardId;
+	private Board board;
 	
 	//파일이름
 	private String fileName;

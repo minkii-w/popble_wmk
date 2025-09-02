@@ -26,7 +26,7 @@ public class AdBoard extends Board {
 	//팝업스토어 번호
 	@OneToOne
 	@JoinColumn(name = "store_id")
-	private PopupStore storeId;
+	private PopupStore popupStore;
 	
 	
 }

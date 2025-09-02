@@ -34,7 +34,7 @@ public class PopupCategoryDummyDataTests {
 		
 		//팝업스토어 전체 불러오기
 		List<PopupStore> popupStores = popupStoreRepository.findAll();
-		PopupStore popupStore = popupStoreRepository.findById(12L).orElseThrow(() -> new RuntimeException("팝업없음"));
+		PopupStore popupStore = popupStoreRepository.findById(1L).orElseThrow(() -> new RuntimeException("팝업없음"));
 		Category cate1 = categoryRepository.findById(102L).orElseThrow(() -> new RuntimeException("102번 카테고리없음"));
 		Category cate2 = categoryRepository.findById(204L).orElseThrow(() -> new RuntimeException("204번 카테고리없음"));
 		

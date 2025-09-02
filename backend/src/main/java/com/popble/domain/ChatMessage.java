@@ -32,12 +32,12 @@ public class ChatMessage {
 	//채팅방 아이디
 	@ManyToOne
 	@JoinColumn(name = "chat_room_id")
-	private ChatRoom chatRoomId;
+	private ChatRoom chatRoom;
 	
 	//회원 번호
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private UserProfile userId;
+	private UserProfile userProfile;
 	
 	//메시지 생성시간
 	@CreatedDate

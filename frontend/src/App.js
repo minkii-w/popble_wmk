@@ -1,5 +1,7 @@
 
 import './App.css';
+import san1 from './assets/testImg/san1.jpg';
+import san2 from './assets/testImg/san2.jpg';
 
 function App() {
   return (
@@ -27,6 +29,12 @@ function App() {
       </div>
       <div className="text-5xl bg-subButtonAccentColor">
         <h1>subButtonAccentColor</h1>
+      </div>
+      <div>
+        <img src={san1} height='200px' width='200px'></img>
+      </div>
+       <div>
+        <img src={san2} height='200px' width= '200px'></img>
       </div>
     </div>
   );

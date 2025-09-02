@@ -36,12 +36,12 @@ public class Bookmark {
 	@ManyToOne
 	@JoinColumn(name = "popup_id")
 	//스토어 번호
-	private PopupStore popupId;
+	private PopupStore popupStore;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	//회원번호
-	private UserProfile userId;
+	private UserProfile userProfile;
 	
 	@CreatedDate
 	@Column(name = "create_date")

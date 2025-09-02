@@ -13,6 +13,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -50,9 +51,9 @@ public abstract class Board {
 	
 	//프로필 유저 연결
 	//Nullable할지 말지 고민
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	private UserProfile userId;
+	private UserProfile userProfile;
 	
 	//권한
 	//Nullable할지 말지 고민

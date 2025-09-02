@@ -28,7 +28,7 @@ public class SocialLogin {
 	
 	@OneToOne
 	@JoinColumn(name = "user_id")
-	private Users userId;
+	private Users users;
 	
 	//소셜로그인(회사)
 	//Enum으로 작성해야하는지(카카오,네이버,구글인지)
