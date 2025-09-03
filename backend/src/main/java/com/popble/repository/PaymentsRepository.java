@@ -16,3 +16,4 @@ public interface PaymentsRepository extends JpaRepository<Payments, Long> {
 	//상태로
 	List<Payments> findByStatus(Payments.Status status);
 }
+
