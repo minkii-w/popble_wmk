@@ -19,7 +19,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>{
 	
 	Optional<Bookmark> findByUserProfileAndPopupStore(UserProfile userProfile, PopupStore popupStore);
 	
-	
-	
-	
+		
 }
