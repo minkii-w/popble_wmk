@@ -37,6 +37,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(10)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -54,6 +55,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(11)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -71,6 +73,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(12)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -88,6 +91,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(15)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -105,6 +109,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(1)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -122,6 +127,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(3)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -139,6 +145,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(5)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -156,6 +163,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(3)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -173,6 +181,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(2)
                 .build());
 
         stores.add(PopupStore.builder()
@@ -190,6 +199,7 @@ public class PopupStoreDummyDataTests {
                 .categories(new ArrayList<>())
                 .reservations(new ArrayList<>())
                 .reservationTimes(new ArrayList<>())
+                .bookmarkCount(5)
                 .build());
         
         popupStoreRepository.saveAll(stores);
