@@ -1,5 +1,7 @@
 package com.popble.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,11 +31,13 @@ public class PopupCategory {
 	
 	//카테고리 번호
 	@ManyToOne
+	@JsonBackReference
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
 	//스토어 번호
 	@ManyToOne
+	@JsonBackReference
 	@JoinColumn(name = "popup_id")
 	private PopupStore popupStore;
 }
