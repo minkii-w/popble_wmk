@@ -3,6 +3,8 @@ package com.popble.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -45,5 +47,6 @@ public class Category {
 	private CategoryType type;
 	
 	@OneToMany(mappedBy = "category")
+	@JsonManagedReference
 	private List<PopupCategory> categories = new ArrayList<>();
 }
