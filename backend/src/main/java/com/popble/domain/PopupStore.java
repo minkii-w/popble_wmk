@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -91,7 +93,14 @@ public class PopupStore {
 	@OneToMany(mappedBy = "popupStore")
 	private List<Reservation> reservations = new ArrayList<>();
 	
-	//지점 추가?
+	//카카오맵 관련 위도,경도
+	//위도
+	@Column(name = "latitude")
+	private Double latitude;
+	
+	//경도
+	@Column(name = "longitude")
+	private Double longitude;
 	
 	//소프트 삭제(1달? 3달 6달? 팝업 소프트삭제)
 	@Column(name = "deleted", nullable = false)
@@ -99,14 +108,18 @@ public class PopupStore {
 	
 	//카테고리연결
 	@OneToMany(mappedBy = "popupStore")
+	@JsonManagedReference
 	private List<PopupCategory> categories = new ArrayList<>();
 	
 	//북마크수
 	@Column(name = "bookmark_count")
-	private int bookmarkCount;
+	private int bookmarkCount = 0;
 	
 	//UserProfile과 연결해야할지 말지 고민...
+	//나중에 기업이 본인이 작성한거 확인 또는 삭제할수 있도록
 	@ManyToOne
 	@JoinColumn(name = "userProfile_id")
 	private UserProfile owner;
+	
+	//이미지와 관계 맺기
 }
