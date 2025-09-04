@@ -39,6 +39,7 @@ import lombok.Setter;
 public abstract class Board {
 
 	public enum Type{
+		
 		NOTICE, GENERAL, QNA, AD, REVIEW
 	}
 	
