@@ -101,7 +101,9 @@ public class PopupStore {
 	@OneToMany(mappedBy = "popupStore")
 	private List<PopupCategory> categories = new ArrayList<>();
 	
-	//
+	//북마크수
+	@Column(name = "bookmark_count")
+	private int bookmarkCount;
 	
 	//UserProfile과 연결해야할지 말지 고민...
 	@ManyToOne
