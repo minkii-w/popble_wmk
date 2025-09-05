@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import './App.css';
 import san1 from './assets/testImg/san1.jpg';
@@ -37,6 +38,16 @@ function App() {
         <img src={san2} height='200px' width= '200px'></img>
       </div>
     </div>
+=======
+import { RouterProvider } from "react-router-dom";
+import root from "./router/root";
+
+
+
+function App() {
+  return (
+      <RouterProvider router={root}></RouterProvider>
+>>>>>>> main
   );
 }
 
