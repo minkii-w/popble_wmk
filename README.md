@@ -2,7 +2,7 @@
 
 ##GitHub 관련
 -------------
-github 사용시 pull 먼저
+작업 시작할 때 pull, push전에도 pull 후 push&commit
 
 
 ##가짜데이터 관련
