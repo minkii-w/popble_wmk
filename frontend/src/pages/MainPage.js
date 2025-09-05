@@ -1,9 +1,15 @@
+import { useState } from "react";
+import BasicLayout from "../layout/BasicLayout";
+import Carousel from "../components/function/Carousel";
+
 import san1 from "../assets/testImg/san1.jpg"
 import san2 from "../assets/testImg/san2.jpg"
 
 const MainPage = () => {
     return(
-        <div>
+        <BasicLayout>
+            <Carousel/>
+        
             <div className="text-5xl bg-primaryColor">
                 <h1>primaryColor</h1>
             </div>
@@ -34,7 +40,7 @@ const MainPage = () => {
             <div>
                 <img src={san2} height='200px' width= '200px'></img>
             </div>
-        </div>
+        </BasicLayout>
     )
 }
 
