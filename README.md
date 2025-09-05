@@ -1,5 +1,7 @@
 # POPBLE
 
+# **순서 꼭 지키세요!!**
+
 ##GitHub 관련
 -------------
 작업 시작할 때 pull, push전에도 pull 후 push&commit
@@ -33,8 +35,8 @@ git push origin [본인_브랜치명] # 원격 저장소에 반영
 ---------------
 src/test/java에 테스트 데이터 넣었습니다.
 
-Users-> UserProfile
+UsersDummy-> UserProfileDummy
 
-PopupStore -> Category -> PopupCategory 
+PopupStoreDummy -> CategoryDummy -> PopupCategoryDummy
 
-순서 꼭 지키세요!!
+# **순서 꼭 지키세요!!**
