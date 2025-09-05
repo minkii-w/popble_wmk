@@ -2,10 +2,12 @@ package com.popble.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.popble.domain.Users;
-import java.util.List;
 
 
 public interface UserRepository extends JpaRepository<Users, Long>{
@@ -18,4 +20,14 @@ public interface UserRepository extends JpaRepository<Users, Long>{
 	
 	//로그인 아이디 또는 이메일로 사용자 착기
 	Optional<Users> findByLoginIdOrEmail(String loginId, String email);
+	
+	
+	
+	@EntityGraph(attributePaths  = {"userRoleList"})
+	@Query("select m from Users m where m.loginId = :loginId")
+	Users getwithRoles(@Param("loginId")String loginId);
+	
+	
+	
+	
 }

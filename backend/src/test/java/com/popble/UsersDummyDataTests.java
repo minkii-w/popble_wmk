@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.popble.domain.Role;
 import com.popble.domain.Users;
@@ -27,7 +28,9 @@ public class UsersDummyDataTests {
 		//유저 프로필
 		@Autowired
 		UserProfileRepository userProfireProfileRepository;
-		
+		// 비밀번호 암호화
+		@Autowired
+		PasswordEncoder passwordEncoder;
 	
 	@Test
 	public void insertUserDummy() {
@@ -36,7 +39,7 @@ public class UsersDummyDataTests {
 			Users admin = new Users();
 			admin.setRole(Role.ADMIN);
 			admin.setLoginId("admin");
-			admin.setPassword("1111");
+			admin.setPassword(passwordEncoder.encode("1111"));
 			admin.setEmail("admin@email.com");
 			admin.setName("Admin");
 			admin.setPhonenumber("01011111111");
