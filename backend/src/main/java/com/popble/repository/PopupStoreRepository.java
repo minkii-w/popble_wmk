@@ -4,10 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.popble.domain.PopupStore;
 
-public interface PopupStoreRepository extends JpaRepository<PopupStore, Long>{
+public interface PopupStoreRepository extends JpaRepository<PopupStore, Long>, JpaSpecificationExecutor<PopupStore>{
 
 	//기업 유저가 등록한 팝업 리스트
 	List<PopupStore> findByOwner_Id(Long ownerId);

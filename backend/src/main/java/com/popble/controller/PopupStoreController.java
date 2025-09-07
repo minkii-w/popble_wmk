@@ -2,10 +2,17 @@ package com.popble.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.popble.domain.PopupStore.Status;
+import com.popble.domain.SortType;
+import com.popble.domain.Category;
+import com.popble.domain.Category.CategoryType;
+import com.popble.domain.PopupStore;
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
+import com.popble.dto.PopupFilterDTO;
 import com.popble.dto.PopupStoreDTO;
 import com.popble.service.PopupStoreService;
 
@@ -20,10 +27,37 @@ public class PopupStoreController {
 
 	private final PopupStoreService popupStoreService;
 	
+//	@GetMapping("/list")
+//	public PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO){
+//		
+//		return popupStoreService.getList(pageRequestDTO);
+//	}
+	
+	//리스트
 	@GetMapping("/list")
-	public PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO){
+	public PageResponseDTO<PopupStoreDTO> getList(@RequestParam(required = false, name = "status") PopupStore.Status status,
+			@RequestParam(required = false, name = "sort") SortType sort,
+			@RequestParam(required = false, name = "categoryType") Category.CategoryType categoryType, 
+			@RequestParam(required = false, name = "categoryId") Integer categoryId,
+			@RequestParam(defaultValue = "1", name = "page") int page, 
+			@RequestParam(defaultValue = "10",name = "size") int size){
 		
-		return popupStoreService.getList(pageRequestDTO);
+		PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+				.page(page)
+				.size(size)
+				.build();
+		
+		
+		PopupFilterDTO popupFilterDTO = PopupFilterDTO.builder()
+				.status(status)
+				.sort(sort)
+				.categoryType(categoryType)
+				.categoryId(categoryId)
+				.pageRequestDTO(pageRequestDTO)
+				.build();
+		log.info("--------------------------------------------------------------");
+		log.info("status={}, sort={}, categoryType={}, categoryId={}", status, sort, categoryType, categoryId);
+		return popupStoreService.getFilteredList(popupFilterDTO);
 	}
 	
 }
