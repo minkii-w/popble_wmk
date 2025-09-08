@@ -1,6 +1,7 @@
 package com.popble.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -48,6 +49,28 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 				.build();
 		
 		return responseDTO;
+		
+	}
+	
+	//팝업스토어 등록하기
+	public Long register(PopupStoreDTO popupStoreDTO) {
+		log.info("---------register-----------");
+		PopupStore popupStore = modelMapper.map(popupStoreDTO, PopupStore.class);
+		
+		PopupStore savedPopupStore = popupStoreRepository.save(popupStore);
+		
+		return savedPopupStore.getId();
+	}
+	
+	//팝업스토어 정보 가져오기
+	public PopupStoreDTO get(Long id) {
+		Optional<PopupStore> result = popupStoreRepository.findById(id);
+		
+		PopupStore popupStore = result.orElseThrow();
+		
+		PopupStoreDTO popupStoreDTO = modelMapper.map(popupStore, PopupStoreDTO.class);
+		
+		return popupStoreDTO;
 	}
 
 }
