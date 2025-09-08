@@ -11,6 +11,13 @@ const CategoryComponent = ({ onSelect }) => {
     THEME: [],
   });
 
+  const categoryLabel = {
+    STATUS: "진행상태",
+    MAIN: "카테고리",
+    LOCALE: "지역",
+    THEME: "테마"
+  }
+
   //상단
   const [selectedTop, setSelectedTop] = useState(null);
   //하단
@@ -40,9 +47,9 @@ const CategoryComponent = ({ onSelect }) => {
   const handleBottomSelect = (sub) => {
     setSelectedBottom(sub);
     if (selectedTop === "STATUS") {
-      onSelect({ type: "STATUS", id: null, key: sub.key });
+      onSelect({ type:"status", value:sub.key });
     } else {
-      onSelect({ type: selectedTop, id: sub.id });
+      onSelect({ type:"category", categoryType: selectedTop, categoryId:sub.id });
     }
   };
 
@@ -63,13 +70,13 @@ const CategoryComponent = ({ onSelect }) => {
           <button
             key={top}
             onClick={() => handleTopSelect(top)}
-            className={`p-2 m-1 rounded-3xl shadow-md border-gray-400 border-2 text-sm ${
+            className={`p-1 m-1 rounded-3xl shadow-md border-gray-400 border-2 text-sm ${
               selectedTop === top
                 ? "bg-subButtonAccentColor text-white"
                 : "bg-subButtonColor"
             }`}
           >
-            {top}
+            {categoryLabel[top] || top}
           </button>
         ))}
       </div>
@@ -80,14 +87,14 @@ const CategoryComponent = ({ onSelect }) => {
           {subList.map((sub) => (
             <button
               key={sub.id || sub.key}
-              className={`p-2 m-1 rounded-3xl shadow-md border-gray-400 border-2 text-sm ${
+              className={`p-1 m-1 rounded-3xl shadow-md border-gray-400 border-2 text-sm ${
                 selectedBottom === sub
                   ? "bg-subButtonAccentColor text-white"
                   : "bg-subButtonColor"
               }`}
               onClick={() => handleBottomSelect(sub)}
             >
-              {sub.name || sub.label}
+              { sub.label || sub.name}
             </button>
           ))}
         </div>

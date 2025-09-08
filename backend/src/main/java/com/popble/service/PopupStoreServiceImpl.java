@@ -1,6 +1,7 @@
 package com.popble.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -11,8 +12,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.popble.domain.PopupStore;
+import com.popble.domain.PopupStore.Status;
 import com.popble.domain.SortType;
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
@@ -32,18 +35,22 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 	private final PopupStoreRepository popupStoreRepository;
 	private final ModelMapper modelMapper;
 
-	public PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO) {
+	//팝업스토어 리스트
+	public PageResponseDTO<PopupStoreDTO> getFilteredList(@ModelAttribute PopupFilterDTO popupFilterDTO) {
 		
 		// specification 추가(조건에 따라 동적 쿼리 생성)
 		Specification<PopupStore> specification = Specification.where(null);
 		
 		// 진행상테 필터링 조건 추가
-		if(popupFilterDTO.getStatus() != null) {
+		if(popupFilterDTO.getStatus() != null && popupFilterDTO.getStatus() != Status.ALL) {
 			specification = specification.and((root, query, cb) ->cb.equal(root.get("status"), popupFilterDTO.getStatus()));
 		}
 		//카테고리
 		if(popupFilterDTO.getCategoryType() != null) {
 			specification = specification.and((root,query,cb) -> cb.equal(root.join("categories").get("category").get("type"), popupFilterDTO.getCategoryType()));
+		}
+		if(popupFilterDTO.getCategoryId() != null) {
+			specification = specification.and((root,query,cb) -> cb.equal(root.join("categories").get("category").get("id"), popupFilterDTO.getCategoryId()));
 		}
 		
 		//정렬
@@ -56,8 +63,17 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 			}else if(popupFilterDTO.getSort().equals(SortType.VIEW)) {
 				sort = Sort.by(Sort.Direction.DESC, "view");
 			}else if(popupFilterDTO.getSort().equals(SortType.END_SOON)) {
-				sort = Sort.by(Sort.Direction.DESC, "endDate");
+				sort = Sort.by(Sort.Direction.ASC, "endDate");
 			}
+		}
+		
+		//검색 추가
+		if(popupFilterDTO.getKeyword() != null && !popupFilterDTO.getKeyword().isEmpty()) {
+			String keyword = "%" + popupFilterDTO.getKeyword().toLowerCase() + "%";
+			specification = specification.and((root,query,cb) -> cb.or(cb.like(cb.lower(root.get("storeName")),keyword),
+																(cb.like(cb.lower(root.get("address")), keyword)),
+																(cb.like(cb.lower(root.get("desc")), keyword))
+						));
 		}
 		
 		//Pageable 객체 생성(페이징 + 정렬)
@@ -85,12 +101,15 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 		return responseDTO;
 	}
 
-//	@Override
-//	public PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
-
-
+	//팝업 상세보기
+	
+	public PopupStoreDTO get(Long id) {
+		Optional<PopupStore> result = popupStoreRepository.findById(id);
+		
+		PopupStore popupStore = result.orElseThrow();
+		
+		PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
+		
+		return dto;
+	}
 }

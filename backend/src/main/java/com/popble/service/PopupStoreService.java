@@ -11,4 +11,6 @@ public interface PopupStoreService {
 //	PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO);
 	
 	PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO);
+	
+	PopupStoreDTO get(Long id);
 }

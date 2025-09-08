@@ -5,7 +5,7 @@ const PopupCard = ({ item }) => {
   return (
     <Link
       to={`/popup/${item.id}`}
-      className="flex bg-secondaryColor w-[380px] h-[180px] rounded-lg shdow-md p-3 hover:shadow-lg transition border-secondaryAccentColor border-2"
+      className="flex bg-secondaryColor w-[380px] h-[180px] rounded-lg shdow-md m-5 p-3 hover:shadow-lg transition border-secondaryAccentColor border-2"
     >
       <img
         src={san1}

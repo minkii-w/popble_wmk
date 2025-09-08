@@ -8,7 +8,7 @@ const SortComponent = ({ onSort }) => {
     { label: "북마크순", value: "BOOKMARK" },
     { label: "조회순", value: "VIEW" },
     { label: "추천순", value: "RECOMMEND" },
-    { label: "종료임박순", value: "ENDING_SOON" },
+    { label: "종료임박순", value: "END_SOON" },
   ];
 
   const handleSelect = (sort) => {

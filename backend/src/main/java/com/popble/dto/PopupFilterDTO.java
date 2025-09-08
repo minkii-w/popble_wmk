@@ -25,4 +25,5 @@ public class PopupFilterDTO {
 	
 	private SortType sort;
 
+	private String keyword;
 }

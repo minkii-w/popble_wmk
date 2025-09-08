@@ -34,7 +34,7 @@ public class PopupStore {
 	
 	//팝업스토어 상태(예정, 진행, 종료)
 	public enum Status{
-		SCHEDULED, ACTIVE, ENDED
+		SCHEDULED, ACTIVE, ENDED, ALL
 	}
 	
 	@Id

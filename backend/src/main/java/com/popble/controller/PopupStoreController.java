@@ -1,14 +1,12 @@
 package com.popble.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.popble.domain.PopupStore.Status;
 import com.popble.domain.SortType;
 import com.popble.domain.Category;
-import com.popble.domain.Category.CategoryType;
 import com.popble.domain.PopupStore;
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
@@ -39,6 +37,7 @@ public class PopupStoreController {
 			@RequestParam(required = false, name = "sort") SortType sort,
 			@RequestParam(required = false, name = "categoryType") Category.CategoryType categoryType, 
 			@RequestParam(required = false, name = "categoryId") Integer categoryId,
+			@RequestParam(required = false, name = "keyword") String keyword,
 			@RequestParam(defaultValue = "1", name = "page") int page, 
 			@RequestParam(defaultValue = "10",name = "size") int size){
 		
@@ -53,11 +52,18 @@ public class PopupStoreController {
 				.sort(sort)
 				.categoryType(categoryType)
 				.categoryId(categoryId)
+				.keyword(keyword)
 				.pageRequestDTO(pageRequestDTO)
 				.build();
 		log.info("--------------------------------------------------------------");
-		log.info("status={}, sort={}, categoryType={}, categoryId={}", status, sort, categoryType, categoryId);
+		log.info("status={}, sort={}, categoryType={}, categoryId={}, keyword = {}", status, sort, categoryType, categoryId, keyword);
 		return popupStoreService.getFilteredList(popupFilterDTO);
 	}
 	
+	
+	//팝업 상세보기
+	@GetMapping("/{id}")
+	public PopupStoreDTO get(@PathVariable("id") Long id) {
+		return popupStoreService.get(id);
+	}
 }

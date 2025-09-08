@@ -47,6 +47,7 @@ public class CategoryController {
 						case SCHEDULED -> "예정";
 						case ACTIVE -> "진행";
 						case ENDED -> "종료";
+						case ALL -> "전체";
 						}
 						))
 				.toList();
