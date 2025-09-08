@@ -17,7 +17,7 @@ import com.popble.repository.UserRepository;
 @SpringBootTest
 public class UserRepositoryTest {
 	
-	@Transactional
+	
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
