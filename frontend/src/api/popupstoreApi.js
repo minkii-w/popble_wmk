@@ -1,4 +1,5 @@
 import axios from "axios";
+import jwtAxios from "../utill/jwtUtill";
 
 //스프링부트
 export const API_SERVER_HOST = 'http://localhost:8000'
@@ -10,7 +11,7 @@ export const getList = async (pageParam) => {
 
     const {page, size} = pageParam;
 
-    const res = await axios.get(`${prefix}`/list, {params:{page:page,size:size}})
+    const res = await jwtAxios.get(`${prefix}/list`, {params:{page:page,size:size}})
 
     return res.data;
 }
