@@ -1,0 +1,93 @@
+package com.popble.security.filter;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.google.gson.Gson;
+import com.popble.dto.UserDTO;
+import com.popble.util.JWTUtill;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.log4j.Log4j2;
+@Log4j2
+public class JWTCheckFilter extends OncePerRequestFilter {
+
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
+		
+		if(request.getMethod().equals("OPTONS")) {
+			return true;
+		}
+		
+		String path = request.getRequestURI();
+		
+		log.info("check uri..............."+path);
+		
+		if(path.startsWith("/api/user")) {
+			return true;
+		}
+		return false;
+		
+		
+	}
+	
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain )
+	throws ServletException, IOException{
+		
+		log.info("----------------------JWTCheckFilter-------------------------");
+		
+		String authHeaderStr = request.getHeader("Authorization");
+		
+		try {
+			String accessToken = authHeaderStr.substring(7);
+			Map<String, Object> claims = JWTUtill.validateToken(accessToken);
+			
+			log.info("JWT claims:"+claims);
+			
+			String loginId = (String) claims.get("email");
+			String password = (String) claims.get("password");
+			String name = (String) claims.get("name");
+			Boolean social = (Boolean) claims.get("social");
+			List<String> roleNames = (List<String>) claims.get("roleNames");
+			
+			UserDTO userDTO = new UserDTO(loginId, password, name, social.booleanValue(), roleNames);
+			
+			log.info("-----------------------");
+			log.info(userDTO);
+			log.info(userDTO.getAuthorities());
+			
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDTO, password, userDTO.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+			
+			filterChain.doFilter(request, response);
+		}catch (Exception e) {
+			log.error("JWT Check Error---------------------");
+			log.error(e.getMessage());
+			
+			Gson gson = new Gson();
+			String msg = gson.toJson(Map.of("error","ERROR_ACCESS_TOKEN"));
+			
+			response.setContentType("application/json");
+			PrintWriter printWriter = response.getWriter();
+			printWriter.println(msg);
+			printWriter.close();
+		}
+				
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+}
