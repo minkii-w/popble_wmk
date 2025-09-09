@@ -26,6 +26,8 @@ public class Image {
 	@ManyToOne
 	private Board board;
 	
+	
+	
 	//파일이름
 	private String fileName;
 	
