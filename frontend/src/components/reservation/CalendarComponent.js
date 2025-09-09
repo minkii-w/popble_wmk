@@ -1,5 +1,5 @@
 import { ko } from "date-fns/locale";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -9,21 +9,40 @@ import "react-datepicker/dist/react-datepicker.css";
 //[0] - 일요일
 //[1~5] - 월~금요일
 //[6] - 토요일
-const CalendarComponent = ({offDays=[]}) => {
-
-    const isoffDays = (date) => {
-        const day = date.getDay();
-        return offDays.includes(day);
-    }
-
+const CalendarComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onSelect}) => {
+    
     //예약이 가능한 날짜 (현재날짜)
-    const [startDate, setStartDate ] = useState(new Date());
+    const [startDate] = useState(new Date());
 
     //이용자가 선택하는 날짜
     const [selectDate, setSelectDate] = useState(new Date());
     
     //날짜 선택 후 시간선택옵션
-    const [selectTime, setSelectTime] = useState(new Date());
+    const [selectTime, setSelectTime] = useState("");
+    
+    const isoffDays = (date) => offDays.includes(date.getDay());
+
+    useEffect( () => {
+        setSelectTime("");
+    },[selectDate]);
+
+    const handleClickTime = (time) => {
+        setSelectTime(time);
+        if(onSelect) onSelect({date:selectDate,time});
+    }
+
+    return (
+        <></>
+    );
+
+    
+ 
+
+    
+
+    
+    
+    
 
     //둘 다 입력 받지 않을 시 띄울 alert(메세지)
     const handleReservationDo = () => {

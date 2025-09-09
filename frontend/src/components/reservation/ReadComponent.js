@@ -8,11 +8,10 @@ const initState = {
     id:0,
     name:'',
     address:'',
-    startdate:'',
-    enddate:'',
-    amtime:['','','',''],
-    pmtime:['','','',''],
-    maxcount:null,
+    startDate:'',
+    endDate:'',
+    reservationTimes:{am:['','','',''],pm:['','','','']},
+    maxCount:null,
     desc:'',
     price:0,
     files:[]
@@ -34,7 +33,7 @@ const ReadComponent = ({id}) => {
     },[id])
 
     return(
-        <div className="border-2 border-sky-200mt-10 m-2 p-4">
+        <div className="border-2 border-sky-200 mt-10 m-2 p-4">
             <div className="flex flex-wrap mx-auto justify-center p-6">
                 <div className="m-auto rounded-md w-60">
                     <div className="row">

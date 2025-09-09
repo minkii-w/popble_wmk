@@ -1,17 +1,9 @@
-import { useParams, useSearchParams, createSearchParams } from "react-router-dom";
+import { useParams} from "react-router-dom";
 import ReadComponent from "../../components/reservation/ReadComponent";
 
 const ReservationPage = () => {
 
     const {id} = useParams()
-    console.log("페이지 파라미터 id:",id)
-
-    const [queryParams] = useSearchParams()
-
-    const page = queryParams.get("page")?parseInt(queryParams.get("page")):1
-    const size = queryParams.get("size")?parseInt(queryParams.get("size")):10
-
-    const queryStr = createSearchParams({page, size}).toString()
 
     return (
 
