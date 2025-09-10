@@ -38,7 +38,9 @@ public class CustomUserdetailsService implements UserDetailsService {
 			users.getPassword(),
 			users.getName(),
 			users.isSocial(),
+			users.getEmail(),
 			users.getUserRoleList()
+			
 			.stream().map(usersRole -> usersRole.name()).collect(Collectors.toList()));
 		
 		log.info(userDTO);
