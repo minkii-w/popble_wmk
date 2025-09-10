@@ -30,8 +30,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	//implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	//implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+<<<<<<< HEAD
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+=======
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	//implementation 'org.springframework.boot:spring-boot-starter-validation'
+>>>>>>> c18711f573dfee35780ebf537bc8011f56a88222
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	compileOnly 'org.projectlombok:lombok'
