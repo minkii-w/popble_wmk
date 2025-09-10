@@ -1,15 +1,15 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
+import ListPage from "../components/popupStore/ListComponent";
 import { Navigate } from "react-router-dom";
 
-const Loading = <div>Loading....</div>;
-const ListPage = lazy(() => import("../pages/popupStore/ListPage"));
+const Loading = <div>Loading.......</div>;
 
-const popupStoreRouter = () => {
+const popupRouter = () => {
   return [
     {
-      path: "list",
+      path: "search",
       element: (
-        <Suspense lazy={Loading}>
+        <Suspense fallback={Loading}>
           <ListPage></ListPage>
         </Suspense>
       ),
@@ -18,15 +18,15 @@ const popupStoreRouter = () => {
       path: "",
       element: (
         <Suspense fallback={Loading}>
-          <Navigate replace to="list"></Navigate>
+          <Navigate replace to="search"></Navigate>
         </Suspense>
       ),
     },
     {
-      path: ":id",
+      path: "detail/:id",
       element: <Suspense fallback={Loading}></Suspense>,
     },
   ];
 };
 
-export default popupStoreRouter;
+export default popupRouter;

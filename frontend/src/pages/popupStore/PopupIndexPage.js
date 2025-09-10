@@ -1,10 +1,11 @@
 import { Outlet } from "react-router-dom";
+import BasicLayout from "../../layout/BasicLayout";
 
 const PopupIndexPage = () => {
   return (
-    <div>
+    <BasicLayout>
       <Outlet></Outlet>
-    </div>
+    </BasicLayout>
   );
 };
 

@@ -1,7 +1,7 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 import { Suspense, lazy } from "react";
-import popupStoreRouter from "./popupStoreRouter";
+import popupRouter from "./popupRouter";
 import userRouter from "./userRouter";
 
 const Loading = <div>Loading......</div>;
@@ -30,7 +30,7 @@ const root = createBrowserRouter(
           <Popup></Popup>
         </Suspense>
       ),
-      children: popupStoreRouter(),
+      children: popupRouter(),
     },
     {
       path: "user",

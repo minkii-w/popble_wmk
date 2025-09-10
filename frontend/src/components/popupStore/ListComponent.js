@@ -7,6 +7,7 @@ import CategoryComponent from "./CategoryComponent";
 import SortComponent from "./SortComponent";
 import SearchBar from "../common/SearchBar";
 import { getBookmarkList, isBookmark } from "../../api/bookmarkApi";
+import { useLocation } from "react-router-dom";
 
 const initState = {
   dtoList: [],
@@ -26,13 +27,26 @@ const ListComponent = () => {
   //로그인 추가되면 지울것
   const userId = 4;
 
+  //URL읽기
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const searchKeyword = params.get("keyword") || null;
+
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+  //   const keyword = params.get("keyword");
+  //   if (keyword) {
+  //     setFilter((prev) => ({ ...prev, keyword }));
+  //   }
+  // }, [location.search]);
+
   //필터 관리
   const [filter, setFilter] = useState({
     status: null,
     sort: null,
     categoryType: null,
     categoryId: null,
-    keyword: null,
+    keyword: searchKeyword,
   });
 
   const [serverData, setServerData] = useState(initState);
