@@ -26,11 +26,14 @@ const MainPage = () => {
             <div className="text-5xl bg-subSecondColor">
                 <h1>subSecondColor</h1>
             </div>
+             <div className="text-5xl bg-hashTagColor">
+                <h1>hashTagColor</h1>
+            </div>
             <div className="text-5xl bg-subButtonColor">
                 <h1>subButtonColor</h1>
             </div>
             <div className="text-5xl bg-subButtonAccentColor">
-                <h1>subButtonAccentColor.</h1>
+                <h1>subButtonAccentColor</h1>
             </div>
 
         </BasicLayout>

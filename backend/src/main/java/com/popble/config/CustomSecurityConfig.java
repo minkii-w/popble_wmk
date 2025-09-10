@@ -50,8 +50,8 @@ public class CustomSecurityConfig {
 	});
 	
 	
-	http.addFilterBefore(new JWTCheckFilter(),
-			 UsernamePasswordAuthenticationFilter.class);
+//	http.addFilterBefore(new JWTCheckFilter(),
+//			 UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}	
 		@Bean
