@@ -11,7 +11,7 @@ const initState = {
     address:'',
     startDate:'',
     endDate:'',
-    reservationTimes:{am:['','','',''],pm:['','','','']},
+    reservationTimes:[],
     maxCount:null,
     desc:'',
     price:0,
@@ -31,6 +31,7 @@ const AdBoardComponent = () => {
 
     const uploadRef = useRef()
 
+
     const handleChangePopupstore = (e) => {
         popupstore[e.target.name] = e.target.value
 
@@ -49,8 +50,7 @@ const AdBoardComponent = () => {
         formData.append("storeName", popupstore.storeName)
         formData.append("address", popupstore.address)
         formData.append("startDate", popupstore.startDate)
-        formData.append("amTime", popupstore.amTime)
-        formData.append("pmTime", popupstore.pmTime)
+        formData.append("reservationTimes",JSON.stringify(popupstore.reservationTimes))
         formData.append("maxCount", popupstore.maxCount)
         formData.append("desc", popupstore.desc)
         formData.append("price", popupstore.price)
@@ -140,9 +140,14 @@ const AdBoardComponent = () => {
             {amTime.map((amTime, idx) => (
                 <div key={idx} 
                 style={{display:"flex"}}>
-                    
                     <input className="border border-gray-400 rounded p-2 w-24" 
-                    type={amTime.type} name={amTime.name}></input>
+                    type={amTime.type}
+                    value={popupstore.reservationTimes.am[idx]}
+                    onChange={(e) => {
+                        const newTimes = {...popupstore.reservationTimes};
+                        newTimes.am[idx] = e.target.value;
+                        setPopupstore({...popupstore, reservationTimes:newTimes});
+                    }}></input>
                 </div>
             ))}
             </div>
@@ -152,9 +157,14 @@ const AdBoardComponent = () => {
             {pmTime.map((pmTime, idx) => (
                 <div key={idx} 
                 style={{display:"flex"}}>
-                    
                     <input className="border border-gray-400 rounded p-2 w-24" 
-                    type={pmTime.type} name={pmTime.name}></input>
+                    type={pmTime.type} 
+                    value={popupstore.reservationTimes.pm[idx]}
+                    onChange={(e) => {
+                        const newTimes = {...popupstore.reservationTimes};
+                        newTimes.pm[idx] = e.target.value;
+                        setPopupstore({...popupstore, reservationTimes: newTimes});
+                    }}></input>
                 </div>
             ))}
             </div>

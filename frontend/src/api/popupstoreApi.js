@@ -48,3 +48,10 @@ export const deleteOne = async (id) => {
     
     return res.data
 }
+
+export const getOne = async(id) => {
+
+    const res = await axios.get(`${prefix}/${id}`)
+
+    return res.data
+}
