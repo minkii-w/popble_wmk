@@ -19,7 +19,17 @@ export const getList = async (pageParam) => {
 //팝업스토어예약하기
 export const getReservation = async (id) => {
 
-    const res = await axios.get(`${prefix}/${id}`)
+    const res = await axios.get(`${prefix}/reservation/${id}`)
 
     return res.data;
+}
+
+//팝업스토어 홍보 게시판 등록하기(사진첨부)
+export const postAdd = async (popupStore) => {
+    
+    const header = {headers:{"Content-Type":"multipart/form-data"}}
+
+    const res = await axios.post(`${prefix}/`,popupStore, header)
+
+    return res.data
 }

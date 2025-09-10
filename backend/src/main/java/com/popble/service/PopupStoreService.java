@@ -15,5 +15,10 @@ public interface PopupStoreService {
 	//팝업스토어 정보 가져오기
 	PopupStoreDTO get(Long PopupStore);
 	
+	void modify (PopupStoreDTO popupStoreDTO);
+	
+	void remove (Long id);
+	
+	
 	
 }

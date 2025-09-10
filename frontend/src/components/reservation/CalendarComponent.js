@@ -28,39 +28,14 @@ const CalendarComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onSelec
 
     const handleClickTime = (time) => {
         setSelectTime(time);
-        if(onSelect) onSelect({date:selectDate,time});
-    }
+        if(onSelect) onSelect({date:selectDate,time})
+    };
 
     return (
-        <></>
-    );
-
-    
- 
-
-    
-
-    
-    
-    
-
-    //둘 다 입력 받지 않을 시 띄울 alert(메세지)
-    const handleReservationDo = () => {
-        if(!selectDate || !selectTime){
-             alert("날짜와 시간을 모두 선택해주세요")
-        }
-    }
-
-    const handleoptionsTime = (time) => {
-        return time.getHours()>6?"text-success":"text-error";
-    }
-
-    return(
+        //달력표시
         <div style={{textAlign:"center"}}>
             <DatePicker
                 inline
-                showDateSelect
-                showTimeSelect
                 locale={ko}
                 minDate={startDate}
                 selected={(selectDate)}
@@ -68,39 +43,51 @@ const CalendarComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onSelec
                 //공휴일
                 filterDate={(date) => !isoffDays(date)}
             ></DatePicker>
-
-        <div>
+            {/*시간표시*/}
             {selectDate &&(
-            <DatePicker
-                showTimeSelect
-                locale={ko}
-                selected={(selectTime)}
-                onChange={(time) => setSelectTime(time)}
-            ></DatePicker>
+            <div style={{margin:"10px"}}>
+                <div>오전
+                    {reservationTimes.am.length>0?(
+                        reservationTimes.am.map((t,idx)=>(
+                            <button
+                            key={idx}
+                            className={`m-1 p-1 border rounded ${selectTime===t?"bg-blue-300 text-white":""}`}
+                            onClick={()=>handleClickTime(t)}>
+                                {t}
+                            </button> 
+                            ))
+                        ):(
+                            <span>예약 불가</span>
+                        )}
+                </div>
+                <div style={{marginTop:"5px"}}>
+                    <div>오후</div>
+                    {reservationTimes.pm.length>0?(
+                        reservationTimes.pm.map((t, idx)=>(
+                            <button
+                            key={idx}
+                            className={`m-1 p-1 border rounded ${selectTime===t?"bg-blue-300 text-white":""}`}
+                            onClick={()=>handleClickTime(t)}>
+                                {t}
+                            </button>
+                        ))
+                    ):(
+                        <span>예약 불가</span>
+                    )}
+                </div>
+            </div>
+            )}
+            {/*선택 날짜,시간 띄우기 */}
+            {selectDate && selectTime &&(
+                <div className="flex justify-center">
+                    <div className="text-right font-normal">
+                        <p>선택날짜:{selectDate.toLocaleDateString()}</p>
+                        <p>선택시간:{selectTime}</p>
+                    </div>
+                </div>
             )}
         </div>
-
-            <div className="flex justify-center">
-                <div className="text-right font-normal">선택날짜
-                <input className="justify-center rounded-r border border-solid"
-                value={selectDate.toLocaleDateString()}>
-                </input>
-                </div>
-            </div>
-            <div className="flex justify-center">
-                <div className="text-right font-normal">선택시간
-                    <input className="justify-center rounded-r border border-solid"
-                    value={selectTime.toLocaleTimeString()}>
-                    </input>
-                </div>
-            
-            </div>
-
-            <button onClick={handleReservationDo} style={{marginTop:"10px"}}>
-            </button>
-        </div>
-
-    )
+        )
 }
 
 export default CalendarComponent;

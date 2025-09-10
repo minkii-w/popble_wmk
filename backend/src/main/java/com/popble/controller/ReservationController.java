@@ -14,14 +14,14 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/api/reservation")
+@RequestMapping("/api/popup")
 
 public class ReservationController {
 	
 	private final PopupStoreService popupStoreService;
 	
 	//id로 팝업스토어 정보 가져오기
-	@GetMapping("/{id}")
+	@GetMapping("/reservation/{id}")
 	public PopupStoreDTO get(@PathVariable("id") Long id) {
 		return popupStoreService.get(id);
 	}
