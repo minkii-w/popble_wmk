@@ -34,7 +34,7 @@ const MyPageBookmark = () => {
             <div className="flex-shrink-0">
               <PopupCard
                 key={item.id}
-                item={{ item, isBookmark: true }}
+                item={{ ...item, isBookmark: true }}
               ></PopupCard>
             </div>
           ))

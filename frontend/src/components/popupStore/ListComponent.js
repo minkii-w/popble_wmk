@@ -61,6 +61,7 @@ const ListComponent = () => {
   }, [userId]);
 
   useEffect(() => {
+    fetchBookmarks();
     fetchData();
   }, [fetchData, fetchBookmarks, refresh]);
 
