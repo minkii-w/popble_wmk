@@ -13,7 +13,6 @@ module.exports = {
         subFirstColor:"#E9E9E9",
         subSecondColor:"#D9D9D9",
         subButtonColor:"#FFD6A5",
-        hashTagColor:"#757575",
         subButtonAccentColor:"#FFB6B9"
       }
     },
