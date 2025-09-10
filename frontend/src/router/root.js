@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Suspense,lazy } from "react";
+import userRouter from "./userRouter";
 
 
 const Loading = <div>Loading......</div>
@@ -13,6 +14,7 @@ const root = createBrowserRouter([
         path:"",
         element:<Suspense fallback = {Loading}><Main></Main></Suspense>
     },
+
     {
         path:"/popup/reservation/:id",
         element:<Suspense fallback={Loading}><Reservation></Reservation></Suspense>
@@ -20,6 +22,11 @@ const root = createBrowserRouter([
     {
         path:"/popup/board/ad",
         element:<Suspense fallback={Loading}><AdBoard></AdBoard></Suspense>
+
+    {
+        path:"user",
+        children:userRouter()
+
     }
 
 ])
