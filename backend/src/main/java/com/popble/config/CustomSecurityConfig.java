@@ -43,6 +43,7 @@ public class CustomSecurityConfig {
 	http.sessionManagement( SessionConfig -> SessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 	http.csrf ( Config -> Config.disable());
 	
+	
 	http.formLogin(config -> {
 		config.loginPage("/api/user/login");
 		config.successHandler(new APILoginSussessHandler());
@@ -52,6 +53,7 @@ public class CustomSecurityConfig {
 	
 //	http.addFilterBefore(new JWTCheckFilter(),
 //			 UsernamePasswordAuthenticationFilter.class);
+
 		return http.build();
 	}	
 		@Bean
