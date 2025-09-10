@@ -1,18 +1,23 @@
 package com.popble.service;
 
-import org.springframework.stereotype.Service;
 
-import com.popble.dto.BoardDTO;
-import com.popble.dto.PageRequestDTO;
+import java.util.List;
 
-@Service
+import com.popble.domain.Board;
+import com.popble.dto.BoardCreateRequest;
+import com.popble.dto.BoardResponse;
+import com.popble.dto.BoardUpdateRequest;
 
-public class BoardService {
+public interface BoardService {
 
-	Long register (BoardDTO boardDTO);
+	Long create(BoardCreateRequest req);
 	
+	BoardResponse get(Long id);
 	
+	List<BoardResponse> listLatest(Board.Type type);
+	List<BoardResponse> list(Board.Type type);
 	
-	PageRequestDTO<BoardDTo> list()
+	void update(Long id, BoardUpdateRequest req);
+	void delete(Long id);
 	
 }
