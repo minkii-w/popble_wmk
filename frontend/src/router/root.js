@@ -4,9 +4,12 @@ import userRouter from "./userRouter";
 
 
 const Loading = <div>Loading......</div>
+
+const About = lazy( () => import("../pages/AboutPage"))
 const Main = lazy( () => import("../pages/MainPage") )
 const Reservation = lazy( () => import("../pages/reservation/ReservationPage"))
 const AdBoard = lazy( () => import("../pages/board/AdBoardPage"))
+
 
 
 const root = createBrowserRouter([
@@ -14,6 +17,11 @@ const root = createBrowserRouter([
         path:"",
         element:<Suspense fallback = {Loading}><Main></Main></Suspense>
     },
+
+    {
+        path:"about",
+        element:<Suspense fallback={Loading}><About></About></Suspense>
+
 
     {
         path:"/popup/reservation/:id",
