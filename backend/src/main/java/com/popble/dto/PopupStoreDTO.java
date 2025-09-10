@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.popble.domain.PopupCategory;
@@ -84,4 +86,15 @@ public class PopupStoreDTO {
 	
 	//북마크수
 	private int bookmarkCount = 0;
-}
+	
+	
+	//2025-09-09 wmk 수정
+	//이미지
+	@Builder.Default
+	private List<MultipartFile>files = new ArrayList<>();
+	
+	@Builder.Default
+	private List<String>uploadFileNames = new ArrayList<>();
+
+	
+	}
