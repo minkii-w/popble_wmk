@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import san1 from "../../assets/testImg/san1.jpg";
+import Sanrio_mediaArt_1 from  "../../assets/img/Sanrio MediaArt_1.jpeg"
 import { useEffect, useState } from "react";
 import { addBookmark, deleteBookmark } from "../../api/bookmarkApi";
 import { GoBookmark } from "react-icons/go";
@@ -42,7 +42,7 @@ const PopupCard = ({ item, userId = 4 }) => {
       </button>
       {/* 팝업간단정보 */}
       <img
-        src={san1}
+        src={Sanrio_mediaArt_1}
         alt={item.title}
         className="w-[150px] h-[150px] object-cover rounded-md flex-shrink-0"
       ></img>

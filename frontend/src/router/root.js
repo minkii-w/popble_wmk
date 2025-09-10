@@ -61,7 +61,6 @@ const root = createBrowserRouter([
     {
         path:"user",
         children:userRouter()
-
     }
 
 ]);

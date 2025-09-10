@@ -31,19 +31,11 @@ export const getList = async (filterData) => {
   return res.data;
 };
 
-
-    const res = await axios.get(`${prefix}/list`, {params:{page:page,size:size}})
-
-
-    return res.data;
-}
-
-
 //팝업스토어예약하기
 export const getReservation = async (id) => {
 
     const res = await axios.get(`${prefix}/reservation/${id}`)
-
+}
 
 //카테고리 조회
 export const getCategories = async (type) => {
@@ -71,8 +63,6 @@ export const getPopup = async (id) => {
 
   return res.data;
 };
-
-}
 
 //팝업스토어 홍보 게시판 등록하기(사진첨부)
 export const postAdd = async (popupStore) => {
