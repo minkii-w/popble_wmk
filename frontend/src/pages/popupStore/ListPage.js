@@ -1,15 +1,12 @@
-import { useSearchParams } from "react-router-dom";
+import BasicLayout from "../../layout/BasicLayout";
+import ListComponent from "../../components/popupStore/ListComponent";
 
 const ListPage = () => {
-
-    const [queryParams] = useSearchParams();
-
-    const page = queryParams.get("page") ? parseInt(queryParams.get("page")) : 1;
-    const size = queryParams.get("size") ? parseInt(queryParams.get("size")) : 10;
-
-    return(
-        <></>
-    )
-}
+  return (
+    <BasicLayout>
+      <ListComponent></ListComponent>
+    </BasicLayout>
+  );
+};
 
 export default ListPage;

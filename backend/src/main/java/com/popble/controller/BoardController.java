@@ -1,5 +1,6 @@
 package com.popble.controller;
 
+
 import com.popble.domain.Board;
 import com.popble.dto.BoardCreateRequest;
 import com.popble.dto.BoardResponse;
@@ -59,4 +60,5 @@ public class BoardController {
         boardService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }
