@@ -15,6 +15,7 @@ import com.popble.domain.ChatMessage;
 @RestController
 @CrossOrigin
 public class ChatController {
-	
+
+//	private ChatService chatService;
 
 }
