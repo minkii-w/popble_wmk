@@ -1,5 +1,6 @@
 package com.popble.domain;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,9 @@ public class ReservationTime {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "am_pm")
 	private AmPm amPm;
+	
+    @Column(name = "time")
+    private LocalTime time;
 	
 	//예약연결(한시간대에서 여러개의 예약을 가질수 있음)
 	@OneToMany(mappedBy = "reservationTime")

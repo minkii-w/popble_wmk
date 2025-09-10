@@ -9,7 +9,7 @@ const getNum = (param, defaultValue) => {
     return parseInt(param);
 }
 
-const useCustomeMove = () => {
+const useCustomMove = () => {
     const navigate = useNavigate();
 
     const [refresh, setRefresh] = useState(false);
@@ -52,4 +52,4 @@ const useCustomeMove = () => {
     return {moveToList, page, size, moveToModify, moveToRead, refresh}
 }
 
-export default useCustomeMove;
+export default useCustomMove;

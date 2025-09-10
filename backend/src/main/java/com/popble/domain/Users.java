@@ -1,10 +1,15 @@
 package com.popble.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -45,11 +50,52 @@ public class Users{
 
     @Column(name = "name", nullable = false)
     private String name;
+    
+    private boolean social;
 
     @Column(name = "phonenumber", nullable = false)
     private String phonenumber;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Role> userRoleList = new ArrayList<>();
+    
+    
+    public void addRole (Role role) {
+    	userRoleList.add(role);
+    }
+    
+    public void clearRole() {
+    	userRoleList.clear();
+    }
+    
+    public void changeName(String name) {
+    	this.name = name;
+    }
+    
+    public void changePw(String password) {
+    	this.password = password;
+    }
+    
+    public void changeSocial(Boolean social) {
+    	this.social = social;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     //UserProfile과 관계 mapping
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL)
     private UserProfile userProfile;
+    
+    
+    
 }
