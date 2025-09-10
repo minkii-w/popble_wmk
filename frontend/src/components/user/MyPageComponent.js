@@ -1,6 +1,6 @@
 import { useState } from "react";
-import MyPageMenuComponent from "./MyPageMenuComponent";
-import MyPageContentComponent from "./MyPageContentComponent";
+import MyPageMenuComponent from "../user/MyPageMenuComponent";
+import MyPageContentComponent from "../user/MyPageContentComponent";
 
 const MyPageComponent = () => {
   const [selectedMenu, setSelectedMenu] = useState();

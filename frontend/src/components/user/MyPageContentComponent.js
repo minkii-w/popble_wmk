@@ -1,6 +1,6 @@
 import { FaClock, FaUserEdit, FaBookmark } from "react-icons/fa";
 import { FcDocument, FcCalendar } from "react-icons/fc";
-import MyPageBookmark from "./MyPageBookmark";
+import MyPageBookmark from "../user/MyPageBookmark";
 
 const MyPageContentComponent = ({ selectedMenu }) => {
   if (selectedMenu === "edit") {

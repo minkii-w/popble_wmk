@@ -1,15 +1,14 @@
 import BasicMenu from "../components/BasicMenu";
 
-const BasicLayout = ({children}) => {
-
-    return(
-        //메인화면 레이아웃
-        <>
-        <BasicMenu>
-
+const BasicLayout = ({ children }) => {
+  return (
+    //메인화면 레이아웃
+    <>
+      <BasicMenu>
         {/* 캐러셀 */}
-        <div style={{marginTop: "50px", marginBottom: "20px"}}>{children}</div>
-                
+        <div style={{ marginTop: "50px", marginBottom: "20px" }}>
+          {children}
+        </div>
 
         {/* <div className="flex justify-center">
 
@@ -20,16 +19,8 @@ const BasicLayout = ({children}) => {
                 </div>       
             </div>        
         </div> */}
-
-        <div className="flex justify-end">
-            <button 
-            className="m-10 p-1 shadow-md rounded-full bg-secondaryAccentColor w-[50px] h-[50px]"
-            onClick={()=>window.scrollTo({top: 0, behavior: 'smooth'})}>위로 이동</button>
-        </div>
-
-        </BasicMenu>
-
-        </>    
-    )
-}
+      </BasicMenu>
+    </>
+  );
+};
 export default BasicLayout;
