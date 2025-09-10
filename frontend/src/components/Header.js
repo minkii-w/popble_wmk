@@ -10,10 +10,10 @@ const Header = () => {
         <div id='menubar' className="flex bg-primaryColor">
             {/* 로고 삽입 및 여백 지정 */}
             <div className="ml-5 mt-2 mb-2">
-                <img src={logo} height='200px' width='200px'></img>
-                        <Link to={'/'}></Link>
+                <Link to={'/'}>
+                    <img src={logo} height='200px' width='200px'></img>
+                </Link>
             </div>
-
             {/* 햄버거 버튼 */}
             <div className="ml-auto mt-5">
                 <NavBar/>

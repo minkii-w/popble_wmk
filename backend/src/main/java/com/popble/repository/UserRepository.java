@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import com.popble.domain.Users;
 
 
-public interface UserRepository extends JpaRepository<Users, Long>{
+public interface UserRepository extends JpaRepository<Users, Long >{
 
 	//로그인 아이디로 사용자 찾기
 	Optional<Users> findByLoginId(String loginId);

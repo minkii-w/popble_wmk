@@ -1,33 +1,35 @@
 package com.popble.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "image")
+@AllArgsConstructor
+@Builder
+@Embeddable
+
+
 public class Image {
+
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	
-	@ManyToOne
-	private Board board;
 	
 	//파일이름
 	private String fileName;
 	
 	private int ord;
+	
+	
+	//다수의 이미지 중 순서 정하기 필드 (2025/09/09 wmk 수정)
+	public void setOrd(int ord) {
+		this.ord = ord;
+		
+	}
 }

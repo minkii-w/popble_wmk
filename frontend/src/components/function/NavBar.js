@@ -177,7 +177,7 @@ const NavBar = () => {
                 
                 {/* 클릭하면 navigate()로 페이지 이동 후 사이드바 닫힘 */}
                     <MenuList>
-                    <MenuItem onClick={() => { navigate('/login'); setOpen(false); }}>
+                    <MenuItem onClick={() => { navigate('/user/login'); setOpen(false); }}>
                         <div className="left">로그인 / 회원가입</div>
                         <div className="chev">›</div>
                     </MenuItem>
@@ -187,19 +187,19 @@ const NavBar = () => {
                         <span><RxPerson size="17"/></span>
                         <span>마이페이지</span>
                     </SectionTitle>
-                    <MenuItem className="submenu" onClick={() => { navigate('/member'); setOpen(false); }}>
+                    <MenuItem className="submenu" onClick={() => { navigate('/member/myPage'); setOpen(false); }}>
                         <div className="left">회원 정보 수정</div>
                         <div className="chev">›</div>
                     </MenuItem>
-                    <MenuItem className="submenu" onClick={() => { navigate('/bookmark'); setOpen(false); }}>
+                    <MenuItem className="submenu" onClick={() => { navigate('/member/myPage'); setOpen(false); }}>
                         <div className="left">북마크 목록</div>
                         <div className="chev">›</div>
                     </MenuItem>
-                    <MenuItem className="submenu" onClick={() => { navigate('/my-posts'); setOpen(false); }}>
+                    <MenuItem className="submenu" onClick={() => { navigate('/member/myPage'); setOpen(false); }}>
                         <div className="left">내 작성 글 목록</div>
                         <div className="chev">›</div>
                     </MenuItem>
-                    <MenuItem className="submenu" onClick={() => { navigate('/reserve'); setOpen(false); }}>
+                    <MenuItem className="submenu" onClick={() => { navigate('/member/myPage'); setOpen(false); }}>
                         <div className="left">예약 목록</div>
                         <div className="chev">›</div>
                     </MenuItem>
