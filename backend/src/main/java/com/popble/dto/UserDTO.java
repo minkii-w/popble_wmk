@@ -9,23 +9,37 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.popble.domain.Users;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties
 public class UserDTO extends User {
 	
+	
+	@NotEmpty
 	private String loginId;
-	
+	@NotEmpty
 	private String password;
-	
+	@NotEmpty
 	private String name;
-	
+
 	private boolean social;
 	
+	
+	@NotEmpty
+	@Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$")
 	private String email;
 	
 	

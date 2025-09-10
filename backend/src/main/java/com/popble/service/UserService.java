@@ -5,5 +5,5 @@ import com.popble.dto.UserDTO;
 public interface UserService {
 
 	
-	String create(UserDTO userDTO);
+	UserDTO create(UserDTO userDTO);
 }
