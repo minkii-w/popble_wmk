@@ -10,9 +10,7 @@ import TextField from "@mui/material/TextField";
         password:'',
         email:'',
         name:'',
-        role: 'MEMBER',
-        phonenumber: "010-1234-5678",
-        social:false
+      
         
     }
     
@@ -43,10 +41,17 @@ import TextField from "@mui/material/TextField";
 
               console.log("회원가입 시도 객체(join):", join);
         
-
+        
+        
+                   const finalJoin = {
+                        ...join,
+                 phonenumber: '010-0000-0000',
+                role: 'MEMBER',
+                 social: false
+                 };
 
             try {
-                const response = await postAdd(join);
+                const response = await postAdd(finalJoin);
                 console.log("회원가입 성공:", response)
 
             } catch (e) {
