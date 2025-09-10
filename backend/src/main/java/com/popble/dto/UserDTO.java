@@ -24,7 +24,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@JsonIgnoreProperties
+
 public class UserDTO extends User {
 	
 	
@@ -44,6 +44,12 @@ public class UserDTO extends User {
 	
 	
 	private List<String> roleNames = new ArrayList<>();
+	
+	
+	public UserDTO() {
+		super("anonymos","anoymous", new ArrayList<>());
+	}
+	
 	
 	public UserDTO(String loginId, String password, String name, boolean social, String email, List<String> rolenames ) {
 		super(

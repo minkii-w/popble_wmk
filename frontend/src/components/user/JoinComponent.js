@@ -10,6 +10,10 @@ import TextField from "@mui/material/TextField";
         password:'',
         email:'',
         name:'',
+        role: 'MEMBER',
+        phonenumber: "010-1234-5678",
+        social:false
+        
     }
     
 
@@ -31,21 +35,14 @@ import TextField from "@mui/material/TextField";
      });
      
 
-        const [join, setJoin] = useState( {...SignUpFormValues})
 
-        const [result, setResult] = useState(null)
 
        
 
         const onSubmit = async (join) => {
 
               console.log("회원가입 시도 객체(join):", join);
-             try {
-            const json = JSON.stringify(join, null, 2);
-            console.log("join JSON.stringify 결과:", json);
-        } catch (e) {
-            console.error("JSON.stringify 실패 - 순환 참조 있음!", e.message);
-        }
+        
 
 
             try {
@@ -92,7 +89,7 @@ import TextField from "@mui/material/TextField";
          onChange={ (e) => {
              field.onChange(e);
              trigger('name'); 
-             JSON.stringify(join)
+           
          }}
           helperText={errors.name && errors.loginId.name}
        
@@ -130,7 +127,7 @@ import TextField from "@mui/material/TextField";
             onChange={ (e) => {
                 field.onChange(e);
                 trigger('loginId');
-        JSON.stringify(join)
+     
             }}
              helperText={errors.loginId && errors.loginId.message}
             />
@@ -162,7 +159,7 @@ import TextField from "@mui/material/TextField";
                         trigger('password');
                         
                         
-                       JSON.stringify(join) 
+                      
                     }}
                      helperText={errors.password && errors.password.message}
                     />
