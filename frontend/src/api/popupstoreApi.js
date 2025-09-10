@@ -33,3 +33,18 @@ export const postAdd = async (popupStore) => {
 
     return res.data
 }
+
+export const putOne = async (id, popupStore) => {
+    const header = {headers:{"Content-Type":"multipart/form-data"}}
+
+    const res = await axios.put(`${prefix}/${id}`,popupStore,header)
+
+    return res.data
+}
+
+export const deleteOne = async (id) => {
+
+    const res = await axios.delete(`${prefix}/${id}`)
+    
+    return res.data
+}

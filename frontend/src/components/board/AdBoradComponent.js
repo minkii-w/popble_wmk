@@ -32,7 +32,7 @@ const AdBoardComponent = () => {
     const uploadRef = useRef()
 
     const handleChangePopupstore = (e) => {
-        popupstore[e.target.storeName] = e.target.value
+        popupstore[e.target.name] = e.target.value
 
         setPopupstore({...popupstore})
     }
@@ -140,8 +140,9 @@ const AdBoardComponent = () => {
             {amTime.map((amTime, idx) => (
                 <div key={idx} 
                 style={{display:"flex"}}>
-                    <label style={{width: "50px"}}>{amTime.label}</label>
-                    <input type={amTime.type} name={amTime.name}></input>
+                    
+                    <input className="border border-gray-400 rounded p-2 w-24" 
+                    type={amTime.type} name={amTime.name}></input>
                 </div>
             ))}
             </div>
@@ -151,8 +152,9 @@ const AdBoardComponent = () => {
             {pmTime.map((pmTime, idx) => (
                 <div key={idx} 
                 style={{display:"flex"}}>
-                    <label style={{width: "50px"}}>{pmTime.label}</label>
-                    <input type={pmTime.type} name={pmTime.name}></input>
+                    
+                    <input className="border border-gray-400 rounded p-2 w-24" 
+                    type={pmTime.type} name={pmTime.name}></input>
                 </div>
             ))}
             </div>

@@ -11,4 +11,4 @@ const AdBoardPage = () => {
     )
 }
 
-export default AdBoardComponent;
+export default AdBoardPage;

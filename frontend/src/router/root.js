@@ -18,7 +18,7 @@ const root = createBrowserRouter([
         element:<Suspense fallback={Loading}><Reservation></Reservation></Suspense>
     },
     {
-        path:"/popup/border/ad",
+        path:"/popup/board/ad",
         element:<Suspense fallback={Loading}><AdBoard></AdBoard></Suspense>
     }
 
