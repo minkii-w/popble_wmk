@@ -5,7 +5,6 @@ import jwtAxios from "../utill/jwtUtill";
 
 export const API_SERVER_HOST = "http://localhost:8080";
 
-
 const prefix = `${API_SERVER_HOST}/api/popup`;
 
 //목록보기
@@ -27,15 +26,14 @@ export const getList = async (filterData) => {
     },
   });
 
-
   return res.data;
 };
 
 //팝업스토어예약하기
 export const getReservation = async (id) => {
-
-    const res = await axios.get(`${prefix}/reservation/${id}`)
-}
+  const res = await axios.get(`${prefix}/reservation/${id}`);
+  return res.data;
+};
 
 //카테고리 조회
 export const getCategories = async (type) => {
@@ -44,7 +42,6 @@ export const getCategories = async (type) => {
       params: { type },
     });
     return res.data;
-
   } catch (err) {
     console.log("getCategories 실패", err);
     return [];
@@ -66,26 +63,23 @@ export const getPopup = async (id) => {
 
 //팝업스토어 홍보 게시판 등록하기(사진첨부)
 export const postAdd = async (popupStore) => {
-    
-    const header = {headers:{"Content-Type":"multipart/form-data"}}
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
 
-    const res = await axios.post(`${prefix}/`,popupStore, header)
+  const res = await axios.post(`${prefix}/`, popupStore, header);
 
-    return res.data
-}
+  return res.data;
+};
 
 export const putOne = async (id, popupStore) => {
-    const header = {headers:{"Content-Type":"multipart/form-data"}}
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
 
-    const res = await axios.put(`${prefix}/${id}`,popupStore,header)
+  const res = await axios.put(`${prefix}/${id}`, popupStore, header);
 
-    return res.data
-}
+  return res.data;
+};
 
 export const deleteOne = async (id) => {
+  const res = await axios.delete(`${prefix}/${id}`);
 
-    const res = await axios.delete(`${prefix}/${id}`)
-    
-    return res.data
-}
-
+  return res.data;
+};

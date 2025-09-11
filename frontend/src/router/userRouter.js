@@ -31,7 +31,7 @@ const userRouter = () => {
       ),
     },
     {
-      path: "mypage/:menu?",
+      path: "mypage",
       element: (
         <Suspense fallback={<LoadingComponent />}>
           <MyPage></MyPage>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getBookmarkList, isBookmark } from "../../api/bookmarkApi";
 import PopupCard from "../popupStore/PopupCard";
+import { FaBookmark } from "react-icons/fa";
 
 const MyPageBookmark = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -27,20 +28,33 @@ const MyPageBookmark = () => {
     fetchBookmarks();
   }, []);
   return (
-    <div className="overflow-x-auto px-4">
-      <div className="flex flex-nowrap gap-4 px-4 py-2">
-        {bookmarks.length > 0 ? (
-          bookmarks.map((item) => (
-            <div className="flex-shrink-0">
-              <PopupCard
-                key={item.id}
-                item={{ ...item, isBookmark: true }}
-              ></PopupCard>
+    <div class className="flex flex-col w-[700px]">
+      {/* 헤더 */}
+      <div className="text-2xl flex flex-row">
+        <FaBookmark size={25} color="red" className="m-2" />
+        <p className="m-2 text-2xl">북마크</p>
+      </div>
+      <hr className="border-subSecondColor border-2 m-4"></hr>
+      {/* 예약카드 시작 */}
+      <div className="overflow-x-auto px-4">
+        <div className="flex flex-nowrap gap-4 px-4 py-2">
+          {bookmarks.length > 0 ? (
+            bookmarks.map((item) => (
+              <div className="flex-shrink-0">
+                <PopupCard
+                  key={item.id}
+                  item={{ ...item, isBookmark: true }}
+                ></PopupCard>
+              </div>
+            ))
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-2xl font-semibold">
+                북마크한 팝업이 없습니다.
+              </p>
             </div>
-          ))
-        ) : (
-          <p>북마크한 팝업이 없습니다.</p>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

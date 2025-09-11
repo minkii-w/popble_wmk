@@ -9,12 +9,12 @@ const menuList = [
     icon: <FaBookmark size={50} color="red" />,
   },
   {
-    key: "myBoard",
+    key: "post",
     label: "내 게시글 보기",
     icon: <FcDocument size={50} />,
   },
   {
-    key: "myReservation",
+    key: "reservation",
     label: "예약내역 확인/취소",
     icon: <FcCalendar size={50} />,
   },

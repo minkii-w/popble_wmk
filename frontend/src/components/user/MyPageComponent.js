@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
 import MyPageMenuComponent from "../user/MyPageMenuComponent";
 import MyPageContentComponent from "../user/MyPageContentComponent";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 const MyPageComponent = () => {
-  const [selectedMenu, setSelectedMenu] = useState();
+  const { menu } = useParams();
+  const navigate = useNavigate();
+  // const [selectedMenu, setSelectedMenu] = useState();
+
+  const handleMenuClick = (key) => {
+    navigate(`/user/mypage/${key}`);
+  };
 
   return (
     <div className="bg-gradient-to-b from-backgroundColor min-h-screen">
@@ -24,14 +31,14 @@ const MyPageComponent = () => {
         {/* 프로필사진 이메일 끝 */}
         {/* 마이페이지 메뉴 시작*/}
         <MyPageMenuComponent
-          selectedMenu={selectedMenu}
-          onMenuClick={setSelectedMenu}
+          selectedMenu={menu || "default"}
+          onMenuClick={handleMenuClick}
         ></MyPageMenuComponent>
         {/* 마이페이지 메뉴 끝 */}
         {/* 마이페이지 내용 시작 */}
-        <MyPageContentComponent
-          selectedMenu={selectedMenu}
-        ></MyPageContentComponent>
+        <div>
+          <Outlet></Outlet>
+        </div>
         {/* 마이페이지 내용 끝 */}
       </div>
     </div>

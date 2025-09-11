@@ -5,7 +5,7 @@ import MyPageReservation from "../user/MyPageReservation";
 import MyPageEdit from "./MyPageEdit";
 
 const MyPageContentComponent = ({ selectedMenu }) => {
-  if (selectedMenu === "edit") {
+  if (selectedMenu === "") {
     return (
       <div className="w-[700px] h-[300px]">
         <div className="text-2xl flex flex-row">
@@ -18,7 +18,7 @@ const MyPageContentComponent = ({ selectedMenu }) => {
         </div>
       </div>
     );
-  } else if (selectedMenu === "bookmark") {
+  } else if (selectedMenu === "") {
     return (
       <div className="w-[700px] h-[300px]">
         <div className="text-2xl flex flex-row">
