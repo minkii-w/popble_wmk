@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 
 const dummyPost = {
@@ -11,6 +11,7 @@ const dummyPost = {
 
 const GeneralDetail = () => {
   const { id } = useParams() // URL에서 id 추출
+  const navigate = useNavigate()
   const [post, setPost] = useState(null)
 
   useEffect(() => {
@@ -18,6 +19,11 @@ const GeneralDetail = () => {
   }, [id])
 
   if (!post) return <div>로딩 중...</div>
+
+  const goModify = () => {
+    console.log("수정 버튼 클릭, 이동할 id:", id)
+    navigate(`/boards/general/${id}/modify`)
+  }
 
   return (
     <div className="p-6 bg-white rounded shadow">
@@ -41,10 +47,18 @@ const GeneralDetail = () => {
           목록
         </Link>
         <div className="space-x-2">
-          <button className="px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500">
+          {/* ✅ onClick 연결 */}
+          <button
+            type="button"
+            onClick={goModify}
+            className="px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500"
+          >
             수정
           </button>
-          <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+          <button
+            type="button"
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
             삭제
           </button>
         </div>
