@@ -192,16 +192,23 @@ const NavBar = () => {
           </MenuItem>
 
           {/* 섹션: 마이페이지 */}
-          <SectionTitle>
+          <SectionTitle
+            className="cursor-pointer"
+            onClick={() => {
+              navigate("/user/mypage");
+              setOpen(false);
+            }}
+          >
             <span>
               <RxPerson size="17" />
             </span>
             <span>마이페이지</span>
           </SectionTitle>
+
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/user/mypage");
+              navigate("/user/mypage/edit");
               setOpen(false);
             }}
           >
@@ -211,7 +218,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/user/mypage");
+              navigate("/user/mypage/bookmark");
               setOpen(false);
             }}
           >
@@ -221,7 +228,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/user/mypage");
+              navigate("/user/mypage/post");
               setOpen(false);
             }}
           >
@@ -231,7 +238,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/user/mypage");
+              navigate("/user/mypage/reservation");
               setOpen(false);
             }}
           >
@@ -240,7 +247,12 @@ const NavBar = () => {
           </MenuItem>
 
           {/* 섹션: 게시판 */}
-          <SectionTitle>
+          <SectionTitle
+            className="cursor-pointer"
+            onClick={() => {
+              navigate("/boards");
+            }}
+          >
             <span>
               <IoList size="20" />
             </span>
@@ -249,7 +261,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/notice");
+              navigate("boards/notice");
               setOpen(false);
             }}
           >
@@ -259,7 +271,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/promo");
+              navigate("boards/ad");
               setOpen(false);
             }}
           >
@@ -269,7 +281,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/free");
+              navigate("boards/general");
               setOpen(false);
             }}
           >
@@ -279,7 +291,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/qna");
+              navigate("boards/qna");
               setOpen(false);
             }}
           >

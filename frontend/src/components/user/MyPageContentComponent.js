@@ -1,6 +1,8 @@
 import { FaClock, FaUserEdit, FaBookmark } from "react-icons/fa";
 import { FcDocument, FcCalendar } from "react-icons/fc";
 import MyPageBookmark from "../user/MyPageBookmark";
+import MyPageReservation from "../user/MyPageReservation";
+import MyPageEdit from "./MyPageEdit";
 
 const MyPageContentComponent = ({ selectedMenu }) => {
   if (selectedMenu === "edit") {
@@ -11,7 +13,9 @@ const MyPageContentComponent = ({ selectedMenu }) => {
           <p className="m-2 text-2xl">회원정보 수정/탈퇴</p>
         </div>
         <hr className="border-subSecondColor border-2"></hr>
-        <div></div>
+        <div>
+          <MyPageEdit />
+        </div>
       </div>
     );
   } else if (selectedMenu === "bookmark") {
@@ -53,7 +57,9 @@ const MyPageContentComponent = ({ selectedMenu }) => {
           <p className="m-2 text-2xl">예약내역 확인/취소</p>
         </div>
         <hr className="border-subSecondColor border-2"></hr>
-        <div></div>
+        <div>
+          <MyPageReservation />
+        </div>
       </div>
     );
   } else {
@@ -63,7 +69,12 @@ const MyPageContentComponent = ({ selectedMenu }) => {
           <FaClock size={25} className="m-2" />
           <p className="m-2 text-2xl">최근 본 팝업</p>
         </div>
-        <hr className="border-subSecondColor border-2"></hr>
+        {/* 구분선 */}
+        <div className="w-[600px] ">
+          <hr className="my-4 border-t-2 border-subSecondColor"></hr>
+        </div>
+
+        <div></div>
         <div></div>
       </div>
     );

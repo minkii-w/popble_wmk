@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import ListPage from "../components/popupStore/ListComponent";
 import { Navigate } from "react-router-dom";
+import LoadingComponent from "../components/common/LoadingComponent";
 
 const Loading = <div>Loading.......</div>;
 
@@ -9,7 +10,7 @@ const popupRouter = () => {
     {
       path: "search",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <ListPage></ListPage>
         </Suspense>
       ),
@@ -17,14 +18,14 @@ const popupRouter = () => {
     {
       path: "",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <Navigate replace to="search"></Navigate>
         </Suspense>
       ),
     },
     {
       path: "detail/:id",
-      element: <Suspense fallback={Loading}></Suspense>,
+      element: <Suspense fallback={<LoadingComponent />}></Suspense>,
     },
   ];
 };

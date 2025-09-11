@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import popupRouter from "./popupRouter";
 import userRouter from "./userRouter";
+import LoadingComponent from "../components/common/LoadingComponent";
 
 const Loading = <div>Loading......</div>;
 
@@ -12,13 +13,14 @@ const Reservation = lazy(() => import("../pages/reservation/ReservationPage"));
 const AdBoard = lazy(() => import("../pages/board/AdBoardPage"));
 const Popup = lazy(() => import("../pages/popupStore/PopupIndexPage"));
 const User = lazy(() => import("../pages/users/IndexPage"));
+const Search = lazy(() => import("../pages/popupStore/PopupIndexPage"));
 
 const root = createBrowserRouter(
   [
     {
       path: "",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <Main></Main>
         </Suspense>
       ),
@@ -26,7 +28,7 @@ const root = createBrowserRouter(
     {
       path: "popup",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <Popup></Popup>
         </Suspense>
       ),
@@ -35,7 +37,7 @@ const root = createBrowserRouter(
     {
       path: "user",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <User></User>
         </Suspense>
       ),
@@ -44,7 +46,7 @@ const root = createBrowserRouter(
     {
       path: "about",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <About></About>
         </Suspense>
       ),
@@ -52,7 +54,7 @@ const root = createBrowserRouter(
     {
       path: "/popup/reservation/:id",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <Reservation></Reservation>
         </Suspense>
       ),
@@ -60,8 +62,16 @@ const root = createBrowserRouter(
     {
       path: "/popup/board/ad",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <AdBoard></AdBoard>
+        </Suspense>
+      ),
+    },
+    {
+      path: "search",
+      element: (
+        <Suspense fallback={<LoadingComponent />}>
+          <Search></Search>
         </Suspense>
       ),
     },

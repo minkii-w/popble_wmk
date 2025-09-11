@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyPageMenuComponent from "../user/MyPageMenuComponent";
 import MyPageContentComponent from "../user/MyPageContentComponent";
 
@@ -6,7 +6,7 @@ const MyPageComponent = () => {
   const [selectedMenu, setSelectedMenu] = useState();
 
   return (
-    <div className="bg-gradient-to-b from-backgroundColor">
+    <div className="bg-gradient-to-b from-backgroundColor min-h-screen">
       <div className="flex flex-col justify-center items-center">
         {/* 프로필사진 이메일 */}
         <div className="flex flex-row justify-center items-center p-4 mb-6">
