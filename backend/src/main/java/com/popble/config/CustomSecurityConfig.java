@@ -18,12 +18,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.popble.security.filter.JWTCheckFilter;
 import com.popble.security.handlr.APILoginFailHandler;
 import com.popble.security.handlr.APILoginSussessHandler;
-
+import com.popble.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-
-
 
 
 @Configuration
@@ -31,6 +28,11 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class CustomSecurityConfig {
+
+    private final UserServiceImpl userServiceImpl;
+
+
+  
 
 	
 	@Bean
@@ -43,15 +45,25 @@ public class CustomSecurityConfig {
 	http.sessionManagement( SessionConfig -> SessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 	http.csrf ( Config -> Config.disable());
 	
+	
 	http.formLogin(config -> {
 		config.loginPage("/api/user/login");
+		
 		config.successHandler(new APILoginSussessHandler());
 		config.failureHandler(new APILoginFailHandler());
 	});
 	
+// oauth2 -----------------------------	
 	
-	http.addFilterBefore(new JWTCheckFilter(),
-			 UsernamePasswordAuthenticationFilter.class);
+	http.oauth2Login();
+	
+	
+
+	
+	
+//	http.addFilterBefore(new JWTCheckFilter(),
+//			 UsernamePasswordAuthenticationFilter.class);
+
 		return http.build();
 	}	
 		@Bean

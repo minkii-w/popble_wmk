@@ -8,29 +8,15 @@ const Join = lazy( () => import("../pages/users/JoinPage"))
 const userRouter = () => {
 
     return[
-
-
         {
             path:"login",
             element:<Suspense fallback={Loading}><Login></Login></Suspense>
 
         },
-
-
         {
-
             path:"join",
             element:<Suspense fallback={Loading}><Join></Join></Suspense>
-
-
         }
-
-
-
-     
-
-
-
     ]
 
 }

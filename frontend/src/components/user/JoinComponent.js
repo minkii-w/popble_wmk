@@ -45,6 +45,7 @@ import TextField from "@mui/material/TextField";
         
                    const finalJoin = {
                         ...join,
+                        
                  phonenumber: '010-0000-0000',
                 role: 'MEMBER',
                  social: false
@@ -66,8 +67,30 @@ import TextField from "@mui/material/TextField";
 
 
         return(
+
+
+
+
+
+            
            
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+
+
+
+      <div>
+                        <center>
+                            <a href="http://localhost:8080/oauth2/authorization/kakao">
+                            <button>카카오 로그인</button>
+                            
+                            </a>
+
+
+                        </center>
+
+
+            </div>
+
 
             <div className="flex justify-center">
                 <div className="text-4xl m-4 p-4 font-extrabold text-blue-500">SIGN UP</div>
@@ -220,19 +243,12 @@ import TextField from "@mui/material/TextField";
             </div>
 
 
-
-
-
-
-
-
-
-                
-                
-             
-
+      
 
         </div>
+
+
+                        
 
 
 

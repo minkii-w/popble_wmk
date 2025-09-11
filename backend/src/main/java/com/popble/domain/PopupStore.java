@@ -6,7 +6,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,6 +24,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
@@ -29,12 +32,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Table(name = "popup_store")
 public class PopupStore {
 	
 	//팝업스토어 상태(예정, 진행, 종료)
 	public enum Status{
-		SCHEDULED, ACTIVE, ENDED
+		SCHEDULED, ACTIVE, ENDED, ALL
 	}
 	
 	@Id
@@ -120,6 +124,31 @@ public class PopupStore {
 	@ManyToOne
 	@JoinColumn(name = "userProfile_id")
 	private UserProfile owner;
+
+	
 	
 	//이미지와 관계 맺기
+	//-----------2025-09-09 wmk 수정
+	
+	@ElementCollection
+	@Builder.Default
+	private List<Image> imageList = new ArrayList<>();
+	
+	public void addImage(Image image) {
+		image.setOrd(this.imageList.size());
+		imageList.add(image);
+	}
+	
+	public void addImageString(String fileName) {
+		Image image = Image.builder()
+				.fileName(fileName)
+				.build();
+		
+		addImage(image);	
+	}
+	
+	public void clearList() {
+		this.imageList.clear();
+	}
+
 }
