@@ -1,5 +1,6 @@
 package com.popble.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -50,7 +51,7 @@ public class Reservation {
 	
 	//예약 날짜
 	@Column(name = "reservation_date")
-	private LocalDateTime reservationDate;
+	private LocalDate reservationDate;
 	
 	//예약시간
 	@ManyToOne(fetch = FetchType.LAZY)

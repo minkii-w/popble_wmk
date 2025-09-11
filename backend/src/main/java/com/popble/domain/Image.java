@@ -19,6 +19,8 @@ import lombok.Setter;
 public class Image {
 
 	
+	
+	
 	//파일이름
 	private String fileName;
 	

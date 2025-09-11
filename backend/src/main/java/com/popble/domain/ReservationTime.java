@@ -18,10 +18,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
 @Entity
 @Getter
 @Setter
@@ -50,8 +52,10 @@ public class ReservationTime {
 	@Column(name = "am_pm")
 	private AmPm amPm;
 	
-    @Column(name = "time")
-    private LocalTime time;
+  
+    private LocalTime startTime;
+    
+    private LocalTime endTime;
 	
 	//예약연결(한시간대에서 여러개의 예약을 가질수 있음)
 	@OneToMany(mappedBy = "reservationTime")

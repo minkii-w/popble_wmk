@@ -50,7 +50,7 @@ public class Users{
 
     @Column(name = "name", nullable = false)
     private String name;
-    
+    @Column(name = "social", nullable = false)
     private boolean social;
 
     @Column(name = "phonenumber", nullable = false)

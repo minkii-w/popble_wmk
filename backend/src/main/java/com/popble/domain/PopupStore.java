@@ -38,7 +38,7 @@ public class PopupStore {
 	
 	//팝업스토어 상태(예정, 진행, 종료)
 	public enum Status{
-		SCHEDULED, ACTIVE, ENDED
+		SCHEDULED, ACTIVE, ENDED, ALL
 	}
 	
 	@Id
@@ -89,7 +89,7 @@ public class PopupStore {
 	private Integer maxCount;
 	
 	//예약시간 오전/오후 기업이 나눌수 있게
-	@OneToMany(mappedBy = "popupStore")
+	@OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReservationTime> reservationTimes = new ArrayList<>();
 	
 	//예약

@@ -15,6 +15,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long>{
 	//카테고리 이름으로 카테고리 찾기
 	Optional<Category> findByName(String name);
 	//카테고리 타입으로 카테고리 찾기
-	List<Category> findByType(CategoryType type);
+	List<Category> findByType(Category.CategoryType type);
+	
 	
 }

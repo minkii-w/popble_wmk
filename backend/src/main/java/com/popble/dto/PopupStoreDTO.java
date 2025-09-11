@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.popble.domain.PopupCategory;
 import com.popble.domain.Reservation;
-import com.popble.domain.ReservationTime;
 import com.popble.domain.PopupStore.Status;
 
 
@@ -61,9 +60,9 @@ public class PopupStoreDTO {
 	//최대 인원수
 	private Integer maxCount;
 	
-	//예약시간 오전/오후 기업이 나눌수 있게
+
 	@Builder.Default
-	private List<ReservationTime> reservationTimes = new ArrayList<>();
+	private List<ReservationTimeDTO> reservationTimes = new ArrayList<>();
 
 	//예약
 	//미사용시 삭제할것(reservation에서 popupstore로 조회가능)

@@ -49,9 +49,9 @@ const ModifyComponent = ({id}) => {
 
     const deleteOldImages = (imageName) => {
 
-        const resultFileNames = popupStore.uploadFileNames.filter( fileName => fileName !== imageName)
+        const resultFileNames = popupstore.uploadFileNames.filter( fileName => fileName !== imageName)
 
-        popupStore.uploadFileNames = resultFileNames
+        popupstore.uploadFileNames = resultFileNames
 
         setPopupstore({...popupstore})
 
@@ -70,8 +70,7 @@ const ModifyComponent = ({id}) => {
         formData.append("storeName", popupstore.storeName)
         formData.append("address", popupstore.address)
         formData.append("startDate", popupstore.startDate)
-        formData.append("amTime", popupstore.amTime)
-        formData.append("pmTime", popupstore.pmTime)
+        formData.append("reservationTimes",JSON.stringify(popupstore.reservationTimes))
         formData.append("maxCount", popupstore.maxCount)
         formData.append("desc", popupstore.desc)
         formData.append("price", popupstore.price)
@@ -91,8 +90,9 @@ const ModifyComponent = ({id}) => {
     const closeModal = () => {
         if(result === '수정'){
             moveToRead(id)
-        }else if(result === '삭제')
+        }else if(result === '삭제'){
             moveToList({page:1})
+        }
             setResult(null)
     }
 
@@ -155,7 +155,7 @@ const ModifyComponent = ({id}) => {
                     <div className="w-1/5 p-6 text-right font-bold">행사시작일</div>
                     <input className="rounded-r border border-solid border-neutral-500 shadow-md"
                     name="startDate"
-                    type={'Date'}
+                    type={'date'}
                     value={popupstore.startDate}
                     onChange={handleChangePopupstore}>
                     </input>
@@ -167,7 +167,7 @@ const ModifyComponent = ({id}) => {
                     <div className="w-1/5 p-6 text-right font-bold">행사종료일</div>
                     <input className="rounded-r border border-solid border-neutral-500 shadow-md"
                     name="endDate"
-                    type={'Date'}
+                    type={'date'}
                     value={popupstore.endDate}
                     onChange={handleChangePopupstore}>
                     </input>
@@ -180,7 +180,14 @@ const ModifyComponent = ({id}) => {
                 style={{display:"flex"}}>
                     
                     <input className="border border-gray-400 rounded p-2 w-24" 
-                    type={amTime.type} name={amTime.name}></input>
+                    type="time"
+                    value={popupstore.reservationTimes.am[idx]}
+                    onChange={(e) => {
+                        const newAm = [...popupstore.reservationTimes.am];
+                        newAm[idx] = e.target.value;
+                        setPopupstore({...popupstore, reservationTimes:{...popupstore.reservationTimes, am:newAm}})
+                    }}
+                    ></input>
                 </div>
             ))}
             </div>
@@ -192,7 +199,14 @@ const ModifyComponent = ({id}) => {
                 style={{display:"flex"}}>
                     
                     <input className="border border-gray-400 rounded p-2 w-24" 
-                    type={pmTime.type} name={pmTime.name}></input>
+                    type="time"
+                    value={popupstore.reservationTimes.pm[idx]}
+                    onChange={(e) => {
+                        const newPm = [...popupstore.reservationTimes.pm];
+                        newPm[idx] = e.target.value;
+                        setPopupstore({...popupstore, reservationTimes:{...popupstore.reservationTimes, pm:newPm}})
+                    }}
+                    ></input>
                 </div>
             ))}
             </div>
@@ -200,7 +214,8 @@ const ModifyComponent = ({id}) => {
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 p-6 text-right font-bold">입장가능인원수
-                    <SelectBoxComponent/>
+                    <SelectBoxComponent value={popupstore.maxCount}
+                    onChange={(val) => setPopupstore({...popupstore, maxCount:val})}/>
                     </div>
                 </div>
             </div>
