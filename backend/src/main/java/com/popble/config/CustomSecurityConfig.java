@@ -60,16 +60,18 @@ public class CustomSecurityConfig {
 		
 		config.successHandler(new APILoginSussessHandler());
 		config.failureHandler(new APILoginFailHandler());
+		
 	});
 	
 // oauth2 -----------------------------	
 	
 	http
     .oauth2Login(oauth2 -> oauth2
-        .defaultSuccessUrl("/login-success")
+        .defaultSuccessUrl("/login/success")
         .successHandler(oauth2AuthenticationSuccessHandler)
         .userInfoEndpoint(userInfo -> userInfo
             .userService(userOauth2Service)
+            
         )
     );
 	
@@ -99,10 +101,7 @@ public class CustomSecurityConfig {
 		
 	
 	
-	@Bean
- 	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+
 	
 	
 	

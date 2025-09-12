@@ -1,5 +1,7 @@
 package com.popble.dto;
 
+import org.springframework.stereotype.Component;
+
 import com.popble.domain.SocialLogin;
 import com.popble.domain.Users;
 
@@ -10,6 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Component
 public class SocialLoginDTO extends SocialLogin {
 
 	//oauth2 id

@@ -13,7 +13,8 @@ const initState = {
 const LoginComponent = () => {
 
     const REST_API_KEY = '15c59ee2f2c32b7e3d1eb89e1bcf316b'
-    const REDIRECT_URI = 'http://localhost:8080/oauth2/authorization/kakao'
+    const REDIRECT_URI = 'http://localhost:8080/login/oauth2/code/kakao'
+                           
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
 
@@ -31,7 +32,7 @@ const LoginComponent = () => {
         const KakaoLogin = (e) => {
                 e.preventDefault();
                 window.location.href = KAKAO_AUTH_URL;
-                kakaoLoginAction()
+           
                 
             }
 
