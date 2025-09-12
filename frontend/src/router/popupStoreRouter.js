@@ -3,6 +3,8 @@ import { Navigate } from "react-router-dom";
 
 const Loading = <div>Loading....</div>;
 const ListPage = lazy(() => import("../pages/popupStore/ListPage"));
+const Reservation = lazy( () => import("../pages/reservation/ReservationPage"));
+
 
 const popupStoreRouter = () => {
   return [
@@ -26,6 +28,10 @@ const popupStoreRouter = () => {
       path: ":id",
       element: <Suspense fallback={Loading}></Suspense>,
     },
+    {
+      path:"reservation/:id",
+      element: <Suspense fallback={Loading}><Reservation></Reservation></Suspense>
+    }
   ];
 };
 

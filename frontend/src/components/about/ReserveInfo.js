@@ -1,4 +1,4 @@
-import ReservaionDoComponent from "../common/ReservationDoComponent";
+import ReservaionDoComponent from "../reservation/ReservationDoComponent"
 
 const ReserveInfo = () => {
   return (

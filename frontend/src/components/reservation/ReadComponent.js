@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { API_SERVER_HOST, getReservation, postReservation } from "../../api/popupstoreApi";
-import ReservationModal from "../reservation/ReservationModal";
-import CalendarComponent from "../reservation/CalendarComponent";
+import ReservaionDoComponent from "./ReservationDoComponent";
+import { useNavigate } from "react-router-dom";
 
 
 const initState = {
@@ -15,16 +15,15 @@ const initState = {
     desc:'',
     price:0,
     uploadFileNames:[]
-
 }
 
 const host = API_SERVER_HOST
 
 const ReadComponent = ({id}) => {
 
-    const [popupstore, setPopupstore] = useState(initState)
+    const navigate = useNavigate();
 
-    const [reservationModal, setReservationModal] = useState(false)
+    const [popupstore, setPopupstore] = useState(initState)
 
     //날짜, 시간 선택
     const [selected, setSelected] = useState({date:null, time:null})
@@ -82,62 +81,77 @@ const ReadComponent = ({id}) => {
     },[id])
 
     return(
-        <div className="border-2 border-sky-200 mt-10 m-2 ml-2">
-                <div className="flex flex-wrap mx-auto p-6">
-                    <div className="relative mb-4 flex w-full flexe-wrap items-stretch">
-                        <div className="text-sm m-1 p-2 w-1/5">id{popupstore.id}</div>
-                        <div className="text-sm m-1 p-2 w-1/5">팝업스토어이름{popupstore.storeName}</div>
-                        <div className="w-full justify-center flex flex-col m-auto items-center">
-                            {popupstore.uploadFileNames.map((imgFile,i)=>
-                            <img
-                            key={i}
-                            alt="popupStore"
-                            className="p-4 w-1/2"
-                            src={`${host}/api/popup/view/${imgFile}`}></img>
-                            )}
-                        </div>
-                        <div className="text-sm m-1 p-2 w-1/5">주소{popupstore.address}</div>
-                        <div className="text-sm m-1 p-2 w-1/5">가격{popupstore.price}</div>
-                        
-                       
-                        
+        <div>
+            <div className="flex justify-center">
+                <div className="mt-10 mb-10 w-4/5 border rounded-2xl border-gray-200">
+                    <div className="text-sm m-1 p-2">id{popupstore.id}</div>
+                    <div className="text-3xl m-1 p-2">{popupstore.storeName}</div>
+                    {/* ------------사진가져오기----------- */}
+                    {/* <div className="w-full justify-center flex flex-col m-auto items-center">
+                    {popupstore.uploadFileNames.map((imgFile,i)=>
+                    <img
+                    key={i}
+                    alt="popupStore"
+                    className="p-4 w-1/2"
+                    src={`${host}/api/popup/view/${imgFile}`}></img>
+                    )}
+                    </div> */}
+                    <div className="text-xl p-2 w-1/5 m-5">일정&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{popupstore.startDate}</div>
+                    <div className="text-xl p-2 w-1/5 m-5">인원&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{popupstore.maxCount}</div>
+                    <div className="text-xl p-2 w-1/5 m-5">가격&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                        <div className="flex justify-end">
-                            <div className="relative mb-4 flex p-4 flex-wrap items-stretch">
-                                <button 
-                                type="button"
-                                className="rounded p-4 w-36 bg-primaryColor text-xl text-white"
-                                onClick={ () => setReservationModal(true)}>
-                                예약하기
-                                </button>
+                    {/* -----------------------------가격 수정하기 -> 예약된 가격으로 */}
+                    {popupstore.price > 0 ? `${popupstore.price*popupstore.maxCount}원`:'무 료'}</div>
+                </div>
+            </div>
 
-                               {reservationModal && (
-                                    <ReservationModal
-                                    title={`${popupstore.storeName}예약`}
-                                    content={
-                                        <div>
-                                        <CalendarComponent 
-                                            offDays={[0]}
-                                            reservationTimes={popupstore.reservationTimes || {am:[],pm:[]}}
-                                            onSelect={handleSelect}
-                                            maxCount={popupstore.maxCount}
-                                            price={popupstore.price}/>
-                                     <div className="flex justify-end"> 
-                                    <button
-                                        onClick={handleReservation}
-                                       
-                                        className="py-2 w-2/5 bg-primaryColor text-xl rounded">다음</button>
-                                        </div>
-                                        </div>
-                                    }
-                                    callbackFn={()=> setReservationModal(false)}/>
-                                )}
+            {/* --------------------------------예약된 정보의 데이터로 수정하기 */}
+
+            <div className="justify-left">
+                <div className="text-3xl m-3">예약자 정보</div><br/>
+                <div className="text-2xl m-5">예약자 이름</div>
+                <div className="flex items-center justify-between w-full p-2">
+                    <span>연락처</span>
+                    <button
+                    type="button"
+                    className="border border-gray-300 rounded px-3 mr-10 bg-backgroundColor">변경</button>
+                </div>     
+            </div>
+
+                {/*-----------이전, 확인 버튼--------------*/}
+                <div className="flex justify-between gap-10">
+                        <button 
+                        type="button"
+                        className="border border-gray-300 rounded p-2 w-1/5 bg-backgroundColor text-xl text-black"
+                        onClick={()=>navigate(-1)}>이 전
+                        </button>
+
+                        <button 
+                        type="button"
+                        className="rounded p-2 w-4/5 bg-primaryColor text-xl text-black"
+                        onClick={ () => setReservationModal(true)}>
+                        예약하기
+                        </button>
+                               
+                        <div>
+                            <ReservaionDoComponent
+                            offDays={[0]}
+                            reservationTimes={popupstore.reservationTimes || {am:[],pm:[]}}
+                            onSelect={handleSelect}
+                            maxCount={popupstore.maxCount}
+                            price={popupstore.price}/>
+
+                            <div className="flex justify-end"> 
+                            <button
+                            onClick={handleReservation}
+                            className="py-2 w-2/5 bg-primaryColor text-xl rounded">다음</button>
                             </div>
                         </div>
-                    </div>
                 </div>
-            
         </div>
+                   
+                        
+                   
 
     )
 }

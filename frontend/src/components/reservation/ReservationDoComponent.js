@@ -70,15 +70,15 @@ const ReservaionDoComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onS
         <div className="reservation-info">
             {/*시간표시*/}
             {selectDate &&(
-                <div className="text-xl">예약 시간
+                <div className="text-3xl mt-10 ml-20">예약 시간
                 <div style={{margin:"5px"}}>
-                    <div>오전</div>
+                    <div className="text-2xl mb-5">오전</div>
                     <div>
                         {am.length>0?(
                         am.map((t,idx)=>(
                             <button
                             key={idx}
-                            className={`inline-flex items-center px-3 py-1 m-1 border rounded-full ${selectTime===t?"bg-primaryColor text-black":"bg-subSecondColor text-black"}`}
+                            className={`inline-flex items-center px-3 py-1 m-1 border rounded-full mb-5 ${selectTime===t?"bg-primaryColor text-black":"bg-subSecondColor text-black"}`}
                             onClick={()=>handleClickTime(t)}>
                                 {t}
                             </button> 
@@ -89,13 +89,13 @@ const ReservaionDoComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onS
                 </div>
                 </div>
                 <div style={{marginTop:"5px"}}>
-                    <div>오후</div>
+                    <div className="text-2xl mb-5">오후</div>
                     <div>
                     {pm.length>0?(
                         pm.map((t, idx)=>(
                             <button
                             key={idx}
-                            className={`inline-flex items-center px-3 py-1 m-1 border rounded-full ${selectTime===t?"bg-primaryColor text-black":"bg-subSecondColor text-black"}`}
+                            className={`inline-flex items-center px-3 py-1 m-1 border rounded-full mb-5${selectTime===t?"bg-primaryColor text-black":"bg-subSecondColor text-black"}`}
                             onClick={()=>handleClickTime(t)}>
                                 {t}
                             </button>

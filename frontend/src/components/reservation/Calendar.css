@@ -3,24 +3,23 @@
 
 /*전체 달력 틀*/
 .react-datepicker {
-  width: 350px;                
+  width: 100%;                
   font-family: 'Arial', sans-serif;
-  font-size: 20px;
-  padding: 30px;
+  font-size: 30px;
+  padding: 20px;
   background-color: #fffcf8;   
-  border-radius: 10px;
+  border: none;
   box-sizing: border-box;
 }
 
 /* 헤더 */
 .react-datepicker__header {
   position: relative;
-  /* padding: 15px 0; */
   background-color: #fffcf8;
   text-align: center;
-  font-size: 50px;
+  font-size: 100px !important;
   font-weight: bold;
-  border-bottom: 2px solid #fffcf8;
+  border-bottom: none;
 }
 
 /* 화살표 */
@@ -53,39 +52,47 @@
   display: inline-block;
   width: 100%;
   text-align: center;
-  font-size: 30px;
+  font-size: 50px;
 }
 
 /* 요일 이름 */
 .react-datepicker__day-names {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 10px;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 15px;
+  text-align: center;
   font-weight: bold;
   color: #666;
+  gap: 30px;
 }
 
 /* 월  */
 .react-datepicker__month {
   display: flex;
   flex-direction: column; 
-  gap: 10px;
+  gap: 30px;
 }
 
 /* 주 */
 .react-datepicker__week {
   display: grid;
   grid-template-columns: repeat(7, 1fr); 
-  gap: 10px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  gap: 30px;
 }
 
 /* 날짜  */
 .react-datepicker__day {
-  width: 100%;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1rem;
+  font-size: 30px;
   box-sizing: border-box;
   border-radius: 50%;
   color: black;
@@ -96,7 +103,7 @@
 /* 선택된 날짜 */
 .react-datepicker__day--selected {
   background-color: #ffb6b9;
-  color: white;
+  color: black;
   font-weight: bold;
 }
 
@@ -109,18 +116,20 @@
 
 .calendar-container {
   display: flex;
-  gap: 30px; /* 달력과 예약 정보 사이 간격 */
+  gap: 20px;
+  flex-wrap: wrap; /* 달력과 예약 정보 사이 간격 */
 }
 
 .calendar-box {
-  flex: 1;
-  min-width:350px; /* 달력 너비 비율 */
+  flex: 0 0 300px;
+  /* 달력 너비 비율 */
 }
 
 .reservation-info {
   flex: 1;
-  min-width: 350; /* 예약 정보 영역 비율 */
+  min-width: 200px; /* 예약 정보 영역 비율 */
 }
+
 .react-datepicker__day--disabled {
   color: #ccc;          /* 글씨 색을 연하게 */
   background-color: #fffcf8; /* 배경도 살짝 흐리게 */
