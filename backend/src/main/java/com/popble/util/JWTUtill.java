@@ -6,13 +6,15 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.stereotype.Component;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.InvalidClaimException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
-
+@Component
 public class JWTUtill {
 
 	
