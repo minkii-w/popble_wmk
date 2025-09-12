@@ -1,7 +1,9 @@
+
 package com.popble.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.popble.domain.Role;
 import com.popble.domain.Users;
 import com.popble.dto.UserDTO;
 import com.popble.repository.UserRepository;
@@ -29,7 +31,11 @@ public class UserServiceImpl implements UserService {
 				.loginId(userDTO.getLoginId())
 				.password(encoder.encode(userDTO.getPassword()))
 				.email(userDTO.getEmail())
+				.phonenumber(userDTO.getPhonenumber())
+				.role(Role.MEMBER)
+				
 				.build();
+	
 		
 		
 		this.userRepository.save(users);
@@ -48,5 +54,3 @@ public class UserServiceImpl implements UserService {
 			
 		}
 	
-	
-

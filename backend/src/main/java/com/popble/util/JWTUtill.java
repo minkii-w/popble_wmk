@@ -6,20 +6,22 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.stereotype.Component;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.InvalidClaimException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
-
+@Component
 public class JWTUtill {
 
 	
 	private static String key = "1234567890123456789012345678901234567890";
 	
 	public static String generateToken(Map<String, Object> valMap, int min) {
-		SecretKey key = null;
+		SecretKey key = null;			
 		
 		try {
 			key = Keys.hmacShaKeyFor(JWTUtill.key.getBytes("UTF-8"));
@@ -38,6 +40,20 @@ public class JWTUtill {
 				.compact();
 		return jwtStr;
 	}
+	
+	
+	public String makeRedirectUrl(String jwt) {
+		
+		return "http://localhost:3000/oauth/callback?token=" +jwt;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public static Map<String, Object> validateToken(String token){ //키의 유효성검사
 		Map<String,Object> claim = null;

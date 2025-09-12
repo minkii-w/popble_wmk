@@ -1,3 +1,4 @@
+
 package com.popble.security.filter;
 
 import java.io.IOException;
@@ -57,9 +58,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 			String name = (String) claims.get("name");
 			Boolean social = (Boolean) claims.get("social");
 			String email = (String) claims.get("email");
+			String phonenumber =(String) claims.get("phonenumber");
 			List<String> roleNames = (List<String>) claims.get("roleNames");
 			
-			UserDTO userDTO = new UserDTO(loginId, password, name, social.booleanValue(),email, roleNames);
+			
+			UserDTO userDTO = new UserDTO(loginId, password, name, social.booleanValue(),email,phonenumber, roleNames);
 			
 			log.info("-----------------------");
 			log.info(userDTO);
@@ -92,3 +95,4 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 	
 	
 }
+

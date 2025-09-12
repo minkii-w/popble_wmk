@@ -4,23 +4,23 @@ import { postAdd } from "../../api/userApi";
 import TextField from "@mui/material/TextField";
 
 
+
+
     const SignUpFormValues ={
 
         loginId:'',
         password:'',
         email:'',
         name:'',
-        role: 'MEMBER',
-        phonenumber: "010-1234-5678",
-        social:false
+      
         
     }
     
 
     const JoinComponent = () => {
 
-
-
+       
+        
    
      const {
         control,
@@ -43,10 +43,18 @@ import TextField from "@mui/material/TextField";
 
               console.log("회원가입 시도 객체(join):", join);
         
-
+        
+        
+                   const finalJoin = {
+                        ...join,
+                        
+                 phonenumber: '010-0000-0000',
+                role: 'MEMBER',
+                 social: false
+                 };
 
             try {
-                const response = await postAdd(join);
+                const response = await postAdd(finalJoin);
                 console.log("회원가입 성공:", response)
 
             } catch (e) {
@@ -61,8 +69,23 @@ import TextField from "@mui/material/TextField";
 
 
         return(
+
+
+
+
+
+            
            
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+
+
+
+      <div>
+                  
+
+
+            </div>
+
 
             <div className="flex justify-center">
                 <div className="text-4xl m-4 p-4 font-extrabold text-blue-500">SIGN UP</div>
@@ -215,19 +238,17 @@ import TextField from "@mui/material/TextField";
             </div>
 
 
+       
+
+            
 
 
-
-
-
-
-
-                
-                
-             
-
+      
 
         </div>
+
+
+                        
 
 
 

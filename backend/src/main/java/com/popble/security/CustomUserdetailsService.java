@@ -1,3 +1,4 @@
+
 package com.popble.security;
 
 import java.util.stream.Collectors;
@@ -39,7 +40,9 @@ public class CustomUserdetailsService implements UserDetailsService {
 			users.getName(),
 			users.isSocial(),
 			users.getEmail(),
+			users.getPhonenumber(),
 			users.getUserRoleList()
+			
 			
 			.stream().map(usersRole -> usersRole.name()).collect(Collectors.toList()));
 		
@@ -50,3 +53,4 @@ public class CustomUserdetailsService implements UserDetailsService {
 	}
 
 }
+
