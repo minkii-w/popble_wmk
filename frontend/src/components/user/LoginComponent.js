@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useCustomLogin from "../../hooks/useCustomLogin";
-import { data } from "react-router-dom";
+import { kakaoLoginAction, KakaoLogin } from "./oauth2/kakao/KakaoLogin";
+import React from "react";
 
 
 const initState = {
@@ -11,9 +12,31 @@ const initState = {
 
 const LoginComponent = () => {
 
+    const REST_API_KEY = '15c59ee2f2c32b7e3d1eb89e1bcf316b'
+    const REDIRECT_URI = 'http://localhost:8080/oauth2/authorization/kakao'
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+
+
     const [loginParam, setLoginParam] = useState({...initState})
 
+   
+
     const {doLogin, moveToPath} = useCustomLogin()
+
+        /**
+         * 
+         * @param {React.MouseEvent} e 
+         */
+        const KakaoLogin = (e) => {
+                e.preventDefault();
+                window.location.href = KAKAO_AUTH_URL;
+                kakaoLoginAction()
+                
+            }
+
+
+
 
     const handleChange = (e) => {
         loginParam[e.target.name] = e.target.value
@@ -87,6 +110,12 @@ const LoginComponent = () => {
 
 
             </div>
+          
+          <div className="w-2/5 p-6 flex justify-center font-bold">
+                    <button className="rounded p-4 w-36 bg-blue-500 text-xl text-white " onClick={KakaoLogin}>
+                        LOGIN
+                    </button>
+                    </div>
 
 
         </div>
