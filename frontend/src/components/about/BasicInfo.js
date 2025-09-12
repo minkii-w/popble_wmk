@@ -114,10 +114,7 @@ const BasicInfo = () => {
                 </span>
             </div>
         </div>
-
-  
     </div>
   );
 };
-
 export default BasicInfo;
