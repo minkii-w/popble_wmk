@@ -1,3 +1,4 @@
+
 package com.popble.domain;
 
 import jakarta.persistence.Column;
@@ -53,3 +54,4 @@ public class SocialLogin {
 	
 	
 }
+
