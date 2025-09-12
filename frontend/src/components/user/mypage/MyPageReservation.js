@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FcCalendar } from "react-icons/fc";
 import { Link } from "react-router-dom";
-import { getReservation } from "../../api/popupstoreApi";
+import { getReservation } from "../../../api/popupstoreApi";
 
 //Todo : 예약이 있으면 불러오고 예약이 없으면 불러오지 말아야함
 const MyPageReservation = ({ userId }) => {

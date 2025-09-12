@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import MyPageMenuComponent from "../user/MyPageMenuComponent";
-import MyPageContentComponent from "../user/MyPageContentComponent";
+import MyPageMenuComponent from "../mypage/MyPageMenuComponent";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 const MyPageComponent = () => {

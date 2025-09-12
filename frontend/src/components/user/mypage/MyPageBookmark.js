@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getBookmarkList, isBookmark } from "../../api/bookmarkApi";
-import PopupCard from "../popupStore/PopupCard";
+import { getBookmarkList, isBookmark } from "../../../api/bookmarkApi";
+import PopupCard from "../../search/PopupCard";
 import { FaBookmark } from "react-icons/fa";
 
 const MyPageBookmark = () => {
@@ -28,7 +28,7 @@ const MyPageBookmark = () => {
     fetchBookmarks();
   }, []);
   return (
-    <div class className="flex flex-col w-[700px]">
+    <div className="flex flex-col w-[700px]">
       {/* 헤더 */}
       <div className="text-2xl flex flex-row">
         <FaBookmark size={25} color="red" className="m-2" />

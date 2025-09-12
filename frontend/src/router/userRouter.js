@@ -5,12 +5,14 @@ const Loading = <div>Loading.........</div>;
 const Login = lazy(() => import("../pages/users/LoginPage"));
 const Join = lazy(() => import("../pages/users/JoinPage"));
 const MyPage = lazy(() => import("../pages/users/MyPage"));
-const MyPageEdit = lazy(() => import("../components/user/MyPageEdit"));
-const MyPagePost = lazy(() => import("../components/user/MyPagePost"));
+const MyPageEdit = lazy(() => import("../components/user/mypage/MyPageEdit"));
+const MyPagePost = lazy(() => import("../components/user/mypage/MyPagePost"));
 const MyPageReservation = lazy(() =>
-  import("../components/user/MyPageReservation")
+  import("../components/user/mypage/MyPageReservation")
 );
-const MyPageBookmark = lazy(() => import("../components/user/MyPageBookmark"));
+const MyPageBookmark = lazy(() =>
+  import("../components/user/mypage/MyPageBookmark")
+);
 
 const userRouter = () => {
   return [

@@ -1,7 +1,6 @@
 import { Suspense } from "react";
-import { Navigate } from "react-router-dom";
 import LoadingComponent from "../components/common/LoadingComponent";
-import ListPage from "../components/popupStore/ListComponent";
+import SearchPage from "../pages/search/SearchPage";
 
 const searchRouter = () => {
   return [
@@ -9,7 +8,7 @@ const searchRouter = () => {
       path: "",
       element: (
         <Suspense fallback={<LoadingComponent />}>
-          <ListPage></ListPage>
+          <SearchPage></SearchPage>
         </Suspense>
       ),
     },

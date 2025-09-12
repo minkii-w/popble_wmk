@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import MyPageComponent from "../../components/user/MyPageComponent";
+import MyPageComponent from "../../components/user/mypage/MyPageComponent";
 
 const MyPage = () => {
   return (

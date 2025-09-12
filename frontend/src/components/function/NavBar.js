@@ -261,7 +261,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("boards/notice");
+              navigate("/boards/notice");
               setOpen(false);
             }}
           >
@@ -271,7 +271,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("boards/ad");
+              navigate("/boards/ad");
               setOpen(false);
             }}
           >
@@ -281,7 +281,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("boards/general");
+              navigate("/boards/general");
               setOpen(false);
             }}
           >
@@ -291,7 +291,7 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("boards/qna");
+              navigate("/boards/qna");
               setOpen(false);
             }}
           >

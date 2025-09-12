@@ -11,9 +11,9 @@ const MainPage = () => {
 
   const handleSearch = (keyword) => {
     if (!keyword || keyword.trim() === "") {
-      navigate("/popup/search");
+      navigate("/search");
     } else {
-      navigate(`/popup/search?keyword=${encodeURIComponent(keyword.trim())}`);
+      navigate(`/search?keyword=${encodeURIComponent(keyword.trim())}`);
     }
   };
   return (

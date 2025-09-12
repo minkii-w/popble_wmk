@@ -1,31 +1,44 @@
-import { Suspense } from "react";
-import ListPage from "../components/popupStore/ListComponent";
-import { Navigate } from "react-router-dom";
+import { Suspense, lazy } from "react";
+
 import LoadingComponent from "../components/common/LoadingComponent";
 
-const Loading = <div>Loading.......</div>;
+const Reservation = lazy(() => import("../pages/reservation/ReservationPage"));
+const AdBoard = lazy(() => import("../pages/board/AdBoardPage"));
+const About = lazy(() => import("../pages/popup/AboutPage"));
 
 const popupRouter = () => {
   return [
     {
-      path: "search",
+      path: "about/:id",
       element: (
         <Suspense fallback={<LoadingComponent />}>
-          <ListPage></ListPage>
+          <About></About>
         </Suspense>
       ),
     },
     {
-      path: "",
+      path: "about",
       element: (
         <Suspense fallback={<LoadingComponent />}>
-          <Navigate replace to="search"></Navigate>
+          <About></About>
         </Suspense>
       ),
     },
     {
-      path: "detail/:id",
-      element: <Suspense fallback={<LoadingComponent />}></Suspense>,
+      path: "reservation/:id",
+      element: (
+        <Suspense fallback={<LoadingComponent />}>
+          <Reservation></Reservation>
+        </Suspense>
+      ),
+    },
+    {
+      path: "board/ad",
+      element: (
+        <Suspense fallback={<LoadingComponent />}>
+          <AdBoard></AdBoard>
+        </Suspense>
+      ),
     },
   ];
 };

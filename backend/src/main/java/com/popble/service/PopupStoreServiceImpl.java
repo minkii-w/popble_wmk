@@ -86,7 +86,14 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 		
 		// 결과를 DTO로 변환
 		List<PopupStoreDTO> dtoList = result.getContent().stream()
-				.map(popupStore -> modelMapper.map(popupStore, PopupStoreDTO.class))
+				.map(popupStore ->{
+					PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
+					List<String> fileNames = popupStore.getImageList().stream()
+											.map(image->image.getFileName())
+											.collect(Collectors.toList());
+					dto.setUploadFileNames(fileNames);
+					return dto;
+				})
 				.collect(Collectors.toList());
 		
 		long totalCount = result.getTotalElements();

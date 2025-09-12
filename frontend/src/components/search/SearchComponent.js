@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { getList } from "../../api/popupstoreApi";
+import { getList } from "../../api/searchApi";
 import PageComponent from "../common/PageComponent";
 import useCustomMove from "../../hooks/useCustomMove";
 import PopupCard from "./PopupCard";
@@ -22,7 +22,7 @@ const initState = {
   current: 0,
 };
 
-const ListComponent = () => {
+const SearchComponent = () => {
   const { page, size, refresh, moveToList } = useCustomMove();
   //로그인 추가되면 지울것
   const userId = 4;
@@ -149,4 +149,4 @@ const ListComponent = () => {
   );
 };
 
-export default ListComponent;
+export default SearchComponent;

@@ -35,25 +35,6 @@ export const getReservation = async (id) => {
   return res.data;
 };
 
-//카테고리 조회
-export const getCategories = async (type) => {
-  try {
-    const res = await axios.get(`${API_SERVER_HOST}/api/filter/category`, {
-      params: { type },
-    });
-    return res.data;
-  } catch (err) {
-    console.log("getCategories 실패", err);
-    return [];
-  }
-};
-
-//팝업스토어 진행상태
-export const getStatusList = async () => {
-  const res = await axios.get(`${API_SERVER_HOST}/api/filter/status`);
-  return res.data;
-};
-
 //팝업 상세보기 페이지 가져오기
 export const getPopup = async (id) => {
   const res = await axios.get(`${prefix}/${id}`);
