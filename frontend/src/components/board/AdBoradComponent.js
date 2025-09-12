@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import useCustomMove from "../../hooks/useCustomMove"
 import ResultModal from "../common/ResultModal";
 import { postAdd } from "../../api/popupstoreApi";
-import SelectBoxComponent from "./SelectBoxComponent";
+import SelectBoxComponent from "../common/SelectBoxComponent"
 
 
 const initState = {
@@ -11,7 +11,7 @@ const initState = {
     address:'',
     startDate:'',
     endDate:'',
-    reservationTimes:{am:['','','',''],pm:['','','','']},
+    reservationTimes:[],
     maxCount:null,
     desc:'',
     price:0,
@@ -31,53 +31,70 @@ const AdBoardComponent = () => {
 
     const uploadRef = useRef()
 
-    const handleChangePopupstore = (e) => {
-        popupstore[e.target.name] = e.target.value
+    const handleTimeChange = (e, amPm, index) => {
 
-        setPopupstore({...popupstore})
+        const newTimes = [...popupstore.reservationTimes];
+
+        newTimes[index] = {
+            amPm,
+            time:e.target.value
+        }
+
+        setPopupstore({...popupstore, reservationTimes:newTimes})
     }
 
-    const handleClickRegister = (e) => {
+
+    const handleChangePopupstore = (e) => {
+        console.log(e.target.name, e.target.value);
+
+        setPopupstore({
+            ...popupstore,
+            [e.target.name]:e.target.value
+        })
+    }
+
+    
+
+    const handleClickRegister = async() => {
+
+        if(!popupstore.startDate || !popupstore.endDate){
+            alert("날짜를 모두 선택해 주세요");
+            return;
+        }
       
-        const files = uploadRef.current.files
+        const files = uploadRef.current.files;
         const formData = new FormData()
 
         for(let i = 0; i<files.length; i++){
-            formData.append("files",files[i]);
+            formData.append("file",files[i]);
         }
 
         formData.append("storeName", popupstore.storeName)
         formData.append("address", popupstore.address)
         formData.append("startDate", popupstore.startDate)
-        formData.append("amTime", popupstore.amTime)
-        formData.append("pmTime", popupstore.pmTime)
+        formData.append("endDate", popupstore.endDate)
+        formData.append("reservationTimes",JSON.stringify(popupstore.reservationTimes))
         formData.append("maxCount", popupstore.maxCount)
         formData.append("desc", popupstore.desc)
         formData.append("price", popupstore.price)
 
-        postAdd(formData)
+        for(let pair of formData.entries()){
+            console.log(pair[0],pair[1])
+        }
+
+
+        try{
+            const result = await postAdd(formData);
+            setResult(result.id);
+        }catch(err){
+            alert("등록실패:" + err.message);
+        }
     }
 
     const closeModal = () => {
         setResult(null)
         moveToList();
     }
-
-     /* 오전,오후 시간 입력 칸 */
-    const amTime = [
-    {name:"amTime1", type:"text"},
-    {name:"amTime2", type:"text"},
-    {name:"amTime3", type:"text"},
-    {name:"amTime4", type:"text"}
-    ]
-
-    const pmTime = [
-    {name:"pmTime1", type:"text"},
-    {name:"pmTime2", type:"text"},
-    {name:"pmTime3", type:"text"},
-    {name:"pmTime4", type:"text"}
-    ]
-
 
     return(
          <form>
@@ -117,7 +134,7 @@ const AdBoardComponent = () => {
                 <div className="w-1/5 p-6 text-right font-bold">행사시작일</div>
                 <input className="rounded-r border border-solid border-neutral-500 shadow-md"
                 name="startDate"
-                type={'Date'}
+                type={'date'}
                 value={popupstore.startDate}
                 onChange={handleChangePopupstore}>
                 </input>
@@ -129,7 +146,7 @@ const AdBoardComponent = () => {
                 <div className="w-1/5 p-6 text-right font-bold">행사종료일</div>
                 <input className="rounded-r border border-solid border-neutral-500 shadow-md"
                 name="endDate"
-                type={'Date'}
+                type={'date'}
                 value={popupstore.endDate}
                 onChange={handleChangePopupstore}>
                 </input>
@@ -137,26 +154,22 @@ const AdBoardComponent = () => {
         </div>
         {/* -------------------am,pm 입력 폼 만드는 코드 시작---------------- */}
             <div style={{display:"flex", gap:"1px", marginBottom:"10px"}}>AM_TIME
-            {amTime.map((amTime, idx) => (
-                <div key={idx} 
-                style={{display:"flex"}}>
-                    
-                    <input className="border border-gray-400 rounded p-2 w-24" 
-                    type={amTime.type} name={amTime.name}></input>
-                </div>
-            ))}
+           {[0,1,2,3].map((i)=>(
+            <input
+            key={`am-${i}`}
+            type="time"
+            onChange={(e) => handleTimeChange(e, "AM", i)}></input>
+           ))}
             </div>
         
        
             <div style={{display:"flex", gap:"1px", marginBottom:"10px"}}>PM_TIME
-            {pmTime.map((pmTime, idx) => (
-                <div key={idx} 
-                style={{display:"flex"}}>
-                    
-                    <input className="border border-gray-400 rounded p-2 w-24" 
-                    type={pmTime.type} name={pmTime.name}></input>
-                </div>
-            ))}
+                {[0,1,2,3].map((i)=> (
+                    <input
+                    key={`pm-${i}`}
+                    type="time"
+                    onChange={(e) => handleTimeChange(e, "PM", i)}></input>
+                ))}
             </div>
             {/* -------------------am,pm 입력 폼 만드는 코드 끝---------------- */}
 
@@ -164,7 +177,8 @@ const AdBoardComponent = () => {
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 p-6 text-right font-bold">입장가능인원수
-                    <SelectBoxComponent/>
+                    <SelectBoxComponent value={popupstore.maxCount}
+                    onChange={(val)=> setPopupstore({...popupstore, maxCount:val})}/>
                     </div>
                 </div>
             </div>
@@ -176,7 +190,7 @@ const AdBoardComponent = () => {
                 <div className="w-1/5 p-6 text-right font-bold">행사입장가격</div>
                 <input className="rounded-r border border-solid border-neutral-500 shadow-md"
                 name="price"
-                type={'text'}
+                type={'number'}
                 value={popupstore.price}
                 onChange={handleChangePopupstore}>{/* 폼에 '천원단위로 입력' or 입력뒤에'원'글자 항상 뜨게? */}
                 </input>
@@ -198,10 +212,9 @@ const AdBoardComponent = () => {
 
         {/*--------------------이미지첨부---------------- */}
         <div className="flex justify-center">
-            <div className="relative mb-4 flex w-full flex-erap items-stretch">
+            <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                 <div className="w-1/5 p-6 text-right font-bold">이미지첨부</div>
                 <input ref={uploadRef} className="w-4/5 p-6 rounded-r border border-solid border-neutral-300 shadow-md"
-                name="files"
                 type={'file'}
                 multiple={true}>
                 </input>
@@ -213,7 +226,7 @@ const AdBoardComponent = () => {
         <div className="flex justify-center">
             <div className="relative mb-4 flex p-4 flex-erap items-stretch">
                 <button type="button"
-                className="rounder p-4 w-36 bg-blue-300 text-xl text-white"
+                className="rounded p-4 w-36 bg-blue-300 text-xl text-white"
                 onClick={handleClickRegister}>등록하기</button>
             </div>
         </div>
