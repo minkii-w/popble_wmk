@@ -1,3 +1,4 @@
+
 package com.popble.domain;
 
 import java.time.LocalTime;
@@ -61,3 +62,4 @@ public class ReservationTime {
 	@OneToMany(mappedBy = "reservationTime")
 	private List<Reservation> reservations = new ArrayList<>();
 }
+

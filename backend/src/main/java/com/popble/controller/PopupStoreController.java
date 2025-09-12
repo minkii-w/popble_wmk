@@ -1,3 +1,4 @@
+
 package com.popble.controller;
 
 
@@ -49,13 +50,7 @@ public class PopupStoreController {
 	private final PopupStoreService popupStoreService;
 	
 	private final ObjectMapper objectMapper;
-	
 
-//	@GetMapping("/list")
-//	public PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO){
-//		
-//		return popupStoreService.getList(pageRequestDTO);
-//	}
 	
 	//리스트
 	@GetMapping("/list")
@@ -184,3 +179,4 @@ public class PopupStoreController {
 	}
 	
 }
+

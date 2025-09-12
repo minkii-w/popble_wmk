@@ -1,3 +1,4 @@
+
 package com.popble.domain;
 
 import java.time.LocalDate;

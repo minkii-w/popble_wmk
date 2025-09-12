@@ -1,3 +1,4 @@
+
 package com.popble.config;
 
 import java.util.Arrays;
@@ -18,6 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.popble.security.filter.JWTCheckFilter;
 import com.popble.security.handlr.APILoginFailHandler;
 import com.popble.security.handlr.APILoginSussessHandler;
+import com.popble.security.handlr.Oauth2AuthenticationSuccessHandler;
+import com.popble.service.UserOauth2Service;
 import com.popble.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,7 +32,14 @@ import lombok.extern.log4j.Log4j2;
 @EnableMethodSecurity
 public class CustomSecurityConfig {
 
+    private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+
+    private final UserOauth2Service userOauth2Service;
+
     private final UserServiceImpl userServiceImpl;
+
+
+   
 
 
   
@@ -51,12 +61,20 @@ public class CustomSecurityConfig {
 		
 		config.successHandler(new APILoginSussessHandler());
 		config.failureHandler(new APILoginFailHandler());
+		
 	});
 	
 // oauth2 -----------------------------	
 	
-	http.oauth2Login();
-	
+	http
+    .oauth2Login(oauth2 -> oauth2
+        .defaultSuccessUrl("/login/success")
+        .successHandler(oauth2AuthenticationSuccessHandler)
+        .userInfoEndpoint(userInfo -> userInfo
+            .userService(userOauth2Service)
+            
+        )
+    );
 	
 
 	
@@ -84,12 +102,10 @@ public class CustomSecurityConfig {
 		
 	
 	
-	@Bean
- 	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+
 	
 	
 	
 	
 }
+

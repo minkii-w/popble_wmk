@@ -1,7 +1,9 @@
 import { useState } from "react";
 import BasicLayout from "../layout/BasicLayout";
 import Carousel from "../components/function/Carousel";
-import CopyrightFooter from "../components/function/CopyrightFooter";
+
+import san1 from "../assets/testImg/san1.jpg"
+import san2 from "../assets/testImg/san2.jpg"
 
 const MainPage = () => {
     return(
@@ -26,16 +28,18 @@ const MainPage = () => {
             <div className="text-5xl bg-subSecondColor">
                 <h1>subSecondColor</h1>
             </div>
-             <div className="text-5xl bg-hashTagColor">
-                <h1>hashTagColor</h1>
-            </div>
             <div className="text-5xl bg-subButtonColor">
                 <h1>subButtonColor</h1>
             </div>
             <div className="text-5xl bg-subButtonAccentColor">
-                <h1>subButtonAccentColor</h1>
+                <h1>subButtonAccentColor.</h1>
             </div>
-
+            <div>
+                <img src={san1} height='200px' width='200px'></img>
+            </div>
+            <div>
+                <img src={san2} height='200px' width= '200px'></img>
+            </div>
         </BasicLayout>
     )
 }
