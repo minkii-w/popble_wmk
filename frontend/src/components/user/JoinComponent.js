@@ -10,9 +10,7 @@ import TextField from "@mui/material/TextField";
         password:'',
         email:'',
         name:'',
-        role: 'MEMBER',
-        phonenumber: "010-1234-5678",
-        social:false
+      
         
     }
     
@@ -43,10 +41,18 @@ import TextField from "@mui/material/TextField";
 
               console.log("회원가입 시도 객체(join):", join);
         
-
+        
+        
+                   const finalJoin = {
+                        ...join,
+                        
+                 phonenumber: '010-0000-0000',
+                role: 'MEMBER',
+                 social: false
+                 };
 
             try {
-                const response = await postAdd(join);
+                const response = await postAdd(finalJoin);
                 console.log("회원가입 성공:", response)
 
             } catch (e) {
@@ -61,8 +67,30 @@ import TextField from "@mui/material/TextField";
 
 
         return(
+
+
+
+
+
+            
            
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+
+
+
+      <div>
+                        <center>
+                            <a href="http://localhost:8080/oauth2/authorization/kakao">
+                            <button>카카오 로그인</button>
+                            
+                            </a>
+
+
+                        </center>
+
+
+            </div>
+
 
             <div className="flex justify-center">
                 <div className="text-4xl m-4 p-4 font-extrabold text-blue-500">SIGN UP</div>
@@ -215,19 +243,12 @@ import TextField from "@mui/material/TextField";
             </div>
 
 
-
-
-
-
-
-
-
-                
-                
-             
-
+      
 
         </div>
+
+
+                        
 
 
 

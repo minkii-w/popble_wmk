@@ -37,6 +37,8 @@ public class UserDTO extends User {
 
 	private boolean social;
 	
+	private String phonenumber;
+	
 	
 	@NotEmpty
 	@Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$")
@@ -51,7 +53,7 @@ public class UserDTO extends User {
 	}
 	
 	
-	public UserDTO(String loginId, String password, String name, boolean social, String email, List<String> rolenames ) {
+	public UserDTO(String loginId, String password, String name, boolean social, String email,String phonenumber, List<String> rolenames ) {
 		super(
 	loginId,password, rolenames.stream().map(str -> new SimpleGrantedAuthority("ROLE_"+str)).collect(Collectors.toList()));
 	
@@ -61,6 +63,8 @@ public class UserDTO extends User {
 			this.social = social;
 			this.roleNames = rolenames;
 			this.email = email;
+			this.phonenumber = phonenumber;
+			
 			
 	}
 	
@@ -73,6 +77,7 @@ public class UserDTO extends User {
 		dataMap.put("social", social);
 		dataMap.put("email", email);
 		dataMap.put("roleNames", roleNames);
+		dataMap.put("phonenumber", phonenumber);
 		
 		return dataMap;
 	}
