@@ -8,6 +8,7 @@ import SortComponent from "./SortComponent";
 import SearchBar from "../common/SearchBar";
 import { getBookmarkList, isBookmark } from "../../api/bookmarkApi";
 import { useLocation } from "react-router-dom";
+import LoadingComponent from "../common/LoadingComponent";
 
 const initState = {
   dtoList: [],
@@ -23,8 +24,8 @@ const initState = {
 };
 
 const SearchComponent = () => {
-  const { page, size, refresh, moveToList } = useCustomMove();
-  //로그인 추가되면 지울것
+  const { page, size, refresh, moveToSearch } = useCustomMove();
+  // Todo:로그인 추가되면 지울것
   const userId = 4;
 
   //URL읽기
@@ -51,6 +52,7 @@ const SearchComponent = () => {
 
   const [serverData, setServerData] = useState(initState);
   const [bookmarkIds, setBookmarkIds] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   //전체 팝업 불러오기
   const fetchData = useCallback(async () => {
@@ -75,9 +77,21 @@ const SearchComponent = () => {
   }, [userId]);
 
   useEffect(() => {
-    fetchBookmarks();
-    fetchData();
+    const fetchAll = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([fetchBookmarks(), fetchData()]);
+      } catch (e) {
+        console.error("데이터를 불러오는데 실패했습니다", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAll();
   }, [fetchData, fetchBookmarks, refresh]);
+
+  if (loading) return <LoadingComponent />;
 
   return (
     <div className="bg-gradient-to-b from-backgroundColor">
@@ -143,7 +157,7 @@ const SearchComponent = () => {
       </div>
       <PageComponent
         serverData={serverData}
-        movePage={moveToList}
+        movePage={moveToSearch}
       ></PageComponent>
     </div>
   );

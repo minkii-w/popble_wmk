@@ -1,26 +1,15 @@
-// src/router/root.js
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import popupRouter from "./popupRouter";
 import userRouter from "./userRouter";
-
-const Loading = <div>Loading......</div>;
-
-const About = lazy(() => import("../pages/AboutPage"));
-const Main = lazy(() => import("../pages/MainPage"));
-const AdBoard = lazy(() => import("../pages/board/AdBoardPage"));
-const Popup = lazy(() => import("../pages/popupStore/PopupIndexPage"));
-const Member = lazy(() => import("../pages/member/IndexPage"));
-
-import BoardsRouter from "./BoardsRouter";
-
-const Loading = <div>Loading......</div>;
-const BoardsLayout = lazy(() => import("../layout/BoardsLayout")); // ← 여기!
+import BoardsRouter from "./BoardsRouter"; // ← 여기!
 import LoadingComponent from "../components/common/LoadingComponent";
 import searchRouter from "./searchRouter";
 import boardRouter from "./boardRouter";
 import NotFoundPage from "../pages/NotFoundPage";
 import BasicLayout from "../layout/BasicLayout";
+
+const BoardsLayout = lazy(() => import("../layout/BoardsLayout"));
 
 const Main = lazy(() => import("../pages/MainPage"));
 const Popup = lazy(() => import("../pages/popup/PopupIndexPage"));
@@ -33,7 +22,7 @@ const root = createBrowserRouter(
     {
       path: "",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <Main></Main>
         </Suspense>
       ),
@@ -41,36 +30,20 @@ const root = createBrowserRouter(
     {
       path: "popup",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <Popup></Popup>
         </Suspense>
       ),
-      children: popupStoreRouter(),
+      children: popupRouter(),
     },
     {
-      path: "member",
+      path: "user",
       element: (
-        <Suspense fallback={Loading}>
-          <Member></Member>
+        <Suspense fallback={<LoadingComponent />}>
+          <User></User>
         </Suspense>
       ),
-      children: memberRouter(),
-    },
-    {
-      path: "about",
-      element: (
-        <Suspense fallback={Loading}>
-          <About></About>
-        </Suspense>
-      ),
-    },
-    {
-      path: "/popup/reservation/:id",
-      element: (
-        <Suspense fallback={Loading}>
-          <Reservation></Reservation>
-        </Suspense>
-      ),
+      children: userRouter(),
     },
     {
       path: "boards",
@@ -79,7 +52,16 @@ const root = createBrowserRouter(
           <Board></Board>
         </Suspense>
       ),
-      children: boardRouter(),
+      children: BoardsRouter(),
+    },
+    {
+      path: "search",
+      element: (
+        <Suspense fallback={<LoadingComponent />}>
+          <Search></Search>
+        </Suspense>
+      ),
+      children: searchRouter(),
     },
     {
       path: "*",

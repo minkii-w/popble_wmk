@@ -10,7 +10,7 @@ const BasicMenu = ({ children }) => {
       <Header />
 
       {/* 페이지 내용과 Footer 겹치지 않도록 padding-bottom */}
-      <div className="pb-20">{children}</div>
+      <div className="pb-20 bg-backgroundColor">{children}</div>
 
       {/* 저작권 */}
       <Footer />

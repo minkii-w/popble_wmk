@@ -3,9 +3,8 @@ import { Navigate } from "react-router-dom";
 import LoadingComponent from "../components/common/LoadingComponent";
 
 const boardRouter = () => {
-  const Loading = <div>Loading...</div>;
   const PopupStoreAdd = lazy(() => import("../pages/board/AdBoardPage"));
-  const PopupStoreModify = lazy(() => import(""));
+  const PopupStoreModify = lazy(() => import("../pages/board/ModifyPage"));
 
   return [
     {
@@ -15,7 +14,7 @@ const boardRouter = () => {
     {
       path: "add",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <PopupStoreAdd></PopupStoreAdd>
         </Suspense>
       ),
@@ -23,7 +22,7 @@ const boardRouter = () => {
     {
       path: "modify/:id",
       element: (
-        <Suspense fallback={Loading}>
+        <Suspense fallback={<LoadingComponent />}>
           <PopupStoreModify></PopupStoreModify>
         </Suspense>
       ),

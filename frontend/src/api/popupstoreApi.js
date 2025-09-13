@@ -14,6 +14,12 @@ export const getList = async (pageParam, id) => {
   return res.data;
 };
 
+//팝업스토어예약하기
+export const getReservation = async (id) => {
+  const res = await axios.get(`${prefix}/reservation/${id}`);
+  return res.data;
+};
+
 //팝업 상세보기 페이지 가져오기
 export const getPopup = async (id) => {
   const res = await axios.get(`${prefix}/${id}`);
