@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCategories, getStatusList } from "../../api/popupstoreApi";
+import { getCategories, getStatusList } from "../../api/searchApi";
 
 const CategoryComponent = ({ onSelect }) => {
   // 팝업상태
@@ -15,8 +15,8 @@ const CategoryComponent = ({ onSelect }) => {
     STATUS: "진행상태",
     MAIN: "카테고리",
     LOCALE: "지역",
-    THEME: "테마"
-  }
+    THEME: "테마",
+  };
 
   //상단
   const [selectedTop, setSelectedTop] = useState(null);
@@ -47,9 +47,13 @@ const CategoryComponent = ({ onSelect }) => {
   const handleBottomSelect = (sub) => {
     setSelectedBottom(sub);
     if (selectedTop === "STATUS") {
-      onSelect({ type:"status", value:sub.key });
+      onSelect({ type: "status", value: sub.key });
     } else {
-      onSelect({ type:"category", categoryType: selectedTop, categoryId:sub.id });
+      onSelect({
+        type: "category",
+        categoryType: selectedTop,
+        categoryId: sub.id,
+      });
     }
   };
 
@@ -94,7 +98,7 @@ const CategoryComponent = ({ onSelect }) => {
               }`}
               onClick={() => handleBottomSelect(sub)}
             >
-              { sub.label || sub.name}
+              {sub.label || sub.name}
             </button>
           ))}
         </div>

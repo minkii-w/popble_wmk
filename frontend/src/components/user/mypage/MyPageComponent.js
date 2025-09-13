@@ -1,12 +1,18 @@
-import { useState } from "react";
-import MyPageMenuComponent from "./MyPageMenuComponent";
-import MyPageContentComponent from "./MyPageContentComponent";
+import { useEffect, useState } from "react";
+import MyPageMenuComponent from "../mypage/MyPageMenuComponent";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 const MyPageComponent = () => {
-  const [selectedMenu, setSelectedMenu] = useState();
+  const { menu } = useParams();
+  const navigate = useNavigate();
+  // const [selectedMenu, setSelectedMenu] = useState();
+
+  const handleMenuClick = (key) => {
+    navigate(`/user/mypage/${key}`);
+  };
 
   return (
-    <div className="bg-gradient-to-b from-backgroundColor">
+    <div className="bg-gradient-to-b from-backgroundColor min-h-screen">
       <div className="flex flex-col justify-center items-center">
         {/* 프로필사진 이메일 */}
         <div className="flex flex-row justify-center items-center p-4 mb-6">
@@ -24,14 +30,14 @@ const MyPageComponent = () => {
         {/* 프로필사진 이메일 끝 */}
         {/* 마이페이지 메뉴 시작*/}
         <MyPageMenuComponent
-          selectedMenu={selectedMenu}
-          onMenuClick={setSelectedMenu}
+          selectedMenu={menu || "default"}
+          onMenuClick={handleMenuClick}
         ></MyPageMenuComponent>
         {/* 마이페이지 메뉴 끝 */}
         {/* 마이페이지 내용 시작 */}
-        <MyPageContentComponent
-          selectedMenu={selectedMenu}
-        ></MyPageContentComponent>
+        <div>
+          <Outlet></Outlet>
+        </div>
         {/* 마이페이지 내용 끝 */}
       </div>
     </div>

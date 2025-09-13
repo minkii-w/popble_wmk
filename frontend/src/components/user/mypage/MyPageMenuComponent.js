@@ -9,12 +9,12 @@ const menuList = [
     icon: <FaBookmark size={50} color="red" />,
   },
   {
-    key: "myBoard",
+    key: "post",
     label: "내 게시글 보기",
     icon: <FcDocument size={50} />,
   },
   {
-    key: "myReservation",
+    key: "reservation",
     label: "예약내역 확인/취소",
     icon: <FcCalendar size={50} />,
   },
@@ -22,7 +22,7 @@ const menuList = [
 
 const MyPageMenuComponent = ({ selectedMenu, onMenuClick }) => {
   return (
-    <div className="grid grid-cols-4 gap-4 bg-secondaryColor p-5 rounded-md mb-10 w-[900px] h-[180px] shadow-lg border-secondaryAccentColor border-2">
+    <div className="grid grid-cols-4 gap-4 bg-secondaryColor p-5 rounded-md mb-10 w-[1000px] h-[180px] shadow-lg border-secondaryAccentColor border-2">
       {menuList.map(({ key, label, icon }) => (
         <div
           key={key}

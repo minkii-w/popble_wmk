@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Sanrio_mediaArt_1 from  "../../assets/img/Sanrio MediaArt_1.jpeg"
+import Sanrio_mediaArt_1 from "../../assets/img/Sanrio MediaArt_1.jpeg";
 import { useEffect, useState } from "react";
 import { addBookmark, deleteBookmark } from "../../api/bookmarkApi";
 import { GoBookmark } from "react-icons/go";
@@ -30,7 +30,7 @@ const PopupCard = ({ item, userId = 4 }) => {
 
   return (
     <Link
-      to={`/popup/${item.id}`}
+      to={`/popup/detail/${item.id}`}
       className="relative flex flex-shrink-0 bg-secondaryColor w-[380px] h-[180px] rounded-lg shdow-md m-5 p-3 hover:shadow-lg transition border-secondaryAccentColor border-2"
     >
       {/* 북마크 */}
