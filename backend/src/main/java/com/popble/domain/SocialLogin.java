@@ -1,3 +1,4 @@
+
 package com.popble.domain;
 
 import jakarta.persistence.Column;
@@ -43,4 +44,14 @@ public class SocialLogin {
 	//토큰 번호를 TEXT로 할지 아니면 그냥 String으로 둘지
 	@Column(name = "access_token")
 	private String accessToken;
+	
+	//카카오 프로필 닉네임
+	@Column(name = "nickname")
+	private String nickname;
+	
+	
+	
+	
+	
 }
+

@@ -1,5 +1,7 @@
+
 package com.popble.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,13 +19,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.popble.domain.Image;
 import com.popble.domain.PopupStore;
 import com.popble.domain.PopupStore.Status;
+import com.popble.domain.ReservationTime;
 import com.popble.domain.SortType;
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
 import com.popble.dto.PopupFilterDTO;
 import com.popble.dto.PopupStoreDTO;
+import com.popble.dto.ReservationTimeDTO;
 import com.popble.repository.PopupStoreRepository;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -31,6 +36,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
+
 public class PopupStoreServiceImpl implements PopupStoreService {
 	
 	private final PopupStoreRepository popupStoreRepository;
@@ -111,15 +117,25 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 		
 		PopupStore popupStore = result.orElseThrow();
 		
+		popupStore.getReservationTimes().clear();
+		
+		popupStoreDTO.getReservationTimes().forEach(dto -> {
+			ReservationTime entity = ReservationTime.builder()
+					.popupStore(popupStore)
+					.startTime(dto.getStartTime())
+					.endTime(dto.getEndTime())
+					.build();
+			popupStore.getReservationTimes().add(entity);
+		});
 		popupStore.setStoreName(popupStoreDTO.getStoreName());
 		popupStore.setAddress(popupStoreDTO.getAddress());
 		popupStore.setStartDate(popupStoreDTO.getStartDate());
 		popupStore.setEndDate(popupStoreDTO.getEndDate());
-		popupStore.setReservationTimes(popupStoreDTO.getReservationTimes());
 		popupStore.setMaxCount(popupStoreDTO.getMaxCount());
 		popupStore.setDesc(popupStoreDTO.getDesc());
 		popupStore.setPrice(popupStoreDTO.getPrice());
 		
+		//이미지처리
 		popupStore.clearList();
 		
 		List<String> uploadFileNames = popupStoreDTO.getUploadFileNames();
@@ -147,13 +163,21 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 	
 	private PopupStoreDTO entityToDTO(PopupStore popupStore) {
 		
+		List<ReservationTimeDTO> reservationTimeDTO = popupStore.getReservationTimes()
+				.stream()
+				.map(rt -> ReservationTimeDTO.builder()
+						.startTime(rt.getStartTime())
+						.endTime(rt.getEndTime())
+						.build())
+				.collect(Collectors.toList());
+		
 		PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
 				.id(popupStore.getId())
 				.storeName(popupStore.getStoreName())
 				.address(popupStore.getAddress())
 				.startDate(popupStore.getStartDate())
 				.endDate(popupStore.getEndDate())
-				.reservationTimes(popupStore.getReservationTimes())
+				.reservationTimes(reservationTimeDTO)
 				.maxCount(popupStore.getMaxCount())
 				.desc(popupStore.getDesc())
 				.price(popupStore.getPrice())
@@ -189,12 +213,27 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 				.address(popupStoreDTO.getAddress())
 				.startDate(popupStoreDTO.getStartDate())
 				.endDate(popupStoreDTO.getEndDate())
-				.reservationTimes(popupStoreDTO.getReservationTimes())
 				.maxCount(popupStoreDTO.getMaxCount())
 				.desc(popupStoreDTO.getDesc())
 				.price(popupStoreDTO.getPrice())
 				.build();
 		
+		if(popupStore.getReservationTimes() == null) {
+			popupStore.setReservationTimes(new ArrayList<>());
+		}
+		
+		if(popupStoreDTO.getReservationTimes() != null) {
+			popupStoreDTO.getReservationTimes().forEach(dto -> {
+				ReservationTime entity = ReservationTime.builder()
+						.popupStore(popupStore)
+						.startTime(dto.getStartTime())
+						.endTime(dto.getEndTime())
+						.build();
+				popupStore.getReservationTimes().add(entity);
+			});
+		}
+		
+		//이미지파일추가
 		List<String> uploadFileNames = popupStoreDTO.getUploadFileNames();
 		
 		if(uploadFileNames == null) {
@@ -224,13 +263,21 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 			PopupStore popupStore = (PopupStore) arr [0];
 			Image image = (Image) arr [1];
 			
+			List<ReservationTimeDTO> reservationTimeDTO = popupStore.getReservationTimes()
+					.stream()
+					.map(rt -> ReservationTimeDTO.builder()
+							.startTime(rt.getStartTime())
+							.endTime(rt.getEndTime())
+							.build())
+					.collect(Collectors.toList());
+			
 			PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
 					.id(popupStore.getId())
 					.storeName(popupStore.getStoreName())
 					.address(popupStore.getAddress())
 					.startDate(popupStore.getStartDate())
 					.endDate(popupStore.getEndDate())
-					.reservationTimes(popupStore.getReservationTimes())
+					.reservationTimes(reservationTimeDTO)
 					.maxCount(popupStore.getMaxCount())
 					.desc(popupStore.getDesc())
 					.price(popupStore.getPrice())

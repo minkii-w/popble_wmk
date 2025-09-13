@@ -5,12 +5,17 @@ const boardRouter = () => {
 
     const Loading = <div>Loading...</div>
     const PopupStoreAdd = lazy( () => import("../pages/board/AdBoardPage"))
-    const PopupStoreModify = lazy( () => import(""))
+    const PopupStoreModify = lazy( () => import("../pages/board/AdBoardModifyPage"))
+    const Reservation = lazy( () => import("../pages/reservation/ReservationPage"))
 
     return [
         {
             path:"",
-            element:<Navigate replace to="/popup/ad"></Navigate>
+            element:<Navigate replace to="/popup/reservation"></Navigate>
+        },
+        {
+            path:"reservation",
+            element:<Suspense fallback={Loading}><Reservation></Reservation></Suspense>
         },
         {
             path:"add",

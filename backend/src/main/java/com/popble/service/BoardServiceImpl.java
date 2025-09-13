@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,10 +31,18 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Long create(BoardCreateRequest req) {
-        // 작성자(UserProfile) 로드: writerId == UserProfile.id 로 사용
-        UserProfile profile = userProfileRepository.getReferenceById(req.getWriterId());
+        // ===== 필수값 검증 (여기서 막아두면 DB 제약/500 이전에 원인 파악 쉬움) =====
+        if (req.getType() == null) {
+            throw new IllegalArgumentException("type is required");
+        }
+        if (req.getTitle() == null || req.getTitle().isBlank()) {
+            throw new IllegalArgumentException("title is required");
+        }
+        if (req.getContent() == null || req.getContent().isBlank()) {
+            throw new IllegalArgumentException("content is required");
+        }
 
-        // 타입별 자식 엔티티 생성 (enum 그대로 사용)
+        // ===== 타입별 자식 엔티티 생성 =====
         Board entity = switch (req.getType()) {
             case GENERAL -> new GeneralBoard();
             case QNA     -> new QnaBoard();
@@ -42,18 +51,28 @@ public class BoardServiceImpl implements BoardService {
             case AD      -> new AdBoard();
         };
 
-        // 공통 필드 세팅
+        // ===== 작성자(UserProfile) 선택적 매핑 =====
+        UserProfile profile = null;
+        if (req.getWriterId() != null) {
+            // 존재하지 않아도 예외 던지지 않도록 Optional 처리
+            profile = userProfileRepository.findById(req.getWriterId()).orElse(null);
+        }
         entity.setUserProfile(profile);
+
+        // ===== 공통 필드 세팅 =====
+        entity.setType(req.getType());      // 자식에서 안 세팅했다면 확실히 박아둠
         entity.setTitle(req.getTitle());
         entity.setContent(req.getContent());
 
-        // writer(String)에 작성자 ID를 문자열로 저장
-        entity.setWriter(String.valueOf(req.getWriterId()));
-
-        // 자식 생성자에서 type을 세팅하지 않았다면 보정
-        if (entity.getType() == null) {
-            entity.setType(req.getType());
+        // writer(String): 표시용. writerId가 있으면 그 값, 없으면 anonymous
+        if (req.getWriterId() != null) {
+            entity.setWriter(String.valueOf(req.getWriterId()));
+        } else {
+            entity.setWriter("anonymous");
         }
+
+        // view/recommend는 엔티티 기본값(0) 사용
+        // role은 엔티티 @PrePersist에서 기본값(Member) 세팅됨
 
         return boardRepository.save(entity).getId();
     }
@@ -70,14 +89,18 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(readOnly = true)
     public List<BoardResponse> listLatest(Board.Type type) {
         return boardRepository.findByTypeOrderByCreateTimeDesc(type)
-                .stream().map(this::toResponse).collect(Collectors.toList());
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     // 기본 목록 (정렬 미지정)
     @Transactional(readOnly = true)
     public List<BoardResponse> list(Board.Type type) {
         return boardRepository.findByType(type)
-                .stream().map(this::toResponse).collect(Collectors.toList());
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -87,7 +110,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (req.getTitle() != null)   e.setTitle(req.getTitle());
         if (req.getContent() != null) e.setContent(req.getContent());
-        // pin/role 없음, 타입별 추가 필드 업데이트 필요 시 여기 분기
+        // 필요 시 타입별 추가 필드 업데이트 분기
     }
 
     @Override
@@ -97,22 +120,24 @@ public class BoardServiceImpl implements BoardService {
 
     // ====== Mapping ======
     private BoardResponse toResponse(Board e) {
-        Long userId = (e.getUserProfile() != null ? e.getUserProfile().getId() : null);
+        // 우선순위: userProfile.id -> writer 문자열 숫자 변환
         Long writerId = null;
-        try {
-            writerId = (e.getWriter() != null) ? Long.valueOf(e.getWriter()) : null;
-        } catch (NumberFormatException ignore) { }
+        if (e.getUserProfile() != null) {
+            writerId = e.getUserProfile().getId();
+        } else if (e.getWriter() != null) {
+            try {
+                writerId = Long.valueOf(e.getWriter());
+            } catch (NumberFormatException ignore) { /* 표기용 이름일 수 있음 */ }
+        }
 
         return BoardResponse.builder()
                 .id(e.getId())
                 .type(e.getType())
                 .title(e.getTitle())
                 .content(e.getContent())
-                .writerId(userId)
-                .writerId(writerId)
+                .writerId(writerId)                 // ★ 중복 세팅 제거
                 .createTime(e.getCreateTime())
                 .modifyTime(e.getModifyTime())
                 .build();
-        
     }
 }

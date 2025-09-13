@@ -4,6 +4,8 @@ import { postAdd } from "../../api/userApi";
 import TextField from "@mui/material/TextField";
 
 
+
+
     const SignUpFormValues ={
 
         loginId:'',
@@ -17,8 +19,8 @@ import TextField from "@mui/material/TextField";
 
     const JoinComponent = () => {
 
-
-
+       
+        
    
      const {
         control,
@@ -79,14 +81,7 @@ import TextField from "@mui/material/TextField";
 
 
       <div>
-                        <center>
-                            <a href="http://localhost:8080/oauth2/authorization/kakao">
-                            <button>카카오 로그인</button>
-                            
-                            </a>
-
-
-                        </center>
+                  
 
 
             </div>
@@ -241,6 +236,11 @@ import TextField from "@mui/material/TextField";
 
 
             </div>
+
+
+       
+
+            
 
 
       

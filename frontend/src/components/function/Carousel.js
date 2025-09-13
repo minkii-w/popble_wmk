@@ -13,7 +13,7 @@ import img1 from "../../assets/img/ShinChan1.png";
 import img2 from "../../assets/img/Kirby1.jpg";
 import img3 from "../../assets/img/forment1.png";
 import img4 from "../../assets/img/lockscreen.png";
-import img5 from "../../assets/img/1.jpeg";
+import img5 from "../../assets/img/Sanrio MediaArt_1.jpeg";
 
 import "swiper/css";
 import "swiper/css/effect-coverflow";
@@ -21,8 +21,6 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 const Carousel = () => {
-  const images = [img1, img2, img3, img4, img5];
-
   return (
     <div
       style={{
@@ -37,15 +35,10 @@ const Carousel = () => {
         grabCursor={true}
         centeredSlides={true}
         loop={true}     //루프
-        //슬라이드 개수(지정 안하니 가끔 자동으로 움직이지 않고 다음 이미지가 안보이는 오류가 생김)
-        loopedSlides={5}
         slidesPerView="auto"
         autoplay={{     //자동재생
           delay: 2500,  //딜레이 시간
           disableOnInteraction: false,
-          pauseOnMouseEnter: false, //원하면 hover 멈춤 방지
-          stopOnLastSlide: false, //autoplay가 마지막에서 멈추는걸 막아줌
-          waitForTransition: true,  //전환 애니메이션이 끝날때까지 다음 autoplay를 기다리게 함
         }}
         coverflowEffect={{
           rotate: 0, //회전 각도
@@ -68,7 +61,8 @@ const Carousel = () => {
           willChange: "transform", // GPU 최적화
         }}
       >
-        {images.map((img, i) => (
+        {["Shinchan1.png", "kirby1.jpg", "forment1.png", "lockscreen.png", "1.jpeg"].map(
+          (img, i) => (
             <SwiperSlide    //박스 스타일 지정
               key={i}
               style={{
@@ -85,7 +79,7 @@ const Carousel = () => {
               }}
             >
               <img
-                src={img}
+                src={`/img/${img}`}
                 alt={`slide-${i}`}
                 style={{
                   width: "100%",

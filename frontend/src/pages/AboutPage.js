@@ -21,9 +21,9 @@ const AboutPage = () => {
         <BasicMenu>
        
             {/* 이미지 삽입 및 여백 지정 */}
+            {/* 여기서 메인 이미지 바꿔주세요 */}
             <div className="flex justify-center mt-10">
                 <img src={Sanrio} height='400px' width= '400px'></img>
-                {/* <Link to={'/about'}></Link> */}
             </div>
 
             {/* 아이콘 버튼 */}
@@ -70,7 +70,6 @@ const AboutPage = () => {
                 {activeTab === "reserve" && <ReserveInfo />}
                 {activeTab === "review" && <ReviewInfo />}
             </div>
-
         </BasicMenu>
     )
 }

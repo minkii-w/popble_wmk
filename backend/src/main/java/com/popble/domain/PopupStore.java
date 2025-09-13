@@ -87,9 +87,9 @@ public class PopupStore {
 	
 	//최대 인원수
 	private Integer maxCount;
-	
+
 	//예약시간 오전/오후 기업이 나눌수 있게
-	@OneToMany(mappedBy = "popupStore")
+	@OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReservationTime> reservationTimes = new ArrayList<>();
 	
 	//예약
@@ -124,7 +124,6 @@ public class PopupStore {
 	@ManyToOne
 	@JoinColumn(name = "userProfile_id")
 	private UserProfile owner;
-
 	
 	
 	//이미지와 관계 맺기
