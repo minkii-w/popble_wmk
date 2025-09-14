@@ -9,7 +9,7 @@ const About = lazy(() => import("../pages/popup/AboutPage"));
 const popupRouter = () => {
   return [
     {
-      path: "about/:id",
+      path: "detail/:id",
       element: (
         <Suspense fallback={<LoadingComponent />}>
           <About></About>
@@ -17,7 +17,7 @@ const popupRouter = () => {
       ),
     },
     {
-      path: "about",
+      path: "detail",
       element: (
         <Suspense fallback={<LoadingComponent />}>
           <About></About>

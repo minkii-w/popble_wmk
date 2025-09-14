@@ -1,3 +1,6 @@
+//나중에 popup과 병합 여부
+
+
 import { Suspense, lazy } from "react";
 import { Navigate } from "react-router-dom";
 import LoadingComponent from "../components/common/LoadingComponent";

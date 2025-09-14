@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import ModifyComponent from "../../components/board/ModifyComponent"
+import ModifyComponent from "../../components/common/board/ModifyComponent"
 
 const ModifyPage = ( ) =>{
 

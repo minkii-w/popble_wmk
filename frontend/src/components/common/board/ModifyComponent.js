@@ -1,6 +1,6 @@
 // components/board/ModifyComponent.jsx
 import { useEffect, useState } from "react";
-import { getOne, patchOne } from "../../api/BoardApi"; // ✅ 실제 API 연결
+import { getOne, patchOne } from "../../../api/BoardApi"; // ✅ 실제 API 연결
 
 const ModifyComponent = ({ id }) => {
   const [form, setForm] = useState({ title: "", content: "" });
