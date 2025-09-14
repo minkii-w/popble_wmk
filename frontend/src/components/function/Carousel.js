@@ -38,7 +38,6 @@ const Carousel = () => {
         grabCursor={true}
         centeredSlides={true}
         loop={true}     //루프
-        // slidesPerView={3} //항상 3개만 보이도록
         autoplay={{     //자동재생
           delay: 2500,  //딜레이 시간
           disableOnInteraction: false,
@@ -78,6 +77,10 @@ const Carousel = () => {
             slidesPerView: 3,  // 데스크탑: 3개
             centeredSlides: true,
           },
+          maxWidth: "1200px",
+          height: "500px",
+          margin: "0 auto",
+          position: "relative", // 버튼 기준점
         }}
       >
         {images.map((img, i) => (
