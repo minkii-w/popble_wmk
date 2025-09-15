@@ -1,27 +1,49 @@
-import axios  from "axios";
+import axios from "axios";
 import { API_SERVER_HOST } from "./popupstoreApi";
 
-const host = `${API_SERVER_HOST}/api/user`
+const host = `${API_SERVER_HOST}/api/user`;
 
 export const loginPost = async (loginParam) => {
+  const header = { headers: { "Content-Type": "x-www-form-urlencoded" } };
 
-    const header = {headers: {"Content-Type":"x-www-form-urlencoded"}}
+  const form = new FormData();
+  form.append("username", loginParam.loginId);
+  form.append("password", loginParam.password);
 
-    const form = new FormData()
-    form.append("username",loginParam.loginId)
-    form.append("password", loginParam.password)
+  const res = await axios.post(`${host}/login`, form, header);
 
-    const res = await axios.post(`${host}/login`,form, header)
-
-    return res.data
-
-}
+  return res.data;
+};
 
 export const postAdd = async (join) => {
+  const head = { headers: { "Content-Type": "application/json" } };
 
-    const head = {headers: {"Content-Type":"application/json"}}
+  const res = await axios.post(`${host}/join`, join, head);
 
-    const res = await axios.post(`${host}/join`,join, head)
+  return res.data;
+};
 
-    return res.data
-}
+// 전체 회원 조회
+export const getAllUsers = async () => {
+  const res = await axios.get(`${host}/list`);
+  return res.data;
+};
+
+// 특정 회원 조회
+export const getUserById = async (id) => {
+  const res = await axios.get(`${host}/${id}`);
+  return res.data;
+};
+
+//회원 정보 수정
+export const updateUser = async (id, user) => {
+  const head = { headers: { "Content-Type": "application/json" } };
+  const res = await axios.put(`${host}/${id}`, user, head);
+  return res.data;
+};
+
+//회원 탈퇴
+export const deleteUser = async (id) => {
+  const res = await axios.delete(`${host}/${id}`);
+  return res.data;
+};

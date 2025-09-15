@@ -1,6 +1,7 @@
 import { FcDocument } from "react-icons/fc";
 import { useState, useEffect } from "react";
 import { getList } from "../../../api/BoardApi";
+import dayjs from "dayjs";
 
 const MyPagePost = () => {
   const [posts, setPosts] = useState([]);
@@ -32,11 +33,11 @@ const MyPagePost = () => {
         </select>
       </div>
       {/* 게시글 목록 */}
-      <table className="w-full">
+      <table className="w-full font-normal text-sm">
         <thead>
           <tr className="bg-gray-100">
             <th className="p-2 border w-2/12">카테고리</th>
-            <th className="p-2 border w-6/12">제목</th>
+            <th className="p-2 border w-7/12">제목</th>
             <th className="p-2 border w-2/12">작성일</th>
             <th className="p-2 border w-1/12">조회수</th>
           </tr>
@@ -49,8 +50,11 @@ const MyPagePost = () => {
                 <th className="p-2 border cursor-pointer" onClick={() => {}}>
                   {post.title}
                 </th>
-                <th className="p-2 border">{post.createAt}</th>
-                <th className="p-2 border">{post.views}</th>
+                <th className="p-2 border">
+                  {" "}
+                  {dayjs(post.createTime).format("YYYY-MM-DD HH:mm")}
+                </th>
+                <th className="p-2 border">{post.view}</th>
               </tr>
             ))
           ) : (
