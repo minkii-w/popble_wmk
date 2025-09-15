@@ -11,7 +11,7 @@ const MyPageBookmark = () => {
   const [active, setActive] = useState([]);
   const [ended, setEnded] = useState([]);
 
-  const userId = useSelector((state) => state.auth.userId);
+  const userId = useSelector((state) => state.loginSlice.loginId);
 
   //유저를 정해둠 나중에 login들어가면 수정
   // const userId = 4;
