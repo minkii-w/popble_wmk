@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  API_SERVER_HOST,
-  getReservation,
-  postReservation,
-} from "../../api/popupstoreApi";
+import { useParams } from "react-router-dom";
+import { getReservation } from "../../api/popupstoreApi";
 import { useNavigate } from "react-router-dom";
 import ReservationDoComponent from "../../components/popup/reservation/ReservationDoComponent";
 
-const ReservationPage = ({ id }) => {
+const ReservationPage = () => {
+  const {id} = useParams();
   const initState = {
     id: 0,
     storeName: "",
@@ -21,7 +19,8 @@ const ReservationPage = ({ id }) => {
     uploadFileNames: [],
   };
 
-  const host = API_SERVER_HOST;
+
+  const [reservation, setReservation] = useState(null);
 
   const navigate = useNavigate();
 
@@ -42,6 +41,8 @@ const ReservationPage = ({ id }) => {
       alert("날짜와 시간을 선택해주세요");
       return;
     }
+    
+      navigate(`/reservation/check/${id}`,{state:{popupstore, selected}})
   };
 
   useEffect(() => {

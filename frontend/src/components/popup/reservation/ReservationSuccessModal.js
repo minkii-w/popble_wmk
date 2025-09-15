@@ -1,14 +1,8 @@
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 
-const ReservationSuccessModal = () => {
+const ReservationSuccessModal = ({popupstore}) => {
 
-
-    const initState = {
-        id:0,
-        storeName:'',
-        reservationTimes:{am:['','','',''],pm:['','','','']}
-    }
 
     return(
           <div className="flex justify-center">

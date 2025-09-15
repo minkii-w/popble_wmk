@@ -35,7 +35,7 @@ public class Reservation {
 	private Long id;
 	
 	//팝업 번호
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "popup_id")
 	private PopupStore popupStore;
 	
@@ -68,7 +68,9 @@ public class Reservation {
 	private int reservationCount;
 	
 	//예약 성공한 시간
-	private LocalDateTime createTime;
+	private LocalDateTime createDateTime;
+	
+	private String phonenumber;
 	
 	
 }
