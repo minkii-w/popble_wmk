@@ -7,7 +7,7 @@ import CategoryComponent from "./CategoryComponent";
 import SortComponent from "./SortComponent";
 import SearchBar from "../common/SearchBar";
 import { getBookmarkList, isBookmark } from "../../api/bookmarkApi";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import LoadingComponent from "../common/LoadingComponent";
 
 const initState = {
@@ -26,7 +26,8 @@ const initState = {
 const SearchComponent = () => {
   const { page, size, refresh, moveToSearch } = useCustomMove();
   // Todo:로그인 추가되면 지울것
-  const userId = 4;
+  // const userId = 4;
+  const userId = useParams();
 
   //URL읽기
   const location = useLocation();
