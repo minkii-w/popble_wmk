@@ -28,3 +28,10 @@ public class SocialLoginDTO extends SocialLogin {
 	//카카오 프로필 닉네임
 	private String nickname;
 }
+
+
+
+
+
+
+

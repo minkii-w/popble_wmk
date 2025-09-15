@@ -1,5 +1,7 @@
 package com.popble.domain;
 
+import org.hibernate.validator.constraints.UniqueElements;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,6 +43,8 @@ public class SocialLogin {
 	
 	//토큰번호
 	//토큰 번호를 TEXT로 할지 아니면 그냥 String으로 둘지
+	
+
 	@Column(name = "access_token")
 	private String accessToken;
 	

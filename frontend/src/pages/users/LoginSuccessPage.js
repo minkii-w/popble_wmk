@@ -3,12 +3,13 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 
 
+
 const LoginSuccessPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/user", { withCredentials: true })
+      .get("http://localhost:3000/", { withCredentials: true  })
       .then((res) => {
         localStorage.setItem("token", res.data.accessToken);
         
@@ -22,6 +23,7 @@ const LoginSuccessPage = () => {
   }, []);
 
   return <div>로그인 중...</div>;
+
 };
 
 export default LoginSuccessPage;

@@ -68,6 +68,9 @@ public class CustomSecurityConfig {
 	http
     .oauth2Login(oauth2 -> oauth2
     		.failureUrl("/login?error=true")
+    		
+    		
+    		
         .defaultSuccessUrl("/user/success")
         .successHandler(oauth2AuthenticationSuccessHandler)
         .userInfoEndpoint(userInfo -> userInfo
