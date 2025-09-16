@@ -14,7 +14,7 @@ const Reservation = lazy( () => import("../pages/reservation/ReservationPage"))
 const AdBoard = lazy( () => import("../pages/board/AdBoardPage"))
 const Popup = lazy(() => import("../pages/popupStore/PopupIndexPage"));
 const Member = lazy(() => import("../pages/member/IndexPage"));
-const Oauth = lazy( () => import("../pages/users/LoginSuccessPage") )
+const Oauth = lazy( () => import("../pages/users/OauthCallback") )
 
 
 const root = createBrowserRouter([
@@ -64,7 +64,7 @@ const root = createBrowserRouter([
     },
 
     {
-        path:"/oauth2/redirect/:token",
+        path:"/oauth/callback",
         element: <Suspense fallback={Loading}><Oauth></Oauth></Suspense>
 
 

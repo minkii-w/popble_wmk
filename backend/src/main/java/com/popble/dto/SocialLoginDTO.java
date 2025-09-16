@@ -25,13 +25,6 @@ public class SocialLoginDTO extends SocialLogin {
 	private String providerId;
 	//토큰번호
 	private String accessToken;
-	//카카오 프로필 닉네임
+	//닉네임
 	private String nickname;
 }
-
-
-
-
-
-
-

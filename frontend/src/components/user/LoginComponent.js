@@ -1,7 +1,8 @@
 import { useState } from "react";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import KakaoLoginButton from "../../pages/users/KakaoLoginButton";
-
+import NaverLoginButton from "../../pages/users/NaverLoginButton"
+import GoogleLoginButton from "../../pages/users/GoogleLoginButton"
 import React from "react";
 
 
@@ -106,6 +107,9 @@ const LoginComponent = () => {
                 <div>
              
         <KakaoLoginButton/>
+        <NaverLoginButton/>
+        <GoogleLoginButton/>
+        
 
 
                 </div>

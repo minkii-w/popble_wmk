@@ -75,8 +75,8 @@ import TextField from "@mui/material/TextField";
 
 
             
-           
-        <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+           <div>
+     
 
 
 
@@ -88,9 +88,32 @@ import TextField from "@mui/material/TextField";
 
 
             <div className="flex justify-center">
-                <div className="text-4xl m-4 p-4 font-extrabold text-blue-500">SIGN UP</div>
-            </div>
+        
+               <div className="
+                   relative
+                   top-[-200px]
+               w-[30em]
+                h-40
+                 bg-primaryColor
+                  rounded-md
+             
+                     flex items-center justify-center
+                     mb-[5em]
+                     ">
+      
+                 </div>
 
+
+            </div>
+        <div
+            className="
+              justify-center
+            w-[40em]
+            h-[5em]
+
+            "
+        
+        >
             <Controller
          name="name"
          control={control}
@@ -107,8 +130,35 @@ import TextField from "@mui/material/TextField";
          {...field}
          label="닉네임"
          required
+         
          fullWidth
-         variant="outlined"
+         variant="standard"
+
+            InputProps={{
+                disableUnderline:true,
+            }}
+
+          
+
+
+            sx={{
+
+                 width: '450px',  
+
+                top: '-505px',
+               // left: '-30px',
+                right: '-200px',
+                
+                border: "none",
+                
+                fontSize: '16px',
+                lineHeight: 10,
+         
+                  backgroundColor: '#e5e5e5'
+               
+            }}
+
+
          onChange={ (e) => {
              field.onChange(e);
              trigger('name'); 
@@ -142,14 +192,34 @@ import TextField from "@mui/material/TextField";
             render={({field}) => (
         
             <TextField
-            {...field}
-            label="아이디"
-            required
-            fullWidth
-            variant="outlined"
-            onChange={ (e) => {
-                field.onChange(e);
-                trigger('loginId');
+           {...field}
+         label="이메일"
+         required
+         
+         fullWidth
+         variant="standard"
+
+            InputProps={{
+                disableUnderline:true,
+            }}
+
+          
+
+
+            sx={{
+
+                 width: '450px',  
+
+                top: '-505px',
+               // left: '-30px',
+                right: '-200px',
+                
+                border: "none",
+                
+                fontSize: '16px',
+                lineHeight: 10,
+         
+                  backgroundColor: '#e5e5e5'
      
             }}
              helperText={errors.loginId && errors.loginId.message}
@@ -176,7 +246,7 @@ import TextField from "@mui/material/TextField";
                     label="비밀번호"
                     required
                     fullWidth
-                    variant="outlined"
+                    variant="standard"
                     onChange={ (e) => {
                         field.onChange(e);
                         trigger('password');
@@ -213,7 +283,7 @@ import TextField from "@mui/material/TextField";
                     label="이메일"
                     required
                     fullWidth
-                    variant="outlined"
+                    variant="standard"
                     placeholder="example@email.com"
                     
                     error={!!errors.email}
@@ -225,12 +295,24 @@ import TextField from "@mui/material/TextField";
                 />
 
 
+                   </div>
+
+
+
                      <div className="flex justify-center">
                 <div className="relative mb-4 flex justify-center" >
                     <div className="w-2/5 p-6 flex justify-center font-bold">
-                    <button className="rounded p-4 w-36 bg-blue-500 text-xl text-white " onClick={handleSubmit(onSubmit)}>
-                        가입
-                    </button>
+                     <button className="
+               w-[60em]
+                h-[4em]
+                 bg-primaryColor
+                  rounded-md
+             
+                     flex items-center justify-center
+                     mb-[5em]
+                     ">
+      
+                 </button>
                     </div>
                 </div>
 
@@ -245,7 +327,7 @@ import TextField from "@mui/material/TextField";
 
       
 
-        </div>
+      </div>
 
 
                         

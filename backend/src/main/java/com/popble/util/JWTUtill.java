@@ -44,7 +44,7 @@ public class JWTUtill {
 	
 	public String makeRedirectUrl(String jwt) {
 		
-		return "http://localhost:3000/oauth2/redirect?token=" +jwt;
+		return "http://localhost:3000/oauth/callback?token=" +jwt;
 	}
 	
 	
