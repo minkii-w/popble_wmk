@@ -3,6 +3,8 @@ import { Navigate } from "react-router-dom";
 
 const Loading = <div>Loading...</div>;
 
+const AllBoardList  = lazy(() => import("../pages/boards/AllBoardList")); // ✅ 전체 글
+
 const GeneralList   = lazy(() => import("../pages/boards/general/GeneralList"));
 const GeneralDetail = lazy(() => import("../pages/boards/general/GeneralDetail"));
 const QnaList       = lazy(() => import("../pages/boards/qna/QnaList"));
@@ -12,14 +14,18 @@ const ReviewDetail  = lazy(() => import("../pages/boards/review/ReviewDetail"));
 const NoticeList    = lazy(() => import("../pages/boards/notice/NoticeList"));
 const NoticeDetail  = lazy(() => import("../pages/boards/notice/NoticeDetail"));
 const AdList        = lazy(() => import("../pages/boards/ad/AdList"));
-const AdDetail      = lazy(() => import("../pages/boards/ad/AdDetail"))
+const AdDetail      = lazy(() => import("../pages/boards/ad/AdDetail"));
 
-const WritePage = lazy(() => import("../pages/board/write/WritePage"));
-const ReadPage  = lazy(() => import("../pages/board/ReadPage"));
-const ModifyPage = lazy(() => import ("../pages/board/ModifyPage"));
+const WritePage     = lazy(() => import("../pages/board/write/WritePage"));
+const ReadPage      = lazy(() => import("../pages/board/ReadPage"));
+const ModifyPage    = lazy(() => import("../pages/board/ModifyPage"));
 
 const BoardsRouter = () => [
-  { index: true, element: <Navigate replace to="general" /> },
+  // ✅ 기본 진입을 전체 글로
+  { index: true, element: <Navigate replace to="all" /> },
+
+  // 전체 글
+  { path: "all", element: <Suspense fallback={Loading}><AllBoardList /></Suspense> },
 
   { path: "general",     element: <Suspense fallback={Loading}><GeneralList /></Suspense> },
   { path: "general/:id", element: <Suspense fallback={Loading}><GeneralDetail /></Suspense> },
