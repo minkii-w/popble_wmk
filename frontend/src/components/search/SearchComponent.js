@@ -9,6 +9,7 @@ import SearchBar from "../common/SearchBar";
 import { getBookmarkList, isBookmark } from "../../api/bookmarkApi";
 import { useLocation, useParams } from "react-router-dom";
 import LoadingComponent from "../common/LoadingComponent";
+import { useSelector } from "react-redux";
 
 const initState = {
   dtoList: [],
@@ -25,9 +26,8 @@ const initState = {
 
 const SearchComponent = () => {
   const { page, size, refresh, moveToSearch } = useCustomMove();
-  // Todo:로그인 추가되면 지울것
-  // const userId = 4;
-  const userId = useParams();
+
+  const userId = useSelector((state) => state.loginSlice);
 
   //URL읽기
   const location = useLocation();
@@ -68,12 +68,17 @@ const SearchComponent = () => {
 
   //북마크 불러오기
   const fetchBookmarks = useCallback(async () => {
+    if (!userId || userId.id) {
+      setBookmarkIds([]);
+      return;
+    }
     try {
       const data = await getBookmarkList(userId);
       const items = Array.isArray(data) ? data : data.content || [];
       setBookmarkIds(items.map((b) => b.id));
     } catch (e) {
       console.error("북마크 조회 실패", e);
+      setBookmarkIds([]);
     }
   }, [userId]);
 
@@ -158,7 +163,10 @@ const SearchComponent = () => {
             {serverData.dtoList.map((item) => (
               <PopupCard
                 key={item.id}
-                item={{ ...item, isBookmark: bookmarkIds.includes(item.id) }}
+                item={{
+                  ...item,
+                  isBookmark: userId && bookmarkIds.includes(item.id),
+                }}
               ></PopupCard>
             ))}
           </div>

@@ -9,9 +9,8 @@ const MyPageEdit = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.loginSlice);
 
-  const [userData, setUserData] = useState(null);
   const [form, setForm] = useState({
     nickname: "",
     password: "",
@@ -19,6 +18,8 @@ const MyPageEdit = () => {
     email: "",
   });
   const [isSocial, setIsSocial] = useState(false);
+
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -73,6 +74,18 @@ const MyPageEdit = () => {
     }
   };
 
+  // 프로필 이미지 관리
+  const handleImageChange = async (e) => {
+    const file = e.target.value.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="flex flex-col w-[700px]">
       {/* 헤더 */}
@@ -85,13 +98,30 @@ const MyPageEdit = () => {
         {/* 프로필사진 추가 편집 */}
         <div className="flex flex-col items-center space-y-6 mb-8">
           {/* 원형 */}
-          <div className="w-20 h-20 rounded-full border-2 border-gray-400 flex items-center">
-            {/* Todo:나중에 이미지 들어올자리 */}
-            {/* <img src></img> */}
+          <div className="w-20 h-20 rounded-full border-2 border-gray-400 flex overflow-hidden items-center justify-center">
+            {profileImage ? (
+              <img
+                src="{profileImage}"
+                alt="프로필사진"
+                className="object-cover w-full h-full"
+              ></img>
+            ) : (
+              <span className="text-gray-400 text-sm">프로필 사진</span>
+            )}
           </div>
-          <button className="px-3 py-1 rounded-xl border-2 border-gray-400">
+          <input
+            type="file"
+            accept="image/*"
+            onCanPlay={handleImageChange}
+            className="hidden"
+            id="profileImageUpload"
+          ></input>
+          <label
+            className="px-3 py-1 rounded-xl border-2 border-gray-400 cursor-pointer"
+            htmlFor="profileImageUpload"
+          >
             편집
-          </button>
+          </label>
         </div>
         {/* 내용 */}
         <div className="space-y-4">

@@ -4,6 +4,7 @@ import PopupCard from "../../search/PopupCard";
 import { FaBookmark } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PopupRecommendComponent from "../../popup/recommend/PopupRecommendComponent";
 
 const MyPageBookmark = () => {
   const [bookmarks, setBookmarks] = useState([]);
