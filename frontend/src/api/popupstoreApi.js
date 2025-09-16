@@ -46,11 +46,32 @@ export const getOne = async (id) => {
 };
 
 //팝업스토어 예약 등록
-export const postReservation = async (payload) => {
-const res = await axios.post(`${prefix}/reservation`,payload,{
-  headers:{
-    "Content-Type":"application/json"
-  }
-})
+// export const postReservation = async (payload) => {
+// const res = await axios.post(`${prefix}/reservation`,payload,{
+//   headers:{
+//     "Content-Type":"application/json"
+//   }
+// })
+//   return res.data;
+// };
+
+
+
+//팝업스토어 예약 등록
+export const postReservation = async ({ popupStoreId, userProfileId, date, time, count }) => {
+  
+  const payload = {
+    popupStoreId: popupStoreId,  
+    userProfileId: userProfileId,              
+    userName: "",                        
+    reservationCount: count,
+    date: date,
+    time: time
+  };
+
+  const res = await axios.post(`${prefix}/reservation`, payload, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+
   return res.data;
 };

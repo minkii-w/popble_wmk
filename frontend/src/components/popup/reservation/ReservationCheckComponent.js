@@ -6,8 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { postReservation } from "../../../api/popupstoreApi"; 
 import ReservationSuccessModal from "./ReservationSuccessModal";
 import TossPayment from "../reservation/TossPayment";
+import axios from "axios";
 
-const ReservationCheckComponent = ({popupStore, selected}) => {
+const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
+    console.log("reservationCheckComponenet userProfileID: ", userProfileId)
+    console.log("popupstore :", popupStore)
+    console.log("selected :", selected)
     
     const [userName, setUserName] = useState("");
 
@@ -20,9 +24,25 @@ const ReservationCheckComponent = ({popupStore, selected}) => {
     
     
 
-    const totalPrice = Number(popupStore.price)* Number(selected.count)
+    const totalPrice = Number(popupStore?.price)* Number(selected.count)
 
     const navigate = useNavigate();
+
+
+    useEffect( () => {
+        if(!userProfileId) return;
+        console.log("useEffect 실행됨, userID:", userProfileId)
+        axios.get(`http://localhost:8080/api/userProfile/${userProfileId}`)
+        .then(res => {
+            console.log("유저프로필데이터:",res.data)
+            const userData = res.data;
+            setUserName(userData.username)
+            setPhonenumber(userData.phonenumber)
+        })
+        .catch(err=> {
+            console.error("유저정보가져오기실패", err)
+        })
+    },[userProfileId])
 
 
 
@@ -37,17 +57,21 @@ const ReservationCheckComponent = ({popupStore, selected}) => {
             return;
         }
         try{
+            const dateStr = selected.date.toISOString().split('T')[0]; 
+            const timeStr = selected.time.padStart(5,'0');
+            const reservationTime = `${dateStr}T${timeStr}`;
 
             // 임의로 넣은 데이터 수정할것
             const payload ={
-            popupStoreId:popupStore?.id,
-            userId:1,
-            userName: userName || "우민경",
-            phonenumber:phonenumber || "010-1111-1111",
-            reservationCount: selected?.count,
-            reservationTime: selected?.time?selected.time.slice(0,5) :"12:00"
+            popupStoreId:popupStore.id,
+            userProfileId:userProfileId,
+            userName: userName,
+            phonenumber:phonenumber,
+            reservationCount: Number(selected.count),
+            reservationTime: reservationTime
         }
-
+        console.log("팝업스토어id타입확인: ",typeof popupStore.id, popupStore.id)
+        console.log("userProfileID타입확인 :", typeof userProfileId, userProfileId)
         console.log("전송할 payload :" , JSON.stringify(payload, null, 2))
 
         const res = await postReservation(payload);
@@ -60,15 +84,9 @@ const ReservationCheckComponent = ({popupStore, selected}) => {
     }
 }
 
-useEffect (() => {
-    if(success){
-        console.log("토스위젯준비완료",totalPrice)
-    }
-},[success,totalPrice])
-
     return(
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
-            {success && <ReservationSuccessModal popupStore={popupStore}/>}
+            {success && <ReservationSuccessModal popupStoreId={popupStore}/>}
             <div className="flex justify-center">
                 <div className="mt-10 mb-10 w-4/5 border rounded-2xl border-gray-200">
                     <div className="text-sm m-1 p-2">id{popupStore.id}</div>
@@ -86,7 +104,7 @@ useEffect (() => {
                     <div className="text-xl p-2 w-1/5 m-5">일정&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{selected.date?.toLocaleDateString()}</div>
                     <div className="text-xl p-2 w-1/5 m-5">인원&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{selected.count}</div>
                     <div className="text-xl p-2 w-1/5 m-5">가격&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    {popupStore.price > 0 ? `${popupStore.price*selected.count}원`:'무 료'}</div>
+                    {popupStore?.price > 0 ? `${popupStore.price*selected.count}원`:'무 료'}</div>
                 </div>
             </div>
 
@@ -94,9 +112,9 @@ useEffect (() => {
 
             <div className="justify-left">
                 <div className="text-3xl m-3">예약자 정보</div><br/>
-                <div className="text-2xl m-5">예약자 이름{userName || "우민경"}</div>
+                <div className="text-2xl m-5">예약자 이름{userName}</div>
                 <div className="flex items-center justify-between w-full p-2">
-                    <span>연락처{phonenumber || "010-1111-1111"}</span>
+                    <span>연락처{phonenumber}</span>
                     <button
                     type="button"
                     className="border border-gray-300 rounded px-3 mr-10 bg-backgroundColor">

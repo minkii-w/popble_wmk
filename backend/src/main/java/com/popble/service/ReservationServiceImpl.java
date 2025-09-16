@@ -30,6 +30,7 @@ public class ReservationServiceImpl implements ReservationService{
 	private final ReservationRepository reservationRepository;
 	
 	private final ReservationTimeRepository reservationTimeRepository;
+	
 
   
 	
@@ -46,6 +47,15 @@ public class ReservationServiceImpl implements ReservationService{
                 .map(this::entityToDto)
                 .orElse(null);
     }
+    
+    @Override
+    public List<ReservationDTO> getByUserProfile(Long userProfileId){
+    	return reservationRepository.findByUserProfileId(userProfileId)
+    			.stream()
+    			.map(this::entityToDto)
+    			.collect(Collectors.toList());
+    }
+    
 
     @Override
     public List<ReservationDTO> getByPopupStore(Long popupStoreId) {
@@ -60,34 +70,37 @@ public class ReservationServiceImpl implements ReservationService{
         reservationRepository.deleteById(id);
     }
 
+    
     private Reservation dtoToEntity(ReservationDTO dto) {
+    	
+    	System.out.println("DTO userId: " + dto.getUserProfileId());
     	
     	PopupStore popupStore = popupStoreRepository.findById(dto.getPopupStoreId())
     	        .orElseThrow(() -> new IllegalArgumentException("Invalid popupStoreId"));
 
-    	    UserProfile user = userProfileRepository.findById(dto.getUserId())
-    	        .orElseThrow(() -> new IllegalArgumentException("Invalid userId"));
+    	    UserProfile userProfile = userProfileRepository.findById(dto.getUserProfileId())
+    	        .orElseThrow(() -> new IllegalArgumentException("Invalid userProfileId"));
 
     	    ReservationTime reservationTime = reservationTimeRepository.findByTime(dto.getReservationTime())
     	        .orElseThrow(() -> new IllegalArgumentException("Invalid reservationTime"));
     	    
         return Reservation.builder()
         		.id(dto.getId())
-                .popupStore(popupStoreRepository.findById(dto.getPopupStoreId())
-                		.orElseThrow(()-> new IllegalArgumentException("Invalid popupstoreId")))
-                .userProfile(userProfileRepository.findById(dto.getUserId())
-                		.orElseThrow(()-> new IllegalArgumentException("Invalid userId")))    
+        		.popupStore(popupStore)
+        		.userProfile(userProfile)
                 .reservationCount(dto.getReservationCount())
                 .createDateTime(dto.getCreateDateTime())
                 .phonenumber(dto.getPhonenumber())
                 .build();
     }
 
+    
+    
     private ReservationDTO entityToDto(Reservation entity) {
         return ReservationDTO.builder()
                 .id(entity.getId())
                 .popupStoreId(entity.getPopupStore().getId())
-                .userId(entity.getUserProfile().getId())
+                .userProfileId(entity.getUserProfile().getId())
                 .reservationCount(entity.getReservationCount())
                 .createDateTime(entity.getCreateDateTime())
                 .phonenumber(entity.getPhonenumber())

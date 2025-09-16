@@ -19,7 +19,8 @@ public class ReservationDTO {
 	
 	private Long popupStoreId;
 	
-	private Long userId;
+	private Long userProfileId;
+	
 	
 	private String userName;
 	
@@ -30,6 +31,7 @@ public class ReservationDTO {
 	private String phonenumber;
 	
 	private int reservationCount;
+	
 	
 	
 

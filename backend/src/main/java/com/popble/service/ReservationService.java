@@ -18,5 +18,7 @@ public interface ReservationService {
 	
 	//예약 취소
 	void cancel(Long id);
-
+	
+	//유저프로필 조회
+	List<ReservationDTO> getByUserProfile(Long userProfiledId);
 }

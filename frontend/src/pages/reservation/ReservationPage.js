@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getReservation } from "../../api/popupstoreApi";
-import { useNavigate } from "react-router-dom";
-import ReservationDoComponent from "../../components/popup/reservation/ReservationDoComponent";
+import ReservationDoComponent from "../../components/popup/reservation/ReservationDoComponent"
+import { getUserById } from "../../api/userApi";
+
+
+const API_SERVER_HOST = "http://localhost:8080";
+const host = `${API_SERVER_HOST}/api/userProfile`;
 
 const ReservationPage = () => {
+
   const {id} = useParams();
+  const userProfileId = 1;
+  
   const initState = {
     id: 0,
     storeName: "",
@@ -20,33 +27,20 @@ const ReservationPage = () => {
   };
 
 
-  const [reservation, setReservation] = useState(null);
-
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   const [popupstore, setPopupstore] = useState(initState);
 
   //날짜, 시간 선택
   const [selected, setSelected] = useState({ date: null, time: null });
 
-  //결과확인모달
-  const [fetching, setFetching] = useState(false);
+
 
   const handleSelect = ({ date, time, count }) => {
     setSelected({ date, time, count });
   };
 
-  const handleReservation = async () => {
-    if (!selected.date || !selected.time) {
-      alert("날짜와 시간을 선택해주세요");
-      return;
-    }
-    
-      navigate(`/reservation/check/${id}`,{state:{popupstore, selected}})
-  };
-
   useEffect(() => {
-    console.log("reservation id :", id);
 
     getReservation(id).then((data) => {
       const am = [];
@@ -57,35 +51,33 @@ const ReservationPage = () => {
         else pm.push(rt.startTime);
       });
 
-      console.log(data);
       setPopupstore({
         ...data,
         reservationTimes: { am, pm },
       });
     });
-  }, [id]);
+
+    console.log("호출URL:", `${host}/${userProfileId}`)
+    getUserById(userProfileId).then((userData) => {
+      console.log("유저데이터:",userData)
+      setUser(userData)
+    })
+  }, []);
 
   return (
     <div>
       <h2 className="text-xl font-bold mb-2">예약</h2>
-      <div>
+      
+        {user&&(
         <ReservationDoComponent
           offDays={[0]}
           reservationTimes={popupstore.reservationTimes || { am: [], pm: [] }}
           onSelect={handleSelect}
           maxCount={popupstore.maxCount}
           price={popupstore.price}
+          userProfileId={user?.userProfile.id}
         />
-
-        <div className="flex justify-end">
-          <button
-            onClick={handleReservation}
-            className="py-2 w-2/5 bg-primaryColor text-xl rounded"
-          >
-            다음
-          </button>
-        </div>
-      </div>
+        )}
     </div>
   );
 };

@@ -9,9 +9,11 @@ import { getReservation } from "../../../api/popupstoreApi";
 import ReservationCheckComponent from "./ReservationCheckComponent";
 
 
-const ReservaionDoComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onSelect, maxCount=10, price=0}) => {
+// const ReservaionDoComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onSelect, maxCount=10, price=0, userId}) => {
+    const ReservaionDoComponent = ({ offDays=[], reservationTimes, onSelect, maxCount, price, userProfileId }) => {
 
     const {id} = useParams();
+    
 
     const initState = {
     id:0,
@@ -25,12 +27,14 @@ const ReservaionDoComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onS
     price:0,
     uploadFileNames:[]
     }
+    
     //다음버튼 누르면 화면이동
     const [clickNext, setClickNext] = useState(false);
 
     const [popupStore, setPopupStore] = useState(initState)
 
-    const [selected, setSelected] = useState({date:null, time:null})
+    // const [selected, setSelected] = useState({date:null, time:null})
+    const [selected, setSelected] = useState({ date: null, time: null, count: null });
 
     //예약이 가능한 날짜 (현재날짜)
     const [startDate] = useState(new Date());
@@ -189,9 +193,11 @@ const ReservaionDoComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onS
                     </div>
                     </div>
                 ):(
+                    
                     <ReservationCheckComponent
                     popupStore={popupStore}
-                    selected={{date:selectDate, time:selectTime, count}}/>
+                    selected={{date:selectDate, time:selectTime, count}}
+                    userProfileId={userProfileId}/>
         
         )
 }

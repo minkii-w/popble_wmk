@@ -41,7 +41,7 @@ public class Reservation {
 	
 	//회원 번호
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "userProfile_id")
 	private UserProfile userProfile;
 	
 	//예약번호(이거 난수로 만들어야함 20250829001)이런식으로
