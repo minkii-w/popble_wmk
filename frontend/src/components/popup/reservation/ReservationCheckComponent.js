@@ -1,7 +1,6 @@
 
 
 import { useState, useEffect } from "react";
-
 import { useNavigate } from "react-router-dom";
 import { postReservation } from "../../../api/popupstoreApi"; 
 import ReservationSuccessModal from "./ReservationSuccessModal";
@@ -9,9 +8,12 @@ import TossPayment from "../reservation/TossPayment";
 import axios from "axios";
 
 const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
+
     console.log("reservationCheckComponenet userProfileID: ", userProfileId)
     console.log("popupstore :", popupStore)
     console.log("selected :", selected)
+
+
     
     const [userName, setUserName] = useState("");
 
@@ -21,6 +23,9 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
 
     // 토스로 넘길 예약성공 데이터 id
     const [reservationId, setReservationId] = useState(null);
+
+    //토스 결제 완료 여부
+    const [tossCompleted, setTossCompleted] = useState(null);
     
     
 
@@ -45,7 +50,7 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
     },[userProfileId])
 
 
-
+    //예약 성공 할 때의 상태를 변환함
     const handleReservationSuccess = async() => {
         console.log("select확인 :", selected)
 
@@ -61,7 +66,6 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
             const timeStr = selected.time.padStart(5,'0');
             const reservationTime = `${dateStr}T${timeStr}`;
 
-            // 임의로 넣은 데이터 수정할것
             const payload ={
             popupStoreId:popupStore.id,
             userProfileId:userProfileId,
@@ -70,13 +74,14 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
             reservationCount: Number(selected.count),
             reservationTime: reservationTime
         }
-        console.log("팝업스토어id타입확인: ",typeof popupStore.id, popupStore.id)
-        console.log("userProfileID타입확인 :", typeof userProfileId, userProfileId)
-        console.log("전송할 payload :" , JSON.stringify(payload, null, 2))
+
+        // console.log("팝업스토어id타입확인: ",typeof popupStore.id, popupStore.id)
+        // console.log("userProfileID타입확인 :", typeof userProfileId, userProfileId)
+        // console.log("전송할 payload :" , JSON.stringify(payload, null, 2))
 
         const res = await postReservation(payload);
         setReservationId(res.id);
-        setSuccess(true);
+        // setSuccess(true);
 
     }catch(err){
         console.error(err);
@@ -84,9 +89,20 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
     }
 }
 
+//결제 완료했을 때 상태 변환함
+    const handleTossComplete = () => {
+        setTossCompleted(true);
+
+    }
+
     return(
-        <div className="border-2 border-sky-200 mt-10 m-2 p-4">
-            {success && <ReservationSuccessModal popupStoreId={popupStore}/>}
+        <>
+        {tossCompleted &&(
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <ReservationSuccessModal popupStore={popupStore}/>
+        </div>
+        )}
+
             <div className="flex justify-center">
                 <div className="mt-10 mb-10 w-4/5 border rounded-2xl border-gray-200">
                     <div className="text-sm m-1 p-2">id{popupStore.id}</div>
@@ -130,24 +146,24 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
                         onClick={()=>navigate(-1)}>이 전
                         </button>
 
-                        {!success?(
+                        {reservationId?(
+                            <div className="w-full mt-4">
+                                <TossPayment
+                                price = {Number(popupStore.price)*Number(selected.count)}
+                                ordername={popupStore.storeName}
+                                onSuccess={handleTossComplete}></TossPayment>
+                            </div>
+                      
+                        ):( 
                             <button 
                             type="button"
                             className="rounded p-2 w-4/5 bg-primaryColor text-xl text-black"
                             onClick={handleReservationSuccess}>
                         예약하기
                         </button>
-
-                        ):(
-                            //예약 성공하면 토스 위젯 띄우기
-                            <div className="w-full mt-4">
-                                <TossPayment
-                                price = {Number(popupStore.price)*Number(selected.count)}
-                                ordername={popupStore.storeName}></TossPayment>
-                            </div>
                         )}
                 </div>
-        </div>
+            </>
 
     );
 }

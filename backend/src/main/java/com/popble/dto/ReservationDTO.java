@@ -1,5 +1,6 @@
 package com.popble.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -31,6 +32,12 @@ public class ReservationDTO {
 	private String phonenumber;
 	
 	private int reservationCount;
+	
+	private LocalDate reservationDate;
+	
+	private String startTime;
+	
+	private String endTime;
 	
 	
 	

@@ -1,6 +1,7 @@
 
 package com.popble.domain;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,5 +66,7 @@ public class ReservationTime {
 	private List<Reservation> reservations = new ArrayList<>();
 	
 	private String time;
+	
+	private LocalDate date;
 }
 

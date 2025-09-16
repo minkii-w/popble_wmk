@@ -69,28 +69,32 @@ import ReservationCheckComponent from "./ReservationCheckComponent";
 
 
     useEffect( () => {
-        setSelectTime("")
-        setCount(null)
 
-        if(id){
-            console.log("getReservation 호출, id=", id)
-            getReservation(id).then(data => {
-                console.log("응답데이터", data)
+         if (!id) return;
 
-            const am = [];
-            const pm = [];
-            data.reservationTimes.forEach(rt => {
-                const hour = parseInt(rt.startTime.split(":")[0])
-                if(hour<12)am.push(rt.startTime)
-                    else pm.push(rt.startTime)
-            })
-            setPopupStore({
-                ...data,
-                reservationTimes:{am,pm}
-            })
-        })
-    }
-    },[id, selectDate]);
+    getReservation(id).then(data => {
+        console.log("응답데이터", data);
+
+        // 전체 시간 배열을 그대로 저장
+        const reservationTimesRaw = data.reservationTimes || [];
+
+        // 초기 선택 날짜 없으면 전체 시간 처리
+        const am = [];
+        const pm = [];
+
+        // 날짜 선택이 있으면 필터링
+        reservationTimesRaw.forEach(rt => {
+                    const hour = parseInt(rt.startTime.split(":")[0], 10);
+                    if (hour < 12) am.push(rt.startTime);
+                    else pm.push(rt.startTime);
+                });
+        setPopupStore({
+            ...data,
+            reservationTimesRaw,
+            reservationTimes: { am, pm }
+        });
+    });
+}, [id]);
 
     const handleClickTime = (time) => {
         setSelectTime(time);

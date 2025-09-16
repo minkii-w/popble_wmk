@@ -19,7 +19,7 @@ const ReservationPage = () => {
     address: "",
     startDate: "",
     endDate: "",
-    reservationTimes: { am: ["", "", "", ""], pm: ["", "", "", ""] },
+    reservationTimes: [],
     maxCount: null,
     desc: "",
     price: 0,
@@ -45,11 +45,18 @@ const ReservationPage = () => {
     getReservation(id).then((data) => {
       const am = [];
       const pm = [];
+      
+      
+      if(Array.isArray(data.reservationTimes)){
+      
       data.reservationTimes.forEach((rt) => {
         const hour = parseInt(rt.startTime.split(":")[0]);
         if (hour < 12) am.push(rt.startTime);
         else pm.push(rt.startTime);
-      });
+      })
+    }else{
+      console.warn("reservation없음 :",data)
+    }
 
       setPopupstore({
         ...data,
@@ -75,7 +82,8 @@ const ReservationPage = () => {
           onSelect={handleSelect}
           maxCount={popupstore.maxCount}
           price={popupstore.price}
-          userProfileId={user?.userProfile.id}
+          userProfileId={user.id}
+        
         />
         )}
     </div>

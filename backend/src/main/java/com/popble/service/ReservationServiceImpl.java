@@ -81,13 +81,19 @@ public class ReservationServiceImpl implements ReservationService{
     	    UserProfile userProfile = userProfileRepository.findById(dto.getUserProfileId())
     	        .orElseThrow(() -> new IllegalArgumentException("Invalid userProfileId"));
 
-    	    ReservationTime reservationTime = reservationTimeRepository.findByTime(dto.getReservationTime())
-    	        .orElseThrow(() -> new IllegalArgumentException("Invalid reservationTime"));
+    	    List<ReservationTime> reservationTimes = reservationTimeRepository.findAllByTime(dto.getReservationTime());
+    	    
+    	    if(reservationTimes.isEmpty()) {
+    	    	throw new IllegalArgumentException("Invalid reservationTime");
+    	    }
+    	    
+    	    ReservationTime reservationTime = reservationTimes.get(0);
     	    
         return Reservation.builder()
         		.id(dto.getId())
         		.popupStore(popupStore)
         		.userProfile(userProfile)
+        		.reservationTime(reservationTime)
                 .reservationCount(dto.getReservationCount())
                 .createDateTime(dto.getCreateDateTime())
                 .phonenumber(dto.getPhonenumber())
@@ -97,6 +103,9 @@ public class ReservationServiceImpl implements ReservationService{
     
     
     private ReservationDTO entityToDto(Reservation entity) {
+    	
+    	ReservationTime reservationTime = entity.getReservationTime();
+    	
         return ReservationDTO.builder()
                 .id(entity.getId())
                 .popupStoreId(entity.getPopupStore().getId())
@@ -104,6 +113,9 @@ public class ReservationServiceImpl implements ReservationService{
                 .reservationCount(entity.getReservationCount())
                 .createDateTime(entity.getCreateDateTime())
                 .phonenumber(entity.getPhonenumber())
+                .reservationDate(entity.getReservationDate())
+                .startTime(reservationTime != null? reservationTime.getStartTime().toString():null)
+                .endTime(reservationTime != null? reservationTime.getEndTime().toString():null)
                 .build();
     }
 
