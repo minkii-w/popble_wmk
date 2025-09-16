@@ -1,62 +1,62 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import {loginPost} from "../api/userApi"
-import { setCookie, getCookie, removeCookie } from "../utill/cookieUtill"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { loginPost } from "../api/userApi";
+import { setCookie, getCookie, removeCookie } from "../utill/cookieUtill";
 
 const initState = {
-    loginId:''
-}
+  loginId: "",
+};
 
 const loadUserCookie = () => {
-    const userInfo = getCookie("user")
+  const userInfo = getCookie("user");
 
-    if(userInfo && userInfo.name){
-        userInfo.name = decodeURIComponent(userInfo.name)
-    }
-    return userInfo
-}
+  if (userInfo && userInfo.name) {
+    userInfo.name = decodeURIComponent(userInfo.name);
+  }
+  return userInfo;
+};
 
-export const loginPostAsync = createAsyncThunk('loginPostAsync', (param) => {
-    return loginPost(param)
-})
+export const loginPostAsync = createAsyncThunk("loginPostAsync", (param) => {
+  return loginPost(param);
+});
 
 const loginSlice = createSlice({
-    name:'LoginSlice',
-    initialState:loadUserCookie() || initState,
+  name: "LoginSlice",
+  initialState: loadUserCookie() || initState,
 
-    reducers: {
-        login:(state, action) => {
-            console.log("login.........")
+  reducers: {
+    login: (state, action) => {
+      console.log("login.........");
 
-            const data = action.payload
+      const data = action.payload;
 
-            return {loginId:data.loginId}
-        },
-
-
+      return { loginId: data.loginId };
     },
 
+    logout: (state, action) => {
+      removeCookie("user");
+      return { ...initState };
+    },
+  },
 
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginPostAsync.fulfilled, (state, action) => {
+        console.log("fulfilled");
 
+        const payload = action.payload;
+        if (!payload.error) {
+          setCookie("user", JSON.stringify(payload), 1);
+        }
 
-    extraReducers:(builder) => {
-        builder.addCase(loginPostAsync.fulfilled, (state,action) => {
-            console.log("fulfilled")
+        return payload;
+      })
 
-            const payload = action.payload
-            if( !payload.error){
-                setCookie("user",JSON.stringify(payload),1)
-            }
+      .addCase(loginPostAsync.pending, (state, action) => {
+        console.log("pending");
+      });
+  },
+});
 
-            return payload
+export const { login, logout } = loginSlice.actions;
 
-        })
-
-        .addCase(loginPostAsync.pending, (state, action) => {
-            console.log("pending")
-        })
-    }
-})
-
-export const {login} = loginSlice.actions
-
-export default loginSlice.reducer
+export default loginSlice.reducer;

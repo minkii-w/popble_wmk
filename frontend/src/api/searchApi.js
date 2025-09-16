@@ -1,4 +1,5 @@
 import axios from "axios";
+import jwtAxios from "../utill/jwtUtill";
 import { API_SERVER_HOST } from "./popupstoreApi";
 
 const prefix = `${API_SERVER_HOST}/api/search`;
@@ -10,7 +11,7 @@ export const getList = async (filterData) => {
     filterData;
   const { page, size } = pageRequestDTO;
 
-  const res = await axios.get(`${prefix}`, {
+  const res = await jwtAxios.get(`${prefix}`, {
     params: {
       status,
       sort,
@@ -28,7 +29,7 @@ export const getList = async (filterData) => {
 //카테고리 조회
 export const getCategories = async (type) => {
   try {
-    const res = await axios.get(`${API_SERVER_HOST}/api/filter/category`, {
+    const res = await jwtAxios.get(`${API_SERVER_HOST}/api/filter/category`, {
       params: { type },
     });
     return res.data;
@@ -40,6 +41,6 @@ export const getCategories = async (type) => {
 
 //팝업스토어 진행상태
 export const getStatusList = async () => {
-  const res = await axios.get(`${API_SERVER_HOST}/api/filter/status`);
+  const res = await jwtAxios.get(`${API_SERVER_HOST}/api/filter/status`);
   return res.data;
 };
