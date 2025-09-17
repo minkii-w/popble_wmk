@@ -1,6 +1,7 @@
 
 package com.popble.domain;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +33,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "reservation_time")
+@Data
 public class ReservationTime {
 
 	public enum AmPm{
@@ -61,5 +64,9 @@ public class ReservationTime {
 	//예약연결(한시간대에서 여러개의 예약을 가질수 있음)
 	@OneToMany(mappedBy = "reservationTime")
 	private List<Reservation> reservations = new ArrayList<>();
+	
+	private String time;
+	
+	private LocalDate date;
 }
 

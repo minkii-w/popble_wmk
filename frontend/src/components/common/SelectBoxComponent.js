@@ -16,7 +16,7 @@ export function SelectBoxComponent ({max=10, value, onChange}) {
         value={countOptions.find((opt)=> opt.value === value) || null}
         options={countOptions}
         placeholder="인원선택"
-        onChange={(select) => onChange(select.value)}
+        onChange={(select) => onChange(Number(select.value))}
         className="w-full"></Select>
     );
 }

@@ -63,8 +63,8 @@ public class CustomSecurityConfig {
 
 						));
 
-//	http.addFilterBefore(new JWTCheckFilter(),
-//			 UsernamePasswordAuthenticationFilter.class);
+	http.addFilterBefore(new JWTCheckFilter(),
+			 UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
@@ -74,7 +74,7 @@ public class CustomSecurityConfig {
 		CorsConfiguration configuration = new CorsConfiguration();
 
 		configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
 		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 		configuration.setAllowCredentials(true);
 

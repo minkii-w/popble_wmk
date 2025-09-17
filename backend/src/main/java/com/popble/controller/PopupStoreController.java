@@ -54,7 +54,8 @@ public class PopupStoreController {
 	
 	//리스트
 	@GetMapping("/list")
-	public PageResponseDTO<PopupStoreDTO> getList(@RequestParam(required = false, name = "status") PopupStore.Status status,
+	public PageResponseDTO<PopupStoreDTO> getList(
+			@RequestParam(required = false, name = "status") PopupStore.Status status,
 			@RequestParam(required = false, name = "sort") SortType sort,
 			@RequestParam(required = false, name = "categoryType") Category.CategoryType categoryType, 
 			@RequestParam(required = false, name = "categoryId") Integer categoryId,

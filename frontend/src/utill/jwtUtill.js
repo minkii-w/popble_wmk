@@ -2,96 +2,91 @@ import axios from "axios";
 import { getCookie, setCookie } from "./cookieUtill";
 import { API_SERVER_HOST } from "../api/popupstoreApi";
 
-
-const jwtAxios = axios.create()
+const jwtAxios = axios.create();
 
 const refreshJWT = async (accessToken, refreshToken) => {
-    const host = API_SERVER_HOST
+  const host = API_SERVER_HOST;
 
-    const header = {headers: {"Authorization": `Bearer ${accessToken}`}}
+  const header = { headers: { Authorization: `Bearer ${accessToken}` } };
 
-    const res = await axios.get( `${host}/api/user/refresh?refreshToken=${refreshToken}`, header)
+  const res = await axios.get(
+    `${host}/api/user/refresh?refreshToken=${refreshToken}`,
+    header
+  );
 
-    console.log("-------------------------------------")
-    console.log(res.data)
+  console.log("-------------------------------------");
+  console.log(res.data);
 
-    return res.data
-}
-
-
+  return res.data;
+};
 
 const beforeReq = (config) => {
-    console.log("before request.....................")
+  console.log("before request.....................");
 
-    const userInfo = getCookie("user")
+  const userInfo = getCookie("user");
 
-    if(!userInfo){
-        console.log("user NOT FOUND")
-        return Promise.reject(
+  if (!userInfo) {
+    console.log("user NOT FOUND");
+    return Promise.reject({
+      response: {
+        data: {
+          error: "REQUIRE_LOGIN",
+        },
+      },
+    });
+  }
 
-            {
-                response:{
-                    data:{
-                        error:"REQUIRE_LOGIN"
-                        
-                    }
-                }
-            }
-        )
-    }
+  const { accessToken } = userInfo;
 
-    const {accessToken} = userInfo
+  config.headers.Authorization = `Bearer ${accessToken}`;
 
-    config.headers.Authorization = `Bearer ${accessToken}`
-
-    return config
-}
+  return config;
+};
 
 const requestFail = (err) => {
-    console.log("request error........................")
+  console.log("request error........................");
 
-    return Promise.reject(err)
+  return Promise.reject(err);
+};
 
-}
+const beforeRes = async (res) => {
+  console.log("before return responce.......................");
 
-const beforeRes =async (res) => {
+  const data = res.data;
 
-    console.log("before return responce.......................")
+  if (data && data.error === "ERROR_ACCESS_TOKEN") {
+    const userCookieValue = getCookie("user");
 
-    const data = res.data
+    const result = await refreshJWT(
+      userCookieValue.accessToken,
+      userCookieValue.refreshToken
+    );
 
-    if(data && data.error === "ERROR_ACCESS_TOKEN"){
+    console.log("refreshJWT RESULT", result);
 
-        const userCookieValue = getCookie("user")
+    userCookieValue.accessToken = result.accessToken;
+    userCookieValue.refreshToken = result.refreshToken;
 
-        const result = await refreshJWT(userCookieValue.accessToken, userCookieValue.refreshToken)
+    setCookie("user", JSON.stringify(userCookieValue), 1);
 
-        console.log("refreshJWT RESULT", result)
+    const originalRequest = res.config;
 
-        userCookieValue.accessToken = result.accessToken
-        userCookieValue.refreshToken = result.refreshToken
+    originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;
 
-        setCookie("user", JSON.stringify(userCookieValue), 1)
+    return await axios(originalRequest);
+  }
 
-        const originalRequest = res.config
-
-        originalRequest.headers.Authorization = `Bearer ${result.accessToken}`
-
-        return await axios(originalRequest)
-    }
-
-    return res
-
-}
+  return res;
+};
 
 const responseFail = (err) => {
-    console.log("response fail error.....................")
+  console.log("response fail error.....................");
 
-    return Promise.reject(err)
-}
+  return Promise.reject(err);
+};
 
-jwtAxios.interceptors.request.use(beforeReq, requestFail)
+jwtAxios.interceptors.request.use(beforeReq, requestFail);
 
-jwtAxios.interceptors.response.use(beforeRes, responseFail)
+jwtAxios.interceptors.response.use(beforeRes, responseFail);
 
-export default jwtAxios
+export default jwtAxios;
