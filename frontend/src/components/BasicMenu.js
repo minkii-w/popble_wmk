@@ -1,7 +1,7 @@
-import Header from "./Header";
 import Footer from "./Footer";
+import Header from "./Header";
 
-import { TfiHeadphoneAlt } from "react-icons/tfi";
+import { FiArrowUp } from "react-icons/fi";
 
 const BasicMenu = ({ children }) => {
   return (
@@ -10,7 +10,16 @@ const BasicMenu = ({ children }) => {
       <Header />
 
       {/* 페이지 내용과 Footer 겹치지 않도록 padding-bottom */}
-      <div className="pb-20 bg-backgroundColor">{children}</div>
+      <div className="pb-20">{children}</div>
+
+      {/* 고정 메뉴(채팅, 위로이동) */}
+
+      <button
+        className="fixed bottom-10 right-10 m-10 p-1 shadow-md rounded-full bg-secondaryAccentColor w-[50px] h-[50px] items-center flex justify-center"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      >
+        <FiArrowUp size={30} className="items-center justify-center" />
+      </button>
 
       {/* 저작권 */}
       <Footer />

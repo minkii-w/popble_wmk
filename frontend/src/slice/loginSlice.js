@@ -3,6 +3,7 @@ import { loginPost } from "../api/userApi";
 import { setCookie, getCookie, removeCookie } from "../utill/cookieUtill";
 
 const initState = {
+  id: "",
   loginId: "",
 };
 
@@ -29,7 +30,7 @@ const loginSlice = createSlice({
 
       const data = action.payload;
 
-      return { loginId: data.loginId };
+      return { loginId: data.loginId, id: data.id };
     },
 
     logout: (state, action) => {

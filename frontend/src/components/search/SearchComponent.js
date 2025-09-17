@@ -27,7 +27,7 @@ const initState = {
 const SearchComponent = () => {
   const { page, size, refresh, moveToSearch } = useCustomMove();
 
-  const userId = useSelector((state) => state.loginSlice);
+  const userId = useSelector((state) => state.loginSlice?.id);
 
   //URL읽기
   const location = useLocation();
@@ -68,9 +68,9 @@ const SearchComponent = () => {
 
   //북마크 불러오기
   const fetchBookmarks = useCallback(async () => {
-    if (!userId || userId.id) {
+    if (!userId) {
       setBookmarkIds([]);
-      return;
+      return Promise.resolve();
     }
     try {
       const data = await getBookmarkList(userId);
@@ -83,6 +83,7 @@ const SearchComponent = () => {
   }, [userId]);
 
   useEffect(() => {
+    console.log("userId in SearchPage:", userId);
     const fetchAll = async () => {
       try {
         setLoading(true);

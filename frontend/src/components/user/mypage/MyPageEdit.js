@@ -134,6 +134,16 @@ const MyPageEdit = () => {
             ></input>
           </div>
           <div className="flex items-center">
+            <span className="w-32 font-medium">이름</span>
+            <input
+              disabled
+              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              value={form.name}
+              onChange={handleChange}
+              name="nickname"
+            ></input>
+          </div>
+          <div className="flex items-center">
             <span className="w-32 font-medium">닉네임</span>
             <input
               className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"

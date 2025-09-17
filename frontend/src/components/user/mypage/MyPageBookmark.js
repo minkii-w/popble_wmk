@@ -12,12 +12,10 @@ const MyPageBookmark = () => {
   const [active, setActive] = useState([]);
   const [ended, setEnded] = useState([]);
 
-  const userId = useSelector((state) => state.loginSlice.loginId);
-
-  //유저를 정해둠 나중에 login들어가면 수정
-  // const userId = 4;
+  const userId = useSelector((state) => state.loginSlice?.id);
 
   useEffect(() => {
+    console.log("userId in MyPageBookmark:", userId);
     const fetchBookmarks = async () => {
       try {
         const data = await getBookmarkList(userId);

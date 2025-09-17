@@ -32,6 +32,9 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long>{
 	//북마크 삭제
 	void deleteByPopupStore(PopupStore popupStore);
 	
+	//북마크 삭제
+	void deleteByUserProfile(UserProfile userProfile);
+	
 	
 //	//현재 구현 안함. 기업에서 등록한 팝업스토어에 달린 모든 북마크
 //	List<Bookmark> findByPopupStore(PopupStore popupStore);

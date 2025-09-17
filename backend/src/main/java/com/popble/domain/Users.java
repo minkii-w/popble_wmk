@@ -93,7 +93,7 @@ public class Users{
     
     
     //UserProfile과 관계 mapping
-    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserProfile userProfile;
     
     
