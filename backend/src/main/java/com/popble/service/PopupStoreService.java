@@ -11,14 +11,14 @@ public interface PopupStoreService {
 	
 	PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO);
 	
+	//팝업스토어 예약 조회
 	PopupStoreDTO get(Long id);
 
 	PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO);
 	
-	//팝업스토어등록
+	//팝업스토어 예약 등록
 	Long register(PopupStoreDTO popupStoreDTO);
 	
-	//팝업스토어 정보 가져오기
 	
 	void modify (PopupStoreDTO popupStoreDTO);
 	

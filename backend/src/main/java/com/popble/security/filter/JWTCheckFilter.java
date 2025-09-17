@@ -24,7 +24,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
 		
-		if(request.getMethod().equals("OPTONS")) {
+		if(request.getMethod().equals("OPTIONS")) {
 			return true;
 		}
 		
@@ -47,13 +47,19 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 		
 		String authHeaderStr = request.getHeader("Authorization");
 		
+		if (authHeaderStr == null || !authHeaderStr.startsWith("Bearer ")) {
+	        log.info("Authorization 헤더가 없거나 Bearer 타입이 아닙니다. 다음 필터로 이동합니다.");
+	        filterChain.doFilter(request, response);
+	        return; 
+	    }
+		
 		try {
 			String accessToken = authHeaderStr.substring(7);
 			Map<String, Object> claims = JWTUtill.validateToken(accessToken);
 			
 			log.info("JWT claims:"+claims);
 			
-			String loginId = (String) claims.get("loginId ");
+			String loginId = (String) claims.get("loginId");
 			String password = (String) claims.get("password");
 			String name = (String) claims.get("name");
 			Boolean social = (Boolean) claims.get("social");

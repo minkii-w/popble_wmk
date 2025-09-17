@@ -1,67 +1,68 @@
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, Navigate, useNavigate } from "react-router-dom";
 import { loginPostAsync } from "../slice/loginSlice";
 
-
 const useCustomLogin = () => {
+  const navigate = useNavigate();
 
-    const  navigate = useNavigate()
-    
-    const dispatch = useDispatch()
-    const loginState = useSelector(state => state.loginSlice)// 로그인 상태
-    const isLogin = loginState.loginId ? true : false //로그인 여부
+  const dispatch = useDispatch();
+  const loginState = useSelector((state) => state.loginSlice); // 로그인 상태
+  const isLogin = loginState.loginId ? true : false; //로그인 여부
 
-        const doLogin = async (loginParam) => {  // 로그인 함수
-        
-        const action = await dispatch(loginPostAsync(loginParam))
+  const doLogin = async (loginParam) => {
+    // 로그인 함수
 
-        return action.payload
-        }
+    const action = await dispatch(loginPostAsync(loginParam));
 
-    //    const doLogout = () => { // 로그아웃 함수
-      //      dispatch(logout())
-      //  }
+    return action.payload;
+  };
 
-        const moveToPath = (path) => { // 페이지 이동
-            navigate({pathname:path}, {replace:true})
-        }
+  //    const doLogout = () => { // 로그아웃 함수
+  //      dispatch(logout())
+  //  }
 
-        const moveToLogin = () => {  // 로그인 페이지로 이동
-            navigate({pathname:'/member/login'}, {replace:true})
-        }
+  const moveToPath = (path) => {
+    // 페이지 이동
+    navigate({ pathname: path }, { replace: true });
+  };
 
-        const moveToLoginReturn = () => {
-            return <Navigate replace to = "/user/login"></Navigate>
-        }
+  const moveToLogin = () => {
+    // 로그인 페이지로 이동
+    navigate({ pathname: "/user/login" }, { replace: true });
+  };
 
+  const moveToLoginReturn = () => {
+    return <Navigate replace to="/user/login"></Navigate>;
+  };
 
+  const exceptionHandle = (ex) => {
+    console.log("Exception---------------------------------");
 
-        
+    console.log(ex);
 
-       
+    const errorMsg = ex.response.data.errorMsg;
+    const errorStr = createSearchParams({ error: errorMsg }).toString();
 
-    const exceptionHandle = (ex) => {
-        console.log("Exception---------------------------------")
+    if (errorMsg === "REQUIRE_LOGIN") {
+      alert("로그인 해야만 합니다");
+      navigate({ pathname: "/user/login", search: errorStr });
 
-        console.log(ex)
-
-        const errorMsg = ex.response.data.errorMsg
-        const errorStr = createSearchParams({error: errorMsg}).toString()
-
-        if(errorMsg === 'REQUIRE_LOGIN'){
-            alert("로그인 해야만 합니다")
-            navigate({pathname:'/user/login', search:errorStr})
-
-            return
-        }
-
-        if(ex.response.data.error === 'ERROR_ACCESSDENTED')
-            alert("해당 매뉴를 사용할 수 없는 권한이 없습니다.")
-            navigate({pathname:'/member/login', search:errorStr})
-}   
-         return {loginState,isLogin,doLogin,moveToPath,moveToLogin,moveToLoginReturn,exceptionHandle}
+      return;
     }
 
+    if (ex.response.data.error === "ERROR_ACCESSDENTED")
+      alert("해당 매뉴를 사용할 수 없는 권한이 없습니다.");
+    navigate({ pathname: "/user/login", search: errorStr });
+  };
+  return {
+    loginState,
+    isLogin,
+    doLogin,
+    moveToPath,
+    moveToLogin,
+    moveToLoginReturn,
+    exceptionHandle,
+  };
+};
 
-export default useCustomLogin
-
+export default useCustomLogin;

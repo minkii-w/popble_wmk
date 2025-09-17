@@ -62,13 +62,12 @@ public class PopupStoreDTO {
 	private Integer maxCount;
 	
 
-	@Builder.Default
-	private List<ReservationTimeDTO> reservationTimes = new ArrayList<>();
+	private List<ReservationTimeDTO> reservationTimes;
 
 	//예약
 	//미사용시 삭제할것(reservation에서 popupstore로 조회가능)
 	@Builder.Default
-	private List<Reservation> reservations = new ArrayList<>();
+	private List<ReservationDTO> reservations = new ArrayList<>();
 	
 	//카카오맵 관련 위도,경도
 	//위도
@@ -85,7 +84,7 @@ public class PopupStoreDTO {
 	private List<PopupCategory> categories = new ArrayList<>();
 	
 	//북마크수
-	private int bookmarkCount = 0;
+//	private int bookmarkCount = 0;
 	
 	
 	//2025-09-09 wmk 수정

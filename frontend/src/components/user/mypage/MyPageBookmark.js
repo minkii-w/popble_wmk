@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getBookmarkList, isBookmark } from "../../../api/bookmarkApi";
 import PopupCard from "../../search/PopupCard";
 import { FaBookmark } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import PopupRecommendComponent from "../../popup/recommend/PopupRecommendComponent";
 
 const MyPageBookmark = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -9,8 +12,10 @@ const MyPageBookmark = () => {
   const [active, setActive] = useState([]);
   const [ended, setEnded] = useState([]);
 
+  const userId = useSelector((state) => state.loginSlice.loginId);
+
   //유저를 정해둠 나중에 login들어가면 수정
-  const userId = 4;
+  // const userId = 4;
 
   useEffect(() => {
     const fetchBookmarks = async () => {
@@ -34,7 +39,7 @@ const MyPageBookmark = () => {
       }
     };
     fetchBookmarks();
-  }, []);
+  }, [userId]);
   return (
     <div className="flex flex-col w-[700px]">
       {/* 헤더 */}

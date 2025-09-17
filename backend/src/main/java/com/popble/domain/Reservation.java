@@ -35,13 +35,13 @@ public class Reservation {
 	private Long id;
 	
 	//팝업 번호
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "popup_id")
 	private PopupStore popupStore;
 	
 	//회원 번호
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "userProfile_id")
 	private UserProfile userProfile;
 	
 	//예약번호(이거 난수로 만들어야함 20250829001)이런식으로
@@ -68,7 +68,9 @@ public class Reservation {
 	private int reservationCount;
 	
 	//예약 성공한 시간
-	private LocalDateTime createTime;
+	private LocalDateTime createDateTime;
+	
+	private String phonenumber;
 	
 	
 }
