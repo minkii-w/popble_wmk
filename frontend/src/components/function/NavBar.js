@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import CopyrightFooter from "./CopyrightFooter";
 
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../slice/authSlice";
+
 import { RxPerson } from "react-icons/rx";
 import { IoList } from "react-icons/io5";
 import { FiMapPin } from "react-icons/fi";
@@ -157,6 +160,13 @@ const NavBar = () => {
   // 메뉴 클릭시 페이지 이동 후 사이드바 닫기
   const navigate = useNavigate();
 
+  
+
+    const { token, isauthenticated} = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
+
+
+
   const [open, setOpen] = useState(false); //사이드바 열림 여부 상태
 
   return (
@@ -181,17 +191,35 @@ const NavBar = () => {
 
         {/* 클릭하면 navigate()로 페이지 이동 후 사이드바 닫힘 */}
         <MenuList>
+
+                    {/* 로그인 상태에 따라 로그인/로그아웃 */}
+                    {!isauthenticated ?
           <MenuItem
             onClick={() => {
               navigate("/user/login");
               setOpen(false);
             }}
           >
-            <div className="left">로그인 / 회원가입</div>
+            <div className="left">로그인</div>
             <div className="chev">›</div>
           </MenuItem>
 
+                    :
+                     <MenuItem onClick={ () => {
+                        dispatch(logout());
+                        setOpen(false);
+                        navigate('/');
+                        alert("로그아웃 되었습니다")
+                     }}>
+                        <div className="left">로그아웃</div>
+                        <div className="chev"></div>
+                     </MenuItem>
+
+                    }
+
           {/* 섹션: 마이페이지 */}
+                    {isauthenticated ?
+                    <>
           <SectionTitle
             className="cursor-pointer"
             onClick={() => {
@@ -245,6 +273,7 @@ const NavBar = () => {
             <div className="left">예약 목록</div>
             <div className="chev">›</div>
           </MenuItem>
+                    </>:<></>}
 
           {/* 섹션: 게시판 */}
           <SectionTitle

@@ -56,13 +56,25 @@ public class CustomSecurityConfig {
 		});
 
 // oauth2 -----------------------------	
+	
+	http
+    .oauth2Login(oauth2 -> oauth2
+    		.failureUrl("/login?error=true")
+        .defaultSuccessUrl("/user/success")
+        .successHandler(oauth2AuthenticationSuccessHandler)
+        .userInfoEndpoint(userInfo -> userInfo
+   
+            .userService(userOauth2Service)
+            
+            
+         
+            
+        )
+    );
+	
 
-		http.oauth2Login(
-				oauth2 -> oauth2.defaultSuccessUrl("/login/success").successHandler(oauth2AuthenticationSuccessHandler)
-						.userInfoEndpoint(userInfo -> userInfo.userService(userOauth2Service)
-
-						));
-
+	
+	
 	http.addFilterBefore(new JWTCheckFilter(),
 			 UsernamePasswordAuthenticationFilter.class);
 
