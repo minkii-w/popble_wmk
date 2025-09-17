@@ -16,7 +16,13 @@ import NaverLoginButton from "../../pages/users/NaverLoginButton";
 import NaverImg from "../../assets/img/Naver.jpg"
 import React from "react";
 import { render } from "@testing-library/react";
-
+import { loginPost } from "../../api/userApi";
+import PopbleImg  from "../../assets/img/POPBLE Logo.png"
+import PopbleImage from "../../pages/users/PopbleImge";
+import { useDispatch } from "react-redux";
+import { login } from "../../slice/loginSlice";
+import { setCookie } from "../../utill/cookieUtill";
+import { loginSuccess } from "../../slice/authSlice";
 
 const initState = {
     loginId:'',
@@ -49,17 +55,19 @@ const LoginComponent = () => {
     
 
 
-
+     const  dispatch = useDispatch();
 
     const handleClickLogin = (e) => {
         const values = getValues();
-        doLogin(values)
+        loginPost(values)
         .then(data => {
             console.log(data)
 
             if(data.error){
                 alert("아이디와 비밀번호를 확인하세요")
             }else{
+                dispatch(loginSuccess({ token: data.token, user: data.user}))
+                localStorage.setItem("token", data.token);
                 alert("로그인 성공")
                 moveToPath('/')
             }
@@ -75,7 +83,21 @@ const LoginComponent = () => {
     return(
 
        
-       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+       <div className="min-h-screen flex flex-col items-center justify-center ">
+
+    
+       
+         
+  <div className="w-[430px] h-[170px] absolute top-[240px] bg-primaryColor flex justify-center items-center ">
+      <PopbleImage src={PopbleImg}/>
+  </div>
+
+
+
+
+
+
+
          <form
           
            className="w-full max-w-[480px] bg-white p-6 rounded shadow space-y-4"
@@ -144,7 +166,7 @@ const LoginComponent = () => {
            
         
        
-           {/* 가입하기 버튼 */}
+           {/* 로그인 */}
            <button
              onClick={handleSubmit(handleClickLogin)}
              className="w-full h-[55px] bg-secondaryAccentColor text-black font-bold text-lg rounded-md"
@@ -152,7 +174,7 @@ const LoginComponent = () => {
                 로그인
            </button>
        
-           {/* 로그인 링크 */}
+           {/* 아이디/비밀번호 재설정/회원가입 링크 */}
            <div className="text-right text-sm">
            
              <Link to="/user/login" className="text-black-500 hover:underline">
@@ -162,7 +184,7 @@ const LoginComponent = () => {
                비밀번호 재설정   
              </Link>
             
-               <Link to="/user/login" className="text-black-500 hover:underline">
+               <Link to="/user/join" className="text-black-500 hover:underline">
                /회원가입
              </Link>
            </div>

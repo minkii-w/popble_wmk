@@ -17,7 +17,7 @@ const JoinPage = () => {
          
 
 
-    <div className="flex flex-wrap w-full h-full justify-center items-center border-2">
+    <div className="flex flex-wrap w-full h-full justify-center items-center">
     
      
         

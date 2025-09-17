@@ -17,6 +17,7 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 
         loginId:'',
         password:'',
+        password2:'',
         email:'',
         name:'',
       
@@ -78,7 +79,7 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 
 
         return(
-            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+            <div className="absolute top-[100px] min-h-screen flex flex-col items-center justify-center px-4">
   <form
     onSubmit={handleSubmit(onSubmit)}
     className="w-full max-w-[480px] bg-white p-6 rounded shadow space-y-4"
@@ -171,12 +172,88 @@ import useCustomLogin from "../../hooks/useCustomLogin";
       )}
     />
 
+
+    {/* 비밀번호 확인 */}
+    <Controller
+      name="password2"
+      control={control}
+      rules={{
+          validate:value =>
+            value === getValues('password') || "비밀번호가  일치하지 않습니다"
+           
+      }}
+      render={({ field }) => (
+        <TextField
+          {...field}
+          label="비밀번호확인"
+          fullWidth
+          variant="standard"
+          type="passwrord"
+        
+          InputProps={{
+            disableUnderline: true,
+            inputProps: { style: { paddingLeft: "15px" } },
+          }}
+          sx={{
+            backgroundColor: "#efefef",
+          }}
+          InputLabelProps={{
+            sx: { fontSize: "13px", left: "10px" },
+          }}
+          onChange={ (e) => {
+                    field.onChange(e);
+                    trigger('password2')
+                }} 
+          helperText={errors.password2 && errors.password2.message}
+        />
+      )}
+    />
+    
+
     {/* 이메일 */}
     <Controller
       name="email"
       control={control}
       rules={{
         required: "이메일을 입력해주세요.",
+        pattern: {
+          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+          message: "유효한 이메일 주소를 입력해주세요.",
+        },
+      }}
+      render={({ field }) => (
+        <TextField
+          {...field}
+          label="이메일"
+          fullWidth
+          variant="standard"
+          placeholder="example@email.com"
+          InputProps={{
+            disableUnderline: true,
+            inputProps: { style: { paddingLeft: "15px" } },
+          }}
+          sx={{
+            backgroundColor: "#efefef",
+          }}
+          InputLabelProps={{
+            sx: { fontSize: "13px", left: "10px" },
+          }}
+          onChange={ (e) => {
+                    field.onChange(e);
+                    trigger('eamail')
+                }} 
+          helperText={errors.email && errors.email.message}
+        />
+      )}
+    />
+
+
+        {/* 이메일 인증 코드 */}
+    <Controller
+      name="email"
+      control={control}
+      rules={{
+        required: "인증코드를 입력해주세요.",
         pattern: {
           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
           message: "유효한 이메일 주소를 입력해주세요.",
