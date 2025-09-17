@@ -12,6 +12,7 @@ const MyPageReservation = lazy(() =>
 const MyPageBookmark = lazy(() =>
   import("../components/user/mypage/MyPageBookmark")
 );
+const Success = lazy( () => import("../pages/users/LoginSuccessPage"))
 
 const userRouter = () => {
   return [
@@ -31,6 +32,16 @@ const userRouter = () => {
         </Suspense>
       ),
     },
+    ,
+        {
+
+
+            path:"success",
+            element:<Suspense fallback={<LoadingComponent/>}><Success></Success></Suspense>
+
+
+
+        },
     {
       path: "mypage",
       element: (
