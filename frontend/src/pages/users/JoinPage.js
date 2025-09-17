@@ -1,7 +1,6 @@
 import BasicMenu from "../../components/BasicMenu";
 import JoinComponent from "../../components/user/JoinComponent";
 
-
 const JoinPage = () => {
 
     return(
@@ -31,12 +30,7 @@ const JoinPage = () => {
     </div>
  
     </div>
-
-
-    )
-
-
-}
-
+  );
+};
 
 export default JoinPage;

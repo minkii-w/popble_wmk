@@ -1,3 +1,4 @@
+
 package com.popble.dto;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import lombok.ToString;
 @ToString
 
 public class UserDTO extends User {
+	
+	private Long id;
 	
 	
 	@NotEmpty
@@ -63,7 +66,7 @@ public class UserDTO extends User {
 	
 	public Map<String, Object> getClaims() {
 		Map<String, Object> dataMap = new HashMap<>();
-		
+		dataMap.put("id", id);
 		dataMap.put("loginId", loginId);
 		dataMap.put("password", password);
 		dataMap.put("name", name);
@@ -80,3 +83,4 @@ public class UserDTO extends User {
 	
 	
 }
+

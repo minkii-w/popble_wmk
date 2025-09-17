@@ -14,15 +14,13 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 
 public class UserContoroller {
 
 	
 	private final UserService userService;
-	
-	
-	
+		
 	
 	@PostMapping("/join")
 	public UserDTO userCreate(@RequestBody UserDTO userDTO) {
@@ -30,4 +28,6 @@ public class UserContoroller {
 		log.info("-----------Service creaete-------------------------");
 		return userService.create(userDTO);
 	}
+	
+	
 }

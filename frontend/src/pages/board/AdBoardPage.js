@@ -1,4 +1,4 @@
-import AdBoardComponent from "../../components/board/AdBoradComponent";
+import AdBoardComponent from "../../components/popup/reservation/AdBoradComponent";
 
 const AdBoardPage = () => {
     return (

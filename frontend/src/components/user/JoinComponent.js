@@ -36,30 +36,22 @@ import useCustomLogin from "../../hooks/useCustomLogin";
         getValues,
         trigger,
 
-        formState: {errors,isValid},
-     } = useForm({
-        mode: 'onChange',
-        defaultValues: SignUpFormValues,
-     });
-     
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: SignUpFormValues,
+  });
 
+  const onSubmit = async (join) => {
+    console.log("회원가입 시도 객체(join):", join);
 
+    const finalJoin = {
+      ...join,
 
-       
-
-        const onSubmit = async (join) => {
-
-              console.log("회원가입 시도 객체(join):", join);
-        
-        
-        
-                   const finalJoin = {
-                        ...join,
-                        
-                 phonenumber: '010-0000-0000',
-                role: 'MEMBER',
-                 social: false
-                 };
+      phonenumber: "010-0000-0000",
+      role: "MEMBER",
+      social: false,
+    };
 
             try {
                 const response = await postAdd(finalJoin);
@@ -336,13 +328,4 @@ import useCustomLogin from "../../hooks/useCustomLogin";
 
     }
 
-    export default JoinComponent;
-
-
-
-
-
-
-
-
-
+export default JoinComponent;

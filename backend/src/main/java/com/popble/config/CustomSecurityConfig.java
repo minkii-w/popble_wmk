@@ -1,3 +1,4 @@
+
 package com.popble.config;
 
 import java.util.Arrays;
@@ -24,45 +25,36 @@ import com.popble.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-
 @Configuration
 @Log4j2
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class CustomSecurityConfig {
 
-    private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+	private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
 
-    private final UserOauth2Service userOauth2Service;
+	private final UserOauth2Service userOauth2Service;
 
-    private final UserServiceImpl userServiceImpl;
+	private final UserServiceImpl userServiceImpl;
 
-
-   
-
-
-  
-
-	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		
+
 		http.cors(httpSecurityCorsConfigurer -> {
 			httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
 		});
-		
-	http.sessionManagement( SessionConfig -> SessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-	http.csrf ( Config -> Config.disable());
-	
-	
-	http.formLogin(config -> {
-		config.loginPage("/api/user/login");
-		
-		config.successHandler(new APILoginSussessHandler());
-		config.failureHandler(new APILoginFailHandler());
-		
-	});
-	
+
+		http.sessionManagement(SessionConfig -> SessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http.csrf(Config -> Config.disable());
+
+		http.formLogin(config -> {
+			config.loginPage("/api/user/login");
+
+			config.successHandler(new APILoginSussessHandler());
+			config.failureHandler(new APILoginFailHandler());
+
+		});
+
 // oauth2 -----------------------------	
 	
 	http
@@ -83,32 +75,25 @@ public class CustomSecurityConfig {
 
 	
 	
-//	http.addFilterBefore(new JWTCheckFilter(),
-//			 UsernamePasswordAuthenticationFilter.class);
+	http.addFilterBefore(new JWTCheckFilter(),
+			 UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
-	}	
-		@Bean
-		public CorsConfigurationSource corsConfigurationSource() {
-			CorsConfiguration configuration = new CorsConfiguration();
-			
-			 configuration.setAllowedOriginPatterns(Arrays.asList("*"));      
-		      configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD"));
-		      configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-		      configuration.setAllowCredentials(true);
-		      
-		      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		      source.registerCorsConfiguration("/**", configuration );
-			
-			return source;
-		}
-		
-		
-	
-	
+	}
 
-	
-	
-	
-	
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+
+		configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
+	}
+
 }
