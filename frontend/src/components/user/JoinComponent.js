@@ -2,10 +2,17 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { postAdd } from "../../api/userApi";
 import TextField from "@mui/material/TextField";
-
-
-
-
+import { Link } from "react-router-dom";
+import KakaoLoginButton from "../../pages/users/KakaoLoginButton";
+import KaKaoImage from "../../pages/users/KakaoImage";
+import KakaoImg from "../../assets/img/Kakao.jpg";
+import GoogleImage from "../../pages/users/GoogleImge";
+import GoogleImg from "../../assets/img/Google.jpg"
+import GoogleLoginButton from "../../pages/users/GoogleLoginButton";
+import NaverImage from "../../pages/users/NaverImge";
+import NaverLoginButton from "../../pages/users/NaverLoginButton";
+import NaverImg from "../../assets/img/Naver.jpg"
+import useCustomLogin from "../../hooks/useCustomLogin";
     const SignUpFormValues ={
 
         loginId:'',
@@ -20,7 +27,7 @@ import TextField from "@mui/material/TextField";
     const JoinComponent = () => {
 
        
-        
+          const {doLogin, moveToPath} = useCustomLogin()
    
      const {
         control,
@@ -56,6 +63,8 @@ import TextField from "@mui/material/TextField";
             try {
                 const response = await postAdd(finalJoin);
                 console.log("회원가입 성공:", response)
+                 moveToPath("/")
+                
 
             } catch (e) {
                 console.error("회원가입 실패:",e);
@@ -69,268 +78,177 @@ import TextField from "@mui/material/TextField";
 
 
         return(
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+  <form
+    onSubmit={handleSubmit(onSubmit)}
+    className="w-full max-w-[480px] bg-white p-6 rounded shadow space-y-4"
+  >
+    {/* 닉네임 */}
+    <Controller
+      name="name"
+      control={control}
+      rules={{ required: "닉네임을 입력하세요" }}
+      render={({ field }) => (
+        <TextField
+          {...field}
+          label="닉네임"
+          fullWidth
+          variant="standard"
+          InputProps={{ disableUnderline: true }}
+          sx={{
+            backgroundColor: "#efefef",
+            paddingLeft: 1,
+          }}
+          InputLabelProps={{
+            sx: { fontSize: "13px", left: "10px" },
+          }}
+
+          onChange={ (e) => {
+                    field.onChange(e);
+                    trigger('name')
+                }} 
+          helperText={errors.name && errors.name.message}
+        />
+      )}
+    />
+
+    {/* 아이디 */}
+    <Controller
+      name="loginId"
+      control={control}
+      rules={{ required: "ID를 입력하세요" }}
+      render={({ field }) => (
+        <TextField
+          {...field}
+          label="아이디"
+          fullWidth
+          variant="standard"
+          InputProps={{ disableUnderline: true }}
+          sx={{
+            backgroundColor: "#efefef",
+            paddingLeft: 1,
+          }}
+          InputLabelProps={{
+            sx: { fontSize: "13px", left: "10px" },
+          }}
+
+          onChange={ (e) => {
+                    field.onChange(e);
+                    trigger('loginId')
+                }} 
+          helperText={errors.loginId && errors.loginId.message}
+        />
+      )}
+    />
+
+    {/* 비밀번호 */}
+    <Controller
+      name="password"
+      control={control}
+      rules={{ required: "비밀번호를 입력하세요" }}
+      render={({ field }) => (
+        <TextField
+          {...field}
+          label="비밀번호"
+          type="password"
+          fullWidth
+          variant="standard"
+          InputProps={{ disableUnderline: true }}
+          sx={{
+            backgroundColor: "#efefef",
+            paddingLeft: 1,
+          }}
+          InputLabelProps={{
+            sx: { fontSize: "13px", left: "10px" },
+          }}
+
+          onChange={ (e) => {
+                    field.onChange(e);
+                    trigger('password')
+                }} 
+          helperText={errors.password && errors.password.message}
+        />
+      )}
+    />
+
+    {/* 이메일 */}
+    <Controller
+      name="email"
+      control={control}
+      rules={{
+        required: "이메일을 입력해주세요.",
+        pattern: {
+          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+          message: "유효한 이메일 주소를 입력해주세요.",
+        },
+      }}
+      render={({ field }) => (
+        <TextField
+          {...field}
+          label="이메일"
+          fullWidth
+          variant="standard"
+          placeholder="example@email.com"
+          InputProps={{
+            disableUnderline: true,
+            inputProps: { style: { paddingLeft: "15px" } },
+          }}
+          sx={{
+            backgroundColor: "#efefef",
+          }}
+          InputLabelProps={{
+            sx: { fontSize: "13px", left: "10px" },
+          }}
+          onChange={ (e) => {
+                    field.onChange(e);
+                    trigger('eamail')
+                }} 
+          helperText={errors.email && errors.email.message}
+        />
+      )}
+    />
+
+    {/* 가입하기 버튼 */}
+    <button
+        onClick={handleSubmit(onSubmit)}
+      className="w-full h-[55px] bg-secondaryAccentColor text-white font-bold text-lg rounded-md"
+    >
+      가입하기
+    </button>
+
+    {/* 로그인 링크 */}
+    <div className="text-right text-sm">
+      <Link to="/user/login" className="text-black-500 hover:underline">
+        로그인
+      </Link>
+    </div>
+
+    {/* 구분선 */}
+    <div className="w-full h-[1px] bg-black" />
+
+    {/* 소셜 로그인 버튼들 */}
+    <div className="flex justify-center gap-9">
+      <KakaoLoginButton >
+        <KaKaoImage src={KakaoImg} />
+      </KakaoLoginButton>
+
+      <GoogleLoginButton >
+        <GoogleImage src={GoogleImg} />
+      </GoogleLoginButton>
+
+      <NaverLoginButton >
+        <NaverImage src={NaverImg} />
+      </NaverLoginButton>
+    </div>
+  </form>
+</div>
 
 
 
 
 
             
-           <div>
-     
-
-
-
-      <div>
-                  
-
-
-            </div>
-
-
-            <div className="flex justify-center">
-        
-               <div className="
-                   relative
-                   top-[-200px]
-               w-[30em]
-                h-40
-                 bg-primaryColor
-                  rounded-md
-             
-                     flex items-center justify-center
-                     mb-[5em]
-                     ">
-      
-                 </div>
-
-
-            </div>
-        <div
-            className="
-              justify-center
-            w-[40em]
-            h-[5em]
-
-            "
-        
-        >
-            <Controller
-         name="name"
-         control={control}
-         defaultValue=""
-         rules={{
-             required: "닉네임을 입력하세요"
-             
-             
-         }}
-
-         render={({field}) => (
-
-         <TextField
-         {...field}
-         label="닉네임"
-         required
          
-         fullWidth
-         variant="standard"
-
-            InputProps={{
-                disableUnderline:true,
-            }}
-
-          
-
-
-            sx={{
-
-                 width: '450px',  
-
-                top: '-505px',
-               // left: '-30px',
-                right: '-200px',
-                
-                border: "none",
-                
-                fontSize: '16px',
-                lineHeight: 10,
-         
-                  backgroundColor: '#e5e5e5'
-               
-            }}
-
-
-         onChange={ (e) => {
-             field.onChange(e);
-             trigger('name'); 
-           
-         }}
-          helperText={errors.name && errors.loginId.name}
-       
-          
-         />
-    
-
-        )}  
-
-       
-         />
-
-
-
-
-
-
-        <Controller
-            name="loginId"
-            control={control}
-            defaultValue=""
-            rules={{
-                required: "ID를 입력하세요"
-                
-            }}
-        
-            render={({field}) => (
-        
-            <TextField
-           {...field}
-         label="이메일"
-         required
-         
-         fullWidth
-         variant="standard"
-
-            InputProps={{
-                disableUnderline:true,
-            }}
-
-          
-
-
-            sx={{
-
-                 width: '450px',  
-
-                top: '-505px',
-               // left: '-30px',
-                right: '-200px',
-                
-                border: "none",
-                
-                fontSize: '16px',
-                lineHeight: 10,
-         
-                  backgroundColor: '#e5e5e5'
-     
-            }}
-             helperText={errors.loginId && errors.loginId.message}
-            />
-            )}  
-            />
-
-
-                         <Controller
-                    name="password"
-                    control={control}
-                    defaultValue=""
-                    rules={{
-                        required: "비밀번호 를 입력하세요"
-
-                   
-                        
-                    }}
-
-                    render={({field}) => (
-
-                    <TextField
-                    {...field}
-                    label="비밀번호"
-                    required
-                    fullWidth
-                    variant="standard"
-                    onChange={ (e) => {
-                        field.onChange(e);
-                        trigger('password');
-                        
-                        
-                      
-                    }}
-                     helperText={errors.password && errors.password.message}
-                    />
-                    
-
-
-
-                    )}  
-                    />
-
-
-                <Controller
-                    name="email"
-                    control={control}
-                    defaultValue={control}
-                    rules={{
-                        required: '이메일을 입력해주세요.',
-                        pattern: {
-                            value:/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                            message: '유효한 이메일 주소를 입력해주세요. 예) example.com'
-                        },
-                    }}
-                    render={({field }) => (
-                   
-                  <TextField
-
-                    {...field}
-                    label="이메일"
-                    required
-                    fullWidth
-                    variant="standard"
-                    placeholder="example@email.com"
-                    
-                    error={!!errors.email}
-                    
-                    helperText={errors.email && errors.email.message}
-                    />
-
-                        )}
-                />
-
-
-                   </div>
-
-
-
-                     <div className="flex justify-center">
-                <div className="relative mb-4 flex justify-center" >
-                    <div className="w-2/5 p-6 flex justify-center font-bold">
-                     <button className="
-               w-[60em]
-                h-[4em]
-                 bg-primaryColor
-                  rounded-md
-             
-                     flex items-center justify-center
-                     mb-[5em]
-                     ">
-      
-                 </button>
-                    </div>
-                </div>
-
-
-            </div>
-
-
-       
-
-            
-
-
-      
-
-      </div>
-
-
-                        
 
 
 
