@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { FcCalendar } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import { getReservation } from "../../../api/popupstoreApi";
+import { useSelector } from "react-redux";
 
 //Todo : 예약이 있으면 불러오고 예약이 없으면 불러오지 말아야함
-const MyPageReservation = ({ userId }) => {
+const MyPageReservation = ({}) => {
   const [reservations, setReservations] = useState([]);
 
+  const userId = useSelector((state) => state.loginSlice?.id);
+
   useEffect(() => {
+    console.log("userId in MyPageReservation:", userId);
     const fetchReservation = async () => {
       try {
         const data = await getReservation(userId);
