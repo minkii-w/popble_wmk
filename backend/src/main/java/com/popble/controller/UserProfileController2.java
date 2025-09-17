@@ -71,26 +71,9 @@ public class UserProfileController2 {
 			@RequestParam("nickname")String nickname,
 			@RequestParam(value="profileImg", required = false)MultipartFile profileImg) 
 					throws IOException{
-		
-//		
-//		UserProfileDTO userProfileDTO = UserProfileDTO.builder()
-//										.nickname(nickname)
-//										.build();
-//		
-//		
-//		userProfileDTO.setNickname(nickname);
-//		
-//		UserProfile userProfile = UserProfile.builder()
-//				.nickname(userProfileDTO.getNickname())
-//				.profileImg(userProfileDTO.getProfileImg())
-//				.build();
-//		
-//	
-//		UserProfile saved = userProfileRepository.save(userProfile);
+
 		Users user = userRepository.findById(userId)
 				.orElseThrow(() -> new IllegalArgumentException("Invalid userId"));
-		
-		
 		
 		UserProfileDTO response = userProfileService.createUserProfile(user ,nickname, profileImg);
 		

@@ -43,19 +43,22 @@ const ReservationPage = () => {
   useEffect(() => {
 
     getReservation(id).then((data) => {
-      const am = [];
-      const pm = [];
+      let am = [];
+      let pm = [];
       
-      
-      if(Array.isArray(data.reservationTimes)){
-      
-      data.reservationTimes.forEach((rt) => {
+      if (Array.isArray(data.reservationTimes)) {
+    data.reservationTimes.forEach((rt) => {
+      if(rt.startTime){
         const hour = parseInt(rt.startTime.split(":")[0]);
         if (hour < 12) am.push(rt.startTime);
         else pm.push(rt.startTime);
-      })
+      }
+    });
+      
     }else{
       console.warn("reservation없음 :",data)
+      am=["10:00","11:00"]
+      pm=["13:00","14:00"]
     }
 
       setPopupstore({

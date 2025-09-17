@@ -62,9 +62,6 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
             return;
         }
         try{
-            const dateStr = selected.date.toISOString().split('T')[0]; 
-            const timeStr = selected.time.padStart(5,'0');
-            const reservationTime = `${dateStr}T${timeStr}`;
 
             const payload ={
             popupStoreId:popupStore.id,
@@ -72,7 +69,11 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
             userName: userName,
             phonenumber:phonenumber,
             reservationCount: Number(selected.count),
-            reservationTime: reservationTime
+            reservationDate: selected.date instanceof Date 
+                            ? selected.date.toISOString().split('T')[0]
+                            : selected.date,
+            startTime: selected.time.padStart(5,'0'),
+            endTime: selected.time.padStart(5, '0'),
         }
 
         // console.log("팝업스토어id타입확인: ",typeof popupStore.id, popupStore.id)
@@ -146,23 +147,49 @@ const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
                         onClick={()=>navigate(-1)}>이 전
                         </button>
 
-                        {reservationId?(
-                            <div className="w-full mt-4">
-                                <TossPayment
-                                price = {Number(popupStore.price)*Number(selected.count)}
-                                ordername={popupStore.storeName}
-                                onSuccess={handleTossComplete}></TossPayment>
-                            </div>
-                      
-                        ):( 
-                            <button 
+                        {!reservationId && ! tossCompleted && (
+                           <button 
                             type="button"
                             className="rounded p-2 w-4/5 bg-primaryColor text-xl text-black"
                             onClick={handleReservationSuccess}>
                         예약하기
-                        </button>
+                        </button> 
                         )}
-                </div>
+                        </div>
+
+                        {!reservationId && !tossCompleted && (
+                            <div className="w-full mt-4">
+                                <TossPayment
+                                price = {Number(popupStore.price)*Number(selected.count)}
+                                ordername={popupStore.storeName}
+                                onSuccess={async(paymentResult) => {
+                                    try{
+                                        const payload = {
+                                        popupStoreId: popupStore.id,
+                                        userProfileId: userProfileId,
+                                        userName: userName,
+                                        phonenumber: phonenumber,
+                                        reservationCount: Number(selected.count),
+                                        reservationDate: selected.date instanceof Date 
+                                                        ? selected.date.toISOString().split('T')[0]
+                                                        : selected.date,
+                                        startTime: selected.time.padStart(5,'0'),
+                                        endTime: selected.time.padStart(5,'0'),
+                                        };
+
+                                        const res = await postReservation(payload);
+
+                                        setReservationId(res.id);
+                                        setTossCompleted(true);
+                                        } catch (err) {
+                                        console.error("예약 등록 실패:", err);
+                                        alert("예약 등록에 실패했습니다.");
+                                        }                        
+                                }}></TossPayment>
+                            </div>
+                            
+                        )}
+                
             </>
 
     );

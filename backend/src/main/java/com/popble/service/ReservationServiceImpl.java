@@ -1,5 +1,6 @@
 package com.popble.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,14 +81,13 @@ public class ReservationServiceImpl implements ReservationService{
 
     	    UserProfile userProfile = userProfileRepository.findById(dto.getUserProfileId())
     	        .orElseThrow(() -> new IllegalArgumentException("Invalid userProfileId"));
+    	    
 
-    	    List<ReservationTime> reservationTimes = reservationTimeRepository.findAllByTime(dto.getReservationTime());
-    	    
-    	    if(reservationTimes.isEmpty()) {
-    	    	throw new IllegalArgumentException("Invalid reservationTime");
+    	    ReservationTime reservationTime = null;
+    	    if(dto.getStartTime() != null && dto.getEndTime() != null && dto.getReservationDate() != null) {
+    	    	reservationTime = reservationTimeRepository.findByDateAndStartTimeAndEndTime(dto.getReservationDate(),dto.getStartTime(), dto.getEndTime())
+    	    			.orElseThrow(()-> new IllegalArgumentException("Invalid reservationTime"));
     	    }
-    	    
-    	    ReservationTime reservationTime = reservationTimes.get(0);
     	    
         return Reservation.builder()
         		.id(dto.getId())
@@ -106,16 +106,20 @@ public class ReservationServiceImpl implements ReservationService{
     	
     	ReservationTime reservationTime = entity.getReservationTime();
     	
+    	UserProfile userProfile = entity.getUserProfile();
+    	
         return ReservationDTO.builder()
                 .id(entity.getId())
                 .popupStoreId(entity.getPopupStore().getId())
                 .userProfileId(entity.getUserProfile().getId())
+                .userName(userProfile != null && userProfile.getUsers() != null? 
+                		userProfile.getUsers().getName():null)
                 .reservationCount(entity.getReservationCount())
-                .createDateTime(entity.getCreateDateTime())
+                .createDateTime(entity.getCreateDateTime() != null? entity.getCreateDateTime():LocalDateTime.now())
                 .phonenumber(entity.getPhonenumber())
-                .reservationDate(entity.getReservationDate())
-                .startTime(reservationTime != null? reservationTime.getStartTime().toString():null)
-                .endTime(reservationTime != null? reservationTime.getEndTime().toString():null)
+                .reservationDate(reservationTime != null? reservationTime.getDate():null)
+                .startTime(reservationTime != null? reservationTime.getStartTime():null)
+                .endTime(reservationTime != null? reservationTime.getEndTime():null)
                 .build();
     }
 

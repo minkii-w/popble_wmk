@@ -80,7 +80,7 @@ public class BookmarkServiceImpl implements BookmarkService{
 		return false;
 	}
 	
-//	//북마크 리스트
+	//북마크 리스트
 //	public Page<PopupStoreDTO> bookmarkList(Long userId, Pageable pageable){
 //		
 //	
@@ -114,7 +114,7 @@ public class BookmarkServiceImpl implements BookmarkService{
 //					.view(popupStore.getView())
 //					.recommend(popupStore.getRecommend())
 //					.maxCount(popupStore.getMaxCount())
-////					.reservationTimes(popupStore.getReservationTimes()) // 복잡한 컬렉션 필드 직접 매핑//안하면 에러나는듯.ㅠ
+//					.reservationTimes(popupStore.getReservationTimes()) // 복잡한 컬렉션 필드 직접 매핑//안하면 에러나는듯.ㅠ
 //					.reservations(popupStore.getReservations())
 //					.latitude(popupStore.getLatitude())
 //					.longitude(popupStore.getLongitude())
