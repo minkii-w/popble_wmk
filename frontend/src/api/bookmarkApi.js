@@ -24,6 +24,6 @@ export const getBookmarkList = async (userId) => {
 
 //북마크 여부
 export const isBookmark = async (userId, popupId) => {
-  const res = await jwtAxios.get(`${prefix}/checkout/${userId}/${popupId}`);
+  const res = await jwtAxios.get(`${prefix}/check/${userId}/${popupId}`);
   return res.data;
 };

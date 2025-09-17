@@ -28,13 +28,15 @@ public class BookmarkController {
 	//북마크 추가
 	@PostMapping("/{userId}/{popupId}")
 	public boolean addBookmark(@PathVariable("userId") Long userId,@PathVariable("popupId") Long popupId) {
+		log.info("북마크 추가 요청 userId={}, popupId={}", userId, popupId);
 		return bookmarkService.addBookmark(userId, popupId);
 	}
 	
 	//북마크 삭제
 	@DeleteMapping("/{userId}/{popupId}")
-	public boolean deleteBookmark(@PathVariable("userId") Long uesrId, @PathVariable("popupId") Long popupId) {
-		return bookmarkService.deleteBookmark(uesrId, popupId);
+	public boolean deleteBookmark(@PathVariable("userId") Long userId, @PathVariable("popupId") Long popupId) {
+		log.info("북마크 삭제 요청 userId={}, popupId={}", userId, popupId);
+		return bookmarkService.deleteBookmark(userId, popupId);
 	}
 	
 	//북마크 여부 확인

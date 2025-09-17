@@ -35,6 +35,9 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 		if(path.startsWith("/api/user")) {
 			return true;
 		}
+		if(path.startsWith("/api/search") || path.startsWith("/api/filter")) {
+			return true;
+		}
 		return false;
 		
 		
@@ -67,8 +70,17 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 			String phonenumber =(String) claims.get("phonenumber");
 			List<String> roleNames = (List<String>) claims.get("roleNames");
 			
+			//id못받아와서 따로 추가한부분
+			Long id = null;
+		    Object idObj = claims.get("id");
+		    if (idObj != null) {
+		        id = Long.valueOf(String.valueOf(idObj));
+		    }
 			
 			UserDTO userDTO = new UserDTO(loginId, password, name, social.booleanValue(),email,phonenumber, roleNames);
+			
+			//추가분
+			userDTO.setId(id);
 			
 			log.info("-----------------------");
 			log.info(userDTO);

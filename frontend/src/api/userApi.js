@@ -11,7 +11,7 @@ export const loginPost = async (loginParam) => {
   form.append("username", loginParam.loginId);
   form.append("password", loginParam.password);
 
-  const res = await jwtAxios.post(`${host}/login`, form, header);
+  const res = await axios.post(`${host}/login`, form, header);
 
   return res.data;
 };

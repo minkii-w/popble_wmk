@@ -46,6 +46,8 @@ public class CustomUserdetailsService implements UserDetailsService {
 			
 			.stream().map(usersRole -> usersRole.name()).collect(Collectors.toList()));
 		
+		userDTO.setId(users.getId());
+		
 		log.info(userDTO);
 		
 		
