@@ -80,22 +80,9 @@ public class Users{
     public void changeSocial(Boolean social) {
     	this.social = social;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     //UserProfile과 관계 mapping
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL)
-    private UserProfile userProfile;
-    
-    
+    private UserProfile userProfile;   
     
 }

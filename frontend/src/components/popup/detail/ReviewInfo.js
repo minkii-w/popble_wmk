@@ -1,11 +1,14 @@
 const ReviewInfo = () => {
   return (
     <div>
-      <h2 className="text-xl font-bold mb-2">후기</h2>
-      <p>사용자 후기 리스트</p>
+      {/* 평점 */}
+      <div className="w-3/5 p-2 justify-center bg-white border border-hashTagColor rounded-xl shadow-sm">
+        <div></div>
+      </div>
 
+      {/* 리뷰 */}
       <div className="mt-4 space-y-3">
-        <div className="p-4 border rounded-lg shadow-sm">
+        <div className="p-4 border rounded-lg shadow-sm"></div>
           <p className="font-semibold">홍길동</p>
           <p>정말 좋았어요!</p>
         </div>
@@ -14,7 +17,6 @@ const ReviewInfo = () => {
           <p>가격 대비 만족도가 높습니다.</p>
         </div>
       </div>
-    </div>
   );
 };
 

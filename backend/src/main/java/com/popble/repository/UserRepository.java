@@ -27,7 +27,4 @@ public interface UserRepository extends JpaRepository<Users, Long >{
 	@Query("select m from Users m where m.loginId = :loginId")
 	Users getwithRoles(@Param("loginId")String loginId);
 	
-	
-	
-	
 }

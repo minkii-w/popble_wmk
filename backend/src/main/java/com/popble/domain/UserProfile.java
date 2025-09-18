@@ -22,19 +22,14 @@ import lombok.Setter;
 @Table(name = "user_profile")
 public class UserProfile {
 
-	
-	//user에 연결된 아이디(Mapping 하면서 바꿀것)
-	//id, column join?
-//  에러남..
 	@Id
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	//@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "user_id")
 	private Users users;
-	
 	
 	//닉네임
 	@Column(name = "nickname", nullable = false)
@@ -43,4 +38,8 @@ public class UserProfile {
 	//이미지파일(나중에 image타입으로 변환)
 	@Column(name = "photo")
 	private String profileImg;
+	
+	public UserProfile(Long id) {
+		this.id = id;
+	}
 }
