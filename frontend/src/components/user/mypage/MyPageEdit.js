@@ -9,7 +9,7 @@ const MyPageEdit = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const user = useSelector((state) => state.loginSlice);
+  const user = useSelector((state) => state.auth?.user);
 
   const [form, setForm] = useState({
     nickname: "",

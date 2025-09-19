@@ -2,6 +2,7 @@ package com.popble.security.handlr;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
@@ -25,13 +26,14 @@ public class APILoginSussessHandler implements AuthenticationSuccessHandler {
 	
 	UserDTO userDTO = (UserDTO) authentication.getPrincipal();
 	
-	Map<String, Object> claims = userDTO.getClaims();
+	Map<String, Object> claims = new HashMap<>();
 	
 	String accessToken = JWTUtill.generateToken(claims, 10);
 	String refreshToken = JWTUtill.generateToken(claims, 60*24);
 	
 	claims.put("accessToken", accessToken);
 	claims.put("refreshToken", refreshToken);
+	claims.put("user",userDTO.getClaims());
 	
 	Gson gson = new Gson();
 	

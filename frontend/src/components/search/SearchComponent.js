@@ -27,7 +27,7 @@ const initState = {
 const SearchComponent = () => {
   const { page, size, refresh, moveToSearch } = useCustomMove();
 
-  const userId = useSelector((state) => state.loginSlice?.id);
+  const userId = useSelector((state) => state.auth?.user?.id);
 
   //URL읽기
   const location = useLocation();

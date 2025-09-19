@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 const MyPageReservation = ({}) => {
   const [reservations, setReservations] = useState([]);
 
-  const userId = useSelector((state) => state.loginSlice?.id);
+  const userId = useSelector((state) => state.auth?.user?.id);
 
   useEffect(() => {
     console.log("userId in MyPageReservation:", userId);

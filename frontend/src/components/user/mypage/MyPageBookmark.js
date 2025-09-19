@@ -4,7 +4,6 @@ import PopupCard from "../../search/PopupCard";
 import { FaBookmark } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import PopupRecommendComponent from "../../popup/recommend/PopupRecommendComponent";
 
 const MyPageBookmark = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -12,7 +11,7 @@ const MyPageBookmark = () => {
   const [active, setActive] = useState([]);
   const [ended, setEnded] = useState([]);
 
-  const userId = useSelector((state) => state.loginSlice?.id);
+  const userId = useSelector((state) => state.auth?.user?.id);
 
   useEffect(() => {
     console.log("userId in MyPageBookmark:", userId);
