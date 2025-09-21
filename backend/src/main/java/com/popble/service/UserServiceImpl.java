@@ -88,14 +88,27 @@ public class UserServiceImpl implements UserService {
 		dto.setPassword(user.getPassword());
 		dto.setName(user.getName());
 		dto.setEmail(user.getEmail());
-		dto.setPhonenumber(user.getPhonenumber());
+		dto.setPhonenumber(formatPhoneNumber(user.getPhonenumber()));
 		dto.setSocial(user.isSocial());
 		dto.setRoleNames(List.of(user.getRole().name()));
 		return dto;
 	}
-
-
-
 	
+	//유저 핸드폰번호 문자열 받으면 자동으로 '-'추가하기
+	private String formatPhoneNumber(String number) {
+        if (number == null) return null;
+        number = number.replaceAll("\\D", "");
+        if (number.length() == 11) {
+            return number.substring(0, 3) + "-" 
+                 + number.substring(3, 7) + "-" 
+                 + number.substring(7);
+        } else if (number.length() == 10) {
+            return number.substring(0, 3) + "-" 
+                 + number.substring(3, 6) + "-" 
+                 + number.substring(6);
+        }
+        return number;
+
+	}
 	
 }

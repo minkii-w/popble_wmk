@@ -31,8 +31,10 @@ public class UserProfileServiceImpl implements UserProfileService{
 		
 		return UserProfileDTO.builder()
 				.id(userProfile.getId())
+				.name(userProfile.getUsers().getName())
 				.nickname(userProfile.getNickname())
 				.profileImg(userProfile.getProfileImg())
+				.phonenumber(userProfile.getUsers().getPhonenumber())
 				.build();
 	}
 	
@@ -61,5 +63,30 @@ public class UserProfileServiceImpl implements UserProfileService{
                 .profileImg(saved.getProfileImg())
                 .build();
     }
+	
+	
+	@Override
+	public UserProfileDTO updateUserProfile(Long id, UserProfileDTO dto) {
+	    UserProfile userProfile = userProfileRepository.findById(id)
+	            .orElseThrow(() -> new IllegalArgumentException("userProfileId Invalid"));
+
+	   
+	    if (dto.getName() != null) {
+	        userProfile.getUsers().setName(dto.getName());
+	    }
+	    if (dto.getPhonenumber() != null) {
+	        userProfile.getUsers().setPhonenumber(dto.getPhonenumber());
+	    }
+
+	    userProfileRepository.save(userProfile);
+
+	    return UserProfileDTO.builder()
+	            .id(userProfile.getId())
+	            .nickname(userProfile.getNickname())
+	            .profileImg(userProfile.getProfileImg())
+	            .name(userProfile.getUsers().getName())
+	            .phonenumber(userProfile.getUsers().getPhonenumber())
+	            .build();
+	}
 
 }

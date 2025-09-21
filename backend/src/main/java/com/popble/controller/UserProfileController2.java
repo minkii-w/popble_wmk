@@ -6,8 +6,10 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.popble.domain.Users;
 import com.popble.dto.ReservationDTO;
+import com.popble.dto.ReservationReactDTO;
 import com.popble.dto.UserProfileDTO;
 import com.popble.repository.UserProfileRepository;
 import com.popble.repository.UserRepository;
@@ -44,7 +47,7 @@ public class UserProfileController2 {
 	
 	//유저프로필조회
 	@GetMapping("/{id}")
-    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long id) {
+    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable("id") Long id) {
         return userProfileRepository.findById(id)
                 .map(user -> UserProfileDTO.builder()
                         .id(user.getId())
@@ -58,7 +61,7 @@ public class UserProfileController2 {
 	
 	//프로필로 예약내역조회
 	@GetMapping("/{id}/reservations")
-	public List<ReservationDTO> getReservationsByUserProfile(@PathVariable Long id){
+	public List<ReservationReactDTO> getReservationsByUserProfile(@PathVariable("id") Long id){
 		return reservationServie.getByUserProfile(id);
 	}
 	
@@ -78,6 +81,13 @@ public class UserProfileController2 {
 		UserProfileDTO response = userProfileService.createUserProfile(user ,nickname, profileImg);
 		
 		return ResponseEntity.ok(response);
+	}
+	
+	@PatchMapping("/{id}")
+	public ResponseEntity<UserProfileDTO> updateUserProfile(
+			@PathVariable("id") Long id,
+			@RequestBody UserProfileDTO userProfileDTO){
+		return ResponseEntity.ok(userProfileService.updateUserProfile(id, userProfileDTO));
 	}
 	
 

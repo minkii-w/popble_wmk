@@ -56,17 +56,26 @@ public class ReservationTime {
 	@Column(name = "am_pm")
 	private AmPm amPm;
 	
-  
+	//행사 시작시간
     private LocalTime startTime;
-    
+    //행사 종료시간
     private LocalTime endTime;
 	
 	//예약연결(한시간대에서 여러개의 예약을 가질수 있음)
 	@OneToMany(mappedBy = "reservationTime")
 	private List<Reservation> reservations = new ArrayList<>();
 	
+	
 	private String time;
 	
+	//예약 가능 날짜
 	private LocalDate date;
+	
+	//한 타임당 예약 가능한 최대 인원
+	private int maxCount;
+	
+	//현재 예약된 인원수 확인
+	private int currentCount;
+	
 }
 

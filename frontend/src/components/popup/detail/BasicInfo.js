@@ -82,7 +82,7 @@ const BasicInfo = () => {
 
             {/* 관람 유의사함 */}
             <h3 className="text-r font-semibold mt-5">관람 유의사항</h3>
-            <p className="leading-6" mb-5>
+            <p className="leading-6 mb-5">
                 • 외부 음식물 및 음료는 반입이 불가합니다.<br/>
                 • 쾌적한 관람 환경을 위해 개인 촬영 장비(ex.액션캠, DSLR, 삼각대, 셀카봉), 대형 쇼핑백은 전시장 반입이 제한됩니다. 보관이 필요하신 경우 IFC몰 내 물품 보관소를 이용해 주세요.<br/>
                 • 전시장 내 유모차 보관이 불가하오니, 유모차는 차량에 보관해 주시거나 아기 띠를 이용해 주시기 바랍니다.<br/>
