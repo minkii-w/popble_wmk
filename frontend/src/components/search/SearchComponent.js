@@ -73,9 +73,9 @@ const SearchComponent = () => {
       return Promise.resolve();
     }
     try {
-      const data = await getBookmarkList(userId);
+      const data = await getBookmarkList();
       const items = Array.isArray(data) ? data : data.content || [];
-      setBookmarkIds(items.map((b) => b.id));
+      setBookmarkIds(items.map((b) => b.popupId));
     } catch (e) {
       console.error("북마크 조회 실패", e);
       setBookmarkIds([]);
@@ -166,6 +166,7 @@ const SearchComponent = () => {
                 key={item.id}
                 item={{
                   ...item,
+                  popupId: item.id,
                   isBookmark: userId && bookmarkIds.includes(item.id),
                 }}
               ></PopupCard>

@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getBookmarkList, isBookmark } from "../../../api/bookmarkApi";
 import PopupCard from "../../search/PopupCard";
 import { FaBookmark } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+
 import { useSelector } from "react-redux";
 
 const MyPageBookmark = () => {
@@ -17,7 +17,7 @@ const MyPageBookmark = () => {
     console.log("userId in MyPageBookmark:", userId);
     const fetchBookmarks = async () => {
       try {
-        const data = await getBookmarkList(userId);
+        const data = await getBookmarkList();
         const bookmarkItems = Array.isArray(data) ? data : data.content || [];
         //북마크 확인
         console.log("북마크 리스트", bookmarkItems);
@@ -58,7 +58,7 @@ const MyPageBookmark = () => {
               scheduled.map((item) => (
                 <div className="flex-shrink-0">
                   <PopupCard
-                    key={item.id}
+                    key={item.popupId}
                     item={{ ...item, isBookmark: true }}
                   ></PopupCard>
                 </div>
@@ -86,7 +86,7 @@ const MyPageBookmark = () => {
               active.map((item) => (
                 <div className="flex-shrink-0">
                   <PopupCard
-                    key={item.id}
+                    key={item.popupId}
                     item={{ ...item, isBookmark: true }}
                   ></PopupCard>
                 </div>
@@ -114,7 +114,7 @@ const MyPageBookmark = () => {
               ended.map((item) => (
                 <div className="flex-shrink-0">
                   <PopupCard
-                    key={item.id}
+                    key={item.popupId}
                     item={{ ...item, isBookmark: true }}
                   ></PopupCard>
                 </div>

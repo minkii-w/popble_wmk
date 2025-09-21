@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.popble.dto.BookmarkDTO;
 import com.popble.dto.PopupStoreDTO;
 import com.popble.dto.UserDTO;
 import com.popble.security.CustomUserdetailsService;
@@ -18,7 +19,7 @@ import com.popble.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-//여기 있는 내용 전부 나중에 Principal로 바꿔야함
+//여기 있는 내용 전부 나중에 Principal로 바꿔야함(완료)
 @RestController
 @RequiredArgsConstructor
 @Log4j2
@@ -52,6 +53,7 @@ public class BookmarkController {
 //	public Page<PopupStoreDTO> getBookmarkList(@PathVariable("userId")Long userId, Pageable pageable){
 //		return bookmarkService.bookmarkList(userId, pageable);
 //		
+	
 		//북마크 추가
 	@PostMapping("/{popupId}")
 	public boolean addBookmark(@AuthenticationPrincipal UserDTO userDTO, @PathVariable("popupId") Long popupId) {
@@ -83,7 +85,7 @@ public class BookmarkController {
 
 	// 내 북마크 목록
 	@GetMapping("/list")
-	public Page<PopupStoreDTO> getBookmarkList(@AuthenticationPrincipal UserDTO userDTO, Pageable pageable) {
+	public Page<BookmarkDTO> getBookmarkList(@AuthenticationPrincipal UserDTO userDTO, Pageable pageable) {
 		
 		Long userId = userDTO.getId();
 		

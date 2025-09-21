@@ -54,8 +54,14 @@ const LoginComponent = () => {
       if (data.error) {
         alert("아이디와 비밀번호를 확인하세요");
       } else {
-        dispatch(loginSuccess({ token: data.token, user: data.user }));
-        localStorage.setItem("token", data.token);
+        dispatch(
+          loginSuccess({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            user: data.user,
+          })
+        );
+        // localStorage.setItem("token", data.token);
         alert("로그인 성공");
         moveToPath("/");
       }

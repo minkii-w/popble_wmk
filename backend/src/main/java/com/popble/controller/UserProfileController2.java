@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,43 +29,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/userProfile")
 public class UserProfileController2 {
-	
+
 	private final ReservationService reservationServie;
-	
+
 	private final UserProfileService userProfileService;
-	
+
 	private final UserProfileRepository userProfileRepository;
-	
+
 	private final UserRepository userRepository;
-	
+
 	private final CustomFileUtil fileUtil;
-	
-	
-	
-	
-	//유저프로필조회
+
+	// 유저프로필조회
 	@GetMapping("/{id}")
-    public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long id) {
-        return userProfileRepository.findById(id)
-                .map(user -> UserProfileDTO.builder()
-                        .id(user.getId())
-                        .nickname(user.getNickname())
-                        .profileImg(user.getProfileImg())
-                        .build())
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-	
-	
-	//프로필로 예약내역조회
+	public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable Long id) {
+		return userProfileRepository.findById(id)
+				.map(user -> UserProfileDTO.builder().id(user.getId()).nickname(user.getNickname())
+						.profileImg(user.getProfileImg()).build())
+				.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	}
+
+	// 프로필로 예약내역조회
 	@GetMapping("/{id}/reservations")
-	public List<ReservationDTO> getReservationsByUserProfile(@PathVariable Long id){
+	public List<ReservationDTO> getReservationsByUserProfile(@PathVariable Long id) {
 		return reservationServie.getByUserProfile(id);
 	}
-	
-	
-	
-	//유저프로필 만들기(+이미지사진)
+
+	// 유저프로필 만들기(+이미지사진)
 	@PostMapping(value="/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<UserProfileDTO> createUserProfile(
 			@RequestParam("userId")Long userId,
@@ -96,6 +87,26 @@ public class UserProfileController2 {
 		
 		return ResponseEntity.ok(response);
 	}
-	
 
+	// 프로필 수정
+	@PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<UserProfileDTO> updateUserProfile(
+			@PathVariable(name = "id") Long userId, 
+			@RequestParam(name = "nickname") String nickname, 
+			@RequestParam(value = "profileImg",required = false) MultipartFile profileImg){
+		
+		UserProfileDTO updatedProfile = userProfileService.updateUserProfile(userId,nickname,profileImg);
+				
+		return ResponseEntity.ok(updatedProfile);
+	}
+	
+	//UserRepository로 아이디 조회해서 profile가져오기
+	@GetMapping("edit/{userId}")
+	public ResponseEntity<UserProfileDTO> getUserProfileByUserId(@PathVariable(name = "userId") Long userId){
+		return userRepository.findById(userId)
+				.map(Users::getUserProfile)
+				.map(userProfile -> UserProfileDTO.builder().id(userProfile.getId()).nickname(userProfile.getNickname()).profileImg(userProfile.getProfileImg()).build())
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
 }

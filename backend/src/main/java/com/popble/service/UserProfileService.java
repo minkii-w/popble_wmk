@@ -13,4 +13,6 @@ public interface UserProfileService {
 	
 	UserProfileDTO createUserProfile(Users user, String nickname, MultipartFile profileImg) throws IOException;
 
+	UserProfileDTO updateUserProfile(Long userId, String nickname, MultipartFile profileImg);
+
 }

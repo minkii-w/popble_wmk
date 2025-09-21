@@ -25,16 +25,15 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserServiceImpl implements UserService {
 
-    private final UserProfileRepository userProfileRepository;
+	private final UserProfileRepository userProfileRepository;
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder encoder;
-	
+
 	private final ReservationRepository reservationRepository;
 	private final BookmarkRepository bookmarkRepository;
 
-
-@Transactional
+	@Transactional
 	public UserDTO create(UserDTO userDTO) {
 
 		log.info("------백앤드 객채 생성----------------------------");
@@ -44,76 +43,69 @@ public class UserServiceImpl implements UserService {
 
 				.build();
 
-		//User저장
+		// User저장
 		Users savedUser = userRepository.save(users);
-		//UserProfile 생성
+		// UserProfile 생성
 		UserProfile userProfile = new UserProfile();
-		//연관관계설정
+		// 연관관계설정
 		userProfile.setNickname(userDTO.getName());
 		userProfile.setUsers(savedUser);
-		
+
 		UserProfile savedProfile = userProfileRepository.save(userProfile);
-		//저장
+		// 저장
 		savedUser.setUserProfile(savedProfile);
 		userRepository.save(savedUser);
-		
 
 		return userDTO;
 
 	}
 
-	//모든 유저목록 불러오기
-	public List<UserDTO> getAllUsers(){
-		return userRepository.findAll().stream()
-				.map(user -> entityToDTO(user))
-				.collect(Collectors.toList());
+	// 모든 유저목록 불러오기
+	public List<UserDTO> getAllUsers() {
+		return userRepository.findAll().stream().map(user -> entityToDTO(user)).collect(Collectors.toList());
 	}
-	
-	//id로 유저 조회
+
+	// id로 유저 조회
 	public UserDTO getUserById(Long id) {
-		Users user = userRepository.findById(id)
-					.orElseThrow();
+		Users user = userRepository.findById(id).orElseThrow();
 		return entityToDTO(user);
 	}
-	
-	
+
+	// 회원 정보 수정
 	public UserDTO updateUser(Long id, UserDTO userDTO) {
-		Users user = userRepository.findById(id)
-				.orElseThrow();
-				
+		Users user = userRepository.findById(id).orElseThrow();
+
 		user.setName(userDTO.getName());
 		user.setEmail(userDTO.getEmail());
 		user.setPhonenumber(userDTO.getPhonenumber());
 		user.setSocial(userDTO.isSocial());
-		
-		Users updateUser = userRepository.save(user);
-		
-		if(userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+
+		if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
 			user.setPassword(encoder.encode(userDTO.getPassword()));
 		}
-		
+
+		Users updateUser = userRepository.save(user);
+
 		return entityToDTO(updateUser);
 	}
 
-	//회원 삭제
-	//각각 연결때문에 안지워짐
+	// 회원 삭제
+	// 각각 연결때문에 안지워짐
 	@Transactional
 	public void deleteUser(Long id) {
-		
-		Users user = userRepository.findById(id)
-				.orElseThrow();
+
+		Users user = userRepository.findById(id).orElseThrow();
 		UserProfile profile = user.getUserProfile();
-		if(user.getUserProfile() != null) {
+		if (user.getUserProfile() != null) {
 			bookmarkRepository.deleteByUserProfile(profile);
 			userProfileRepository.delete(profile);
 			user.setUserProfile(null);
 		}
-		
+
 		userRepository.delete(user);
-		
+
 	}
 
-	
 	public UserDTO entityToDTO(Users user) {
 		UserDTO dto = new UserDTO();
 		dto.setId(user.getId());
@@ -127,8 +119,4 @@ public class UserServiceImpl implements UserService {
 		return dto;
 	}
 
-
-
-	
-	
 }

@@ -1,11 +1,36 @@
 import { useEffect, useState } from "react";
 import MyPageMenuComponent from "../mypage/MyPageMenuComponent";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { API_SERVER_HOST } from "../../../api/popupstoreApi";
 
 const MyPageComponent = () => {
   const { menu } = useParams();
   const navigate = useNavigate();
   // const [selectedMenu, setSelectedMenu] = useState();
+
+  const user = useSelector((state) => state.auth?.user);
+  const userProfile = useSelector((state) => state.auth?.userProfile);
+
+  const [profileImgUrl, setProfileImgUrl] = useState(null);
+  const [nickname, setNickname] = useState("POPBLE");
+  const [email, setEmail] = useState("popble@popble.com");
+
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email);
+    }
+    if (userProfile) {
+      setNickname(userProfile.nickname || "POPBLE");
+      if (userProfile.profileImg) {
+        setProfileImgUrl(
+          `${API_SERVER_HOST}/uploads/${userProfile.profileImg}`
+        );
+      } else {
+        setProfileImgUrl(null);
+      }
+    }
+  }, [user, userProfile]);
 
   const handleMenuClick = (key) => {
     navigate(`/user/mypage/${key}`);
@@ -17,14 +42,18 @@ const MyPageComponent = () => {
         {/* 프로필사진 이메일 */}
         <div className="flex flex-row justify-center items-center p-4 mb-6">
           <div className="size-[150px] shadow-md m-3 p-2 rounded-full text-center">
-            {/* <img src=""></img> */}
+            <img
+              src={profileImgUrl}
+              alt="프로필사진"
+              className="object-cover h-full w-full"
+            ></img>
             이미지
           </div>
           <div className="m-3 p-3">
             <h2 className="text-5xl font-bold p-2 m-2 tracking-widest">
-              POPBLE
+              {nickname}
             </h2>
-            <p className="text-2xl p-2 m-2 tracking-wide">popble@popble.com</p>
+            <p className="text-2xl p-2 m-2 tracking-wide">{email}</p>
           </div>
         </div>
         {/* 프로필사진 이메일 끝 */}
