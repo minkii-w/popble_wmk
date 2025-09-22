@@ -3,6 +3,7 @@ import MyPageMenuComponent from "../mypage/MyPageMenuComponent";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { API_SERVER_HOST } from "../../../api/popupstoreApi";
+import { getUserProfileByUserId } from "../../../api/userProfileApi";
 
 const MyPageComponent = () => {
   const { menu } = useParams();
@@ -10,27 +11,30 @@ const MyPageComponent = () => {
   // const [selectedMenu, setSelectedMenu] = useState();
 
   const user = useSelector((state) => state.auth?.user);
-  const userProfile = useSelector((state) => state.auth?.userProfile);
-
+  //현재 userProfile이 undefined로 나옴
+  // const userProfile = useSelector((state) => state.auth?.userProfile);
+  // console.log("REDUX에 저장된 userProfile:", userProfile);
   const [profileImgUrl, setProfileImgUrl] = useState(null);
   const [nickname, setNickname] = useState("POPBLE");
   const [email, setEmail] = useState("popble@popble.com");
 
+  const formatImageUrl = (path) => {
+    if (!path) return null;
+    return `${API_SERVER_HOST}${path}`;
+  };
+
   useEffect(() => {
-    if (user) {
-      setEmail(user.email);
-    }
-    if (userProfile) {
-      setNickname(userProfile.nickname || "POPBLE");
-      if (userProfile.profileImg) {
-        setProfileImgUrl(
-          `${API_SERVER_HOST}/uploads/${userProfile.profileImg}`
-        );
+    if (!user?.id) return;
+    setEmail(user.email || "");
+    getUserProfileByUserId(user.id).then((data) => {
+      setNickname(data.nickname || "");
+      if (data.profileImg) {
+        setProfileImgUrl(formatImageUrl(data.profileImg));
       } else {
         setProfileImgUrl(null);
       }
-    }
-  }, [user, userProfile]);
+    });
+  }, [user]);
 
   const handleMenuClick = (key) => {
     navigate(`/user/mypage/${key}`);
@@ -45,9 +49,8 @@ const MyPageComponent = () => {
             <img
               src={profileImgUrl}
               alt="프로필사진"
-              className="object-cover h-full w-full"
+              className="object-cover h-full w-full rounded-full"
             ></img>
-            이미지
           </div>
           <div className="m-3 p-3">
             <h2 className="text-5xl font-bold p-2 m-2 tracking-widest">

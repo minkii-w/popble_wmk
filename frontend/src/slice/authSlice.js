@@ -25,7 +25,7 @@ const authSlice = createSlice({
       setCookie(
         "user",
         // 1일동안
-        JSON.stringify({ accessToken, refreshToken, user }, 1)
+        JSON.stringify({ accessToken, refreshToken, user, userProfile }, 1)
       );
     },
 
@@ -40,8 +40,9 @@ const authSlice = createSlice({
       //쿠키 삭제
       removeCookie("user");
     },
+
     //유저프로필 수정
-    updateUserProfile(state, action) {
+    updateUserProfileRedux(state, action) {
       // MyPageEdit에서 프로필 수정 후 호출
       state.userProfile = action.payload;
       const { accessToken, refreshToken, user } = state;
@@ -60,11 +61,20 @@ const authSlice = createSlice({
       state.refreshToken = refreshToken;
 
       const user = state.user;
-      setCookie("user", JSON.stringify({ accessToken, refreshToken, user }), 1);
+      const userProfile = state.userProfile;
+      setCookie(
+        "user",
+        JSON.stringify({ accessToken, refreshToken, user, userProfile }),
+        1
+      );
     },
   },
 });
 
-export const { loginSuccess, logout, refreshTokenSuccess, updateUserProfile } =
-  authSlice.actions;
+export const {
+  loginSuccess,
+  logout,
+  refreshTokenSuccess,
+  updateUserProfileRedux,
+} = authSlice.actions;
 export default authSlice.reducer;

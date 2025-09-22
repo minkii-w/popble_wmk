@@ -104,9 +104,9 @@ public class UserProfileController2 {
 	@GetMapping("edit/{userId}")
 	public ResponseEntity<UserProfileDTO> getUserProfileByUserId(@PathVariable(name = "userId") Long userId){
 		return userRepository.findById(userId)
-				.map(Users::getUserProfile)
+				.map(user -> user.getUserProfile())
 				.map(userProfile -> UserProfileDTO.builder().id(userProfile.getId()).nickname(userProfile.getNickname()).profileImg(userProfile.getProfileImg()).build())
-				.map(ResponseEntity::ok)
+				.map(userProfileDTO -> ResponseEntity.ok(userProfileDTO))
 				.orElse(ResponseEntity.notFound().build());
 	}
 }

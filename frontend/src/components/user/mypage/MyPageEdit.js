@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { getUserById, updateUser, deleteUser } from "../../../api/userApi";
 import { FaUserEdit } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../../slice/loginSlice";
+// import { logout } from "../../../slice/loginSlice";
+import { logout, updateUserProfileRedux } from "../../../slice/authSlice";
 import { useNavigate } from "react-router-dom";
 import {
   getUserProfileByUserId,
@@ -56,7 +57,7 @@ const MyPageEdit = () => {
         profileImg: data.profileImg || null,
       });
       if (data.profileImg) {
-        setProfileImage(`${API_SERVER_HOST}/uploads/${data.profileImg}`);
+        setProfileImage(`${API_SERVER_HOST}${data.profileImg}`);
       }
     });
   }, [user]);
@@ -87,15 +88,15 @@ const MyPageEdit = () => {
       });
 
       //UserProfile
-      await updateUserProfile(user.id, {
+      const updatedProfile = await updateUserProfile(user.id, {
         nickname: profileForm.nickname,
         profileImg: profileForm.profileImg,
       });
       dispatch(
-        updateUserProfile({
-          ...updateUserProfile,
-          profileImg: updateUserProfile.profileImg
-            ? `${API_SERVER_HOST}/uploads/${updateUserProfile.profileImg}`
+        updateUserProfileRedux({
+          ...updatedProfile,
+          profileImg: updatedProfile.profileImg
+            ? `${API_SERVER_HOST}/uploads/${updatedProfile.profileImg}`
             : null,
         })
       );

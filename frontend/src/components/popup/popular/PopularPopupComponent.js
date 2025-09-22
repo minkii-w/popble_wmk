@@ -1,22 +1,45 @@
 import { Link } from "react-router-dom";
 
-const PopularPopupComponent = ({ item }) => {
+//임시용 이미지
+import img3 from "../../../assets/img/1.jpeg";
+
+const PopularPopupComponent = ({ item, index }) => {
   return (
     <Link
       to={`/popup/detail/${item.id}`}
-      className="relative flex flex-col bg-secondaryColor w-[200px] h-[290px] rounded-lg m-5 p-3 hover:shadow-lg transition border-secondaryAccentColor border-2 overflow-hidden"
+      className="relative flex flex-col w-[200px] h-[290px] rounded-lg m-5 p-3 
+               bg-gradient-to-br from-black/20 to-black/60 backdrop-blur-md border border-white/20
+                shadow-md hover:shadow-xl transition-all duration-300
+                overflow-hidden"
     >
-      {/* 팝업간단정보 */}
+      {/* 숫자표시 */}
+      <div
+        className="absolute top-2 left-2  text-white text-6xl font-bold
+      w-10 h-10 z-20 flex items-center justify-center rounded-full"
+        style={{ transform: "rotate(2deg)" }}
+      >
+        {index + 1}
+      </div>
+      {/* 팝업 이미지 */}
       <img
-        src={item.image}
+        // Todo: 하드코딩용 임시 블락 데이터 입력후 주석 해제
+        // src={item.image}
+        src={img3}
         alt={item.title}
-        className="w-full h-[200px] object-cover"
+        className="absolute inset-0 w-full h-full object-cover"
       ></img>
-      <div className="p-3 flex flex-col justify-between h-[90px]">
-        <h3 className="font-bold text-lg">{item.storeName}</h3>
-        {/* <p className="text-sm text-gray-500">{item.address}</p> */}
-        <p className="text-sm text-gray-500">
-          {item.startDate} ~ {item.endDate}
+
+      {/* 오버레이 */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/90 bg-opacity-50 z-10"></div>
+
+      {/* 카드 내용 */}
+      <div className="relative z-20 mt-auto p-3 flex flex-col justify-between h-[90px]">
+        <h3 className="font-bold text-lg text-gray-100">{item.storeName}</h3>
+        <p className="text-sm text-gray-100">{item.address}</p>
+        <p className="text-sm text-gray-100">
+          <span>{item.startDate}</span>
+          <br />
+          <span>{item.endDate}</span>
         </p>
       </div>
     </Link>
