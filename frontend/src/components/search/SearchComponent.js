@@ -27,7 +27,7 @@ const initState = {
 const SearchComponent = () => {
   const { page, size, refresh, moveToSearch } = useCustomMove();
 
-  const userId = useSelector((state) => state.loginSlice);
+  const userId = useSelector((state) => state.auth?.user?.id);
 
   //URL읽기
   const location = useLocation();
@@ -68,14 +68,14 @@ const SearchComponent = () => {
 
   //북마크 불러오기
   const fetchBookmarks = useCallback(async () => {
-    if (!userId || userId.id) {
+    if (!userId) {
       setBookmarkIds([]);
-      return;
+      return Promise.resolve();
     }
     try {
-      const data = await getBookmarkList(userId);
+      const data = await getBookmarkList();
       const items = Array.isArray(data) ? data : data.content || [];
-      setBookmarkIds(items.map((b) => b.id));
+      setBookmarkIds(items.map((b) => b.popupId));
     } catch (e) {
       console.error("북마크 조회 실패", e);
       setBookmarkIds([]);
@@ -83,6 +83,7 @@ const SearchComponent = () => {
   }, [userId]);
 
   useEffect(() => {
+    console.log("userId in SearchPage:", userId);
     const fetchAll = async () => {
       try {
         setLoading(true);
@@ -165,6 +166,7 @@ const SearchComponent = () => {
                 key={item.id}
                 item={{
                   ...item,
+                  popupId: item.id,
                   isBookmark: userId && bookmarkIds.includes(item.id),
                 }}
               ></PopupCard>

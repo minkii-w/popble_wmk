@@ -1,7 +1,28 @@
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { postAdd } from "../../api/userApi";
+import TextField from "@mui/material/TextField";
 import useCustomLogin from "../../hooks/useCustomLogin";
-// import { kakaoLoginAction, KakaoLogin } from "./oauth2/kakao/KakaoLogin"; //? kakaologin을 못찾음..날라간듯?
+
+import { Link } from "react-router-dom";
+import KakaoLoginButton from "../../pages/users/KakaoLoginButton";
+import KaKaoImage from "../../pages/users/KakaoImage";
+import KakaoImg from "../../assets/img/Kakao.jpg";
+import GoogleImage from "../../pages/users/GoogleImge";
+import GoogleImg from "../../assets/img/Google.jpg";
+import GoogleLoginButton from "../../pages/users/GoogleLoginButton";
+import NaverImage from "../../pages/users/NaverImge";
+import NaverLoginButton from "../../pages/users/NaverLoginButton";
+import NaverImg from "../../assets/img/Naver.jpg";
 import React from "react";
+import { render } from "@testing-library/react";
+import { loginPost } from "../../api/userApi";
+import PopbleImg from "../../assets/img/POPBLE Logo.png";
+import PopbleImage from "../../pages/users/PopbleImge";
+import { useDispatch } from "react-redux";
+import { login } from "../../slice/loginSlice";
+import { setCookie } from "../../utill/cookieUtill";
+import { loginSuccess } from "../../slice/authSlice";
 
 const initState = {
   loginId: "",
@@ -9,37 +30,38 @@ const initState = {
 };
 
 const LoginComponent = () => {
-  const REST_API_KEY = "15c59ee2f2c32b7e3d1eb89e1bcf316b";
-  const REDIRECT_URI = "http://localhost:8080/login/oauth2/code/kakao";
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    trigger,
 
-  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-
-  const [loginParam, setLoginParam] = useState({ ...initState });
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: initState,
+  });
 
   const { doLogin, moveToPath } = useCustomLogin();
 
-  /**
-   *
-   * @param {React.MouseEvent} e
-   */
-  const KakaoLogin = (e) => {
-    e.preventDefault();
-    window.location.href = KAKAO_AUTH_URL;
-  };
+  const dispatch = useDispatch();
 
-  const handleChange = (e) => {
-    loginParam[e.target.name] = e.target.value;
-
-    setLoginParam({ ...loginParam });
-  };
-
-  const handleChlickLogin = (e) => {
-    doLogin(loginParam).then((data) => {
+  const handleClickLogin = (e) => {
+    const values = getValues();
+    loginPost(values).then((data) => {
       console.log(data);
 
       if (data.error) {
         alert("아이디와 비밀번호를 확인하세요");
       } else {
+        dispatch(
+          loginSuccess({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+            user: data.user,
+          })
+        );
+        // localStorage.setItem("token", data.token);
         alert("로그인 성공");
         moveToPath("/");
       }
@@ -47,60 +69,111 @@ const LoginComponent = () => {
   };
 
   return (
-    <div className="border-2 border-sky-200 mt-10 m-2 p-4">
-      <div className="flex justify-center">
-        <div className="text-4xl m-4 p-4 font-extrabold text-blue-500">
-          LOGIN
-        </div>
+    <div className="min-h-screen flex flex-col items-center justify-center ">
+      <div className="w-[430px] h-[170px] absolute top-[240px] bg-primaryColor flex justify-center items-center ">
+        <PopbleImage src={PopbleImg} />
       </div>
 
-      <div className="flex justify-center">
-        <div className="relative mb-4 flex w-full  flex-wrap items-stretch">
-          <div className="w-full p-3 text-left font-bold">ID</div>
-          <input
-            className="w-full p-3 rounded-r border border-solid border-neutral-500 shadow-md"
-            name="loginId"
-            type={"text"}
-            value={loginParam.loginId}
-            onChange={handleChange}
-          ></input>
-        </div>
-      </div>
+      <form className="w-full max-w-[480px] bg-white p-6 rounded shadow space-y-4">
+        {/* 닉네임 */}
 
-      <div className="flex justify-center">
-        <div className="relative mb-4 flex w-full flex-wrap items-stretch">
-          <div className="w-full p-3 text-left font-bold">Password</div>
-          <input
-            className="w-full p-3 rounded-r border border-solid border-neutral-500 shadow-md"
-            name="password"
-            type={"password"}
-            value={loginParam.password}
-            onChange={handleChange}
-          ></input>
-        </div>
-      </div>
+        {/* 아이디 */}
+        <Controller
+          name="loginId"
+          control={control}
+          rules={{ required: "ID를 입력하세요" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="아이디"
+              fullWidth
+              variant="standard"
+              InputProps={{ disableUnderline: true }}
+              sx={{
+                backgroundColor: "#efefef",
+                paddingLeft: 1,
+              }}
+              InputLabelProps={{
+                sx: { fontSize: "13px", left: "10px" },
+              }}
+              onChange={(e) => {
+                field.onChange(e);
+                trigger("loginId");
+              }}
+              helperText={errors.loginId && errors.loginId.message}
+            />
+          )}
+        />
 
-      <div className="flex justify-center">
-        <div className="relative mb-4 flex justify-center">
-          <div className="w-2/5 p-6 flex justify-center font-bold">
-            <button
-              className="rounded p-4 w-36 bg-blue-500 text-xl text-white "
-              onClick={handleChlickLogin}
-            >
-              LOGIN
-            </button>
-          </div>
-        </div>
-      </div>
+        {/* 비밀번호 */}
+        <Controller
+          name="password"
+          control={control}
+          rules={{ required: "비밀번호를 입력하세요" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="비밀번호"
+              type="password"
+              fullWidth
+              variant="standard"
+              InputProps={{ disableUnderline: true }}
+              sx={{
+                backgroundColor: "#efefef",
+                paddingLeft: 1,
+              }}
+              InputLabelProps={{
+                sx: { fontSize: "13px", left: "10px" },
+              }}
+              onChange={(e) => {
+                field.onChange(e);
+                trigger("password");
+              }}
+              helperText={errors.password && errors.password.message}
+            />
+          )}
+        />
 
-      <div className="w-2/5 p-6 flex justify-center font-bold">
+        {/* 로그인 */}
         <button
-          className="rounded p-4 w-36 bg-blue-500 text-xl text-white "
-          onClick={KakaoLogin}
+          onClick={handleSubmit(handleClickLogin)}
+          className="w-full h-[55px] bg-secondaryAccentColor text-black font-bold text-lg rounded-md"
         >
-          LOGIN
+          로그인
         </button>
-      </div>
+
+        {/* 아이디/비밀번호 재설정/회원가입 링크 */}
+        <div className="text-right text-sm">
+          <Link to="/user/login" className="text-black-500 hover:underline">
+            아이디/
+          </Link>
+          <Link to="/user/login" className="text-black-500 hover:underline">
+            비밀번호 재설정
+          </Link>
+
+          <Link to="/user/signup" className="text-black-500 hover:underline">
+            /회원가입
+          </Link>
+        </div>
+
+        {/* 구분선 */}
+        <div className="w-full h-[1px] bg-black" />
+
+        {/* 소셜 로그인 버튼 */}
+        <div className="flex justify-center gap-9">
+          <KakaoLoginButton>
+            <KaKaoImage src={KakaoImg} />
+          </KakaoLoginButton>
+
+          <GoogleLoginButton>
+            <GoogleImage src={GoogleImg} />
+          </GoogleLoginButton>
+
+          <NaverLoginButton>
+            <NaverImage src={NaverImg} />
+          </NaverLoginButton>
+        </div>
+      </form>
     </div>
   );
 };

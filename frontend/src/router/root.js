@@ -16,6 +16,7 @@ const Popup = lazy(() => import("../pages/popup/PopupIndexPage"));
 const User = lazy(() => import("../pages/users/IndexPage"));
 const Search = lazy(() => import("../pages/search/SearchIndexPage"));
 const Board = lazy(() => import("../pages/board/BoardIndexPage"));
+const Oauth = lazy( () => import("../pages/users/OauthCallback") )
 
 const root = createBrowserRouter(
   [
@@ -62,6 +63,13 @@ const root = createBrowserRouter(
         </Suspense>
       ),
       children: searchRouter(),
+    },
+       {
+        path:"/oauth/callback",
+        element: <Suspense fallback={<LoadingComponent/>}><Oauth></Oauth></Suspense>
+
+
+
     },
     {
       path: "*",
