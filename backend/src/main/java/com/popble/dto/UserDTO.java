@@ -68,7 +68,7 @@ public class UserDTO extends User {
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("id", id);
 		dataMap.put("loginId", loginId);
-		dataMap.put("password", password);
+//		dataMap.put("password", password);
 		dataMap.put("name", name);
 		dataMap.put("social", social);
 		dataMap.put("email", email);

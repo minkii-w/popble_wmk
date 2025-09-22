@@ -2,59 +2,105 @@ import { useState, useEffect } from "react";
 import { getUserById, updateUser, deleteUser } from "../../../api/userApi";
 import { FaUserEdit } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../../slice/loginSlice";
+// import { logout } from "../../../slice/loginSlice";
+import { logout, updateUserProfileRedux } from "../../../slice/authSlice";
 import { useNavigate } from "react-router-dom";
+import {
+  getUserProfileByUserId,
+  getUserProfileById,
+  updateUserProfile,
+} from "../../../api/userProfileApi";
+import { API_SERVER_HOST } from "../../../api/popupstoreApi";
 
 const MyPageEdit = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth?.user);
 
-  const user = useSelector((state) => state.loginSlice);
-
-  const [form, setForm] = useState({
-    nickname: "",
+  //User부분의 수정
+  const [userForm, setUserForm] = useState({
     password: "",
     passwordConfirm: "",
     email: "",
+    name: "",
+    phonenumber: "",
+  });
+
+  //UserProfile부분의 수정
+  const [profileForm, setProfileForm] = useState({
+    nickname: "",
+    profileImg: null,
   });
   const [isSocial, setIsSocial] = useState(false);
 
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      setForm({
-        nickname: user.nickname || "",
+    if (!user || !user.id) return;
+
+    // User 내용
+    getUserById(user.id).then((data) => {
+      setUserForm({
+        email: data.email || "",
         password: "",
         passwordConfirm: "",
-        email: user.email || "",
+        name: data.name || "",
+        phonenumber: data.phonenumber || "",
       });
-    }
+      setIsSocial(data.isSocial);
+    });
+
+    // Profile 내용
+    getUserProfileByUserId(user.id).then((data) => {
+      setProfileForm({
+        nickname: data.nickname || "",
+        profileImg: data.profileImg || null,
+      });
+      if (data.profileImg) {
+        setProfileImage(`${API_SERVER_HOST}${data.profileImg}`);
+      }
+    });
   }, [user]);
 
   if (!user || !user.loginId) {
     return <div className="text-red-500">로그인이 필요합니다</div>;
   }
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleUserChange = (e) => {
+    setUserForm({ ...userForm, [e.target.name]: e.target.value });
+  };
+  const handleProfileChange = (e) => {
+    setProfileForm({ ...profileForm, [e.target.name]: e.target.value });
   };
 
   const handleUpdate = async () => {
-    if (!form.nickname || !form.email) {
-      alert("닉네임과 이메일은 필수입니다");
-      return;
-    }
-    if (!isSocial && form.password !== form.passwordConfirm) {
-      alert("비밀번호가 일치하지 않습니다");
-      return;
-    }
     try {
+      //User
+      if (!isSocial && userForm.password !== userForm.passwordConfirm) {
+        alert("비밀번호가 일치하지 않습니다");
+        return;
+      }
       await updateUser(user.id, {
-        nickname: form.nickname,
-        password: isSocial ? null : form.password,
-        email: form.email,
+        email: userForm.email,
+        password: isSocial ? null : userForm.password,
+        name: userForm.name,
+        phonenumber: userForm.phonenumber,
       });
+
+      //UserProfile
+      const updatedProfile = await updateUserProfile(user.id, {
+        nickname: profileForm.nickname,
+        profileImg: profileForm.profileImg,
+      });
+      dispatch(
+        updateUserProfileRedux({
+          ...updatedProfile,
+          profileImg: updatedProfile.profileImg
+            ? `${API_SERVER_HOST}/uploads/${updatedProfile.profileImg}`
+            : null,
+        })
+      );
+
       alert("회원정보 수정 완료");
     } catch (err) {
       alert("회원정보 수정 실패:" + err.message);
@@ -76,10 +122,12 @@ const MyPageEdit = () => {
 
   // 프로필 이미지 관리
   const handleImageChange = async (e) => {
-    const file = e.target.value.files[0];
+    const file = e.target.files[0];
     if (file) {
+      setProfileForm({ ...profileForm, profileImg: file });
       const reader = new FileReader();
       reader.onloadend = () => {
+        //미리보기
         setProfileImage(reader.result);
       };
       reader.readAsDataURL(file);
@@ -101,7 +149,7 @@ const MyPageEdit = () => {
           <div className="w-20 h-20 rounded-full border-2 border-gray-400 flex overflow-hidden items-center justify-center">
             {profileImage ? (
               <img
-                src="{profileImage}"
+                src={profileImage}
                 alt="프로필사진"
                 className="object-cover w-full h-full"
               ></img>
@@ -112,7 +160,7 @@ const MyPageEdit = () => {
           <input
             type="file"
             accept="image/*"
-            onCanPlay={handleImageChange}
+            onChange={handleImageChange}
             className="hidden"
             id="profileImageUpload"
           ></input>
@@ -138,26 +186,27 @@ const MyPageEdit = () => {
             <input
               disabled
               className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
-              value={form.name}
-              onChange={handleChange}
-              name="nickname"
+              value={userForm.name}
+              onChange={handleUserChange}
+              name="name"
             ></input>
           </div>
           <div className="flex items-center">
             <span className="w-32 font-medium">닉네임</span>
             <input
               className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
-              value={form.nickname}
-              onChange={handleChange}
+              value={profileForm.nickname}
+              onChange={handleProfileChange}
               name="nickname"
             ></input>
           </div>
           <div className="flex items-center">
             <span className="w-32 font-medium">비밀번호</span>
             <input
+              disabled={isSocial}
               className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
-              value={form.password}
-              onChange={handleChange}
+              value={userForm.password}
+              onChange={handleUserChange}
               name="password"
               type="password"
             ></input>
@@ -166,9 +215,10 @@ const MyPageEdit = () => {
             <span className="w-32 font-medium">비밀번호 재확인</span>
             {/* Todo: 비밀번호 재확인할 password2 필요? */}
             <input
+              disabled={isSocial}
               className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
-              value={form.passwordConfirm}
-              onChange={handleChange}
+              value={userForm.passwordConfirm}
+              onChange={handleUserChange}
               name="passwordConfirm"
               type="password"
             ></input>
@@ -177,10 +227,20 @@ const MyPageEdit = () => {
             <span className="w-32 font-medium">이메일</span>
             <input
               className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
-              value={form.email}
-              onChange={handleChange}
+              value={userForm.email}
+              onChange={handleUserChange}
               name="email"
               type="email"
+            ></input>
+          </div>
+          <div className="flex items-center">
+            <span className="w-32 font-medium">전화번호</span>
+            <input
+              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              value={userForm.phonenumber}
+              onChange={handleUserChange}
+              name="phonenumber"
+              type="phonenumber"
             ></input>
           </div>
         </div>

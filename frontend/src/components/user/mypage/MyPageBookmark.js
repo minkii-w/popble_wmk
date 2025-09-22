@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getBookmarkList, isBookmark } from "../../../api/bookmarkApi";
 import PopupCard from "../../search/PopupCard";
 import { FaBookmark } from "react-icons/fa";
-import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import PopupRecommendComponent from "../../popup/recommend/PopupRecommendComponent";
+import customSwiper from "../../common/CustomSwiper";
+import CustomSwiper from "../../common/CustomSwiper";
+import { SwiperSlide } from "swiper/react";
 
 const MyPageBookmark = () => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -12,13 +13,13 @@ const MyPageBookmark = () => {
   const [active, setActive] = useState([]);
   const [ended, setEnded] = useState([]);
 
-  const userId = useSelector((state) => state.loginSlice?.id);
+  const userId = useSelector((state) => state.auth?.user?.id);
 
   useEffect(() => {
     console.log("userId in MyPageBookmark:", userId);
     const fetchBookmarks = async () => {
       try {
-        const data = await getBookmarkList(userId);
+        const data = await getBookmarkList();
         const bookmarkItems = Array.isArray(data) ? data : data.content || [];
         //북마크 확인
         console.log("북마크 리스트", bookmarkItems);
@@ -38,6 +39,7 @@ const MyPageBookmark = () => {
     };
     fetchBookmarks();
   }, [userId]);
+
   return (
     <div className="flex flex-col w-[700px]">
       {/* 헤더 */}
@@ -53,26 +55,21 @@ const MyPageBookmark = () => {
           예정
         </p>
         <hr className="border-2 border-gray-400 m-2"></hr>
-        <div className="overflow-x-auto pr-4">
-          <div className="flex flex-nowrap gap-2 pr-4 py-2">
-            {scheduled.length > 0 ? (
-              scheduled.map((item) => (
-                <div className="flex-shrink-0">
-                  <PopupCard
-                    key={item.id}
-                    item={{ ...item, isBookmark: true }}
-                  ></PopupCard>
-                </div>
-              ))
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-2xl font-semibold">
-                  북마크한 팝업이 없습니다.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <CustomSwiper>
+          {scheduled.length > 0 ? (
+            scheduled.map((item) => (
+              <SwiperSlide style={{ width: "400px" }} key={item.popupId}>
+                <PopupCard item={{ ...item, isBookmark: true }}></PopupCard>
+              </SwiperSlide>
+            ))
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-2xl font-semibold">
+                북마크한 팝업이 없습니다.
+              </p>
+            </div>
+          )}
+        </CustomSwiper>
       </div>
       {/* 진행중 */}
       <div className="mb-8">
@@ -81,26 +78,21 @@ const MyPageBookmark = () => {
           진행중
         </button>
         <hr className="border-2 border-gray-400 m-2"></hr>
-        <div className="overflow-x-auto pr-4">
-          <div className="flex flex-nowrap gap-4 pr-4 py-2">
-            {active.length > 0 ? (
-              active.map((item) => (
-                <div className="flex-shrink-0">
-                  <PopupCard
-                    key={item.id}
-                    item={{ ...item, isBookmark: true }}
-                  ></PopupCard>
-                </div>
-              ))
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-2xl font-semibold">
-                  북마크한 팝업이 없습니다.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <CustomSwiper>
+          {active.length > 0 ? (
+            active.map((item) => (
+              <SwiperSlide style={{ width: "400px" }} key={item.popupId}>
+                <PopupCard item={{ ...item, isBookmark: true }}></PopupCard>
+              </SwiperSlide>
+            ))
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-2xl font-semibold">
+                북마크한 팝업이 없습니다.
+              </p>
+            </div>
+          )}
+        </CustomSwiper>
       </div>
       {/* 종료 */}
       <div className="mb-8">
@@ -109,26 +101,21 @@ const MyPageBookmark = () => {
           종료된 팝업
         </button>
         <hr className="border-2 border-gray-400 m-2"></hr>
-        <div className="overflow-x-auto pr-4">
-          <div className="flex flex-nowrap gap-4 px-r py-2">
-            {ended.length > 0 ? (
-              ended.map((item) => (
-                <div className="flex-shrink-0">
-                  <PopupCard
-                    key={item.id}
-                    item={{ ...item, isBookmark: true }}
-                  ></PopupCard>
-                </div>
-              ))
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-2xl font-semibold">
-                  북마크한 팝업이 없습니다.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        <CustomSwiper>
+          {ended.length > 0 ? (
+            ended.map((item) => (
+              <SwiperSlide style={{ width: "400px" }} key={item.popupId}>
+                <PopupCard item={{ ...item, isBookmark: true }}></PopupCard>
+              </SwiperSlide>
+            ))
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-2xl font-semibold">
+                북마크한 팝업이 없습니다.
+              </p>
+            </div>
+          )}
+        </CustomSwiper>
       </div>
     </div>
   );

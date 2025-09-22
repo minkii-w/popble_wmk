@@ -3,6 +3,9 @@ package com.popble.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -81,19 +84,10 @@ public class Users{
     	this.social = social;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     //UserProfile과 관계 mapping
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private UserProfile userProfile;
     
     

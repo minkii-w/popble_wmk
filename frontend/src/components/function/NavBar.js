@@ -160,12 +160,8 @@ const NavBar = () => {
   // 메뉴 클릭시 페이지 이동 후 사이드바 닫기
   const navigate = useNavigate();
 
-  
-
-    const { token, isauthenticated} = useSelector((state) => state.auth);
-    const dispatch = useDispatch();
-
-
+  const { token, isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false); //사이드바 열림 여부 상태
 
@@ -191,89 +187,91 @@ const NavBar = () => {
 
         {/* 클릭하면 navigate()로 페이지 이동 후 사이드바 닫힘 */}
         <MenuList>
-
-                    {/* 로그인 상태에 따라 로그인/로그아웃 */}
-                    {!isauthenticated ?
-          <MenuItem
-            onClick={() => {
-              navigate("/user/login");
-              setOpen(false);
-            }}
-          >
-            <div className="left">로그인</div>
-            <div className="chev">›</div>
-          </MenuItem>
-
-                    :
-                     <MenuItem onClick={ () => {
-                        dispatch(logout());
-                        setOpen(false);
-                        navigate('/');
-                        alert("로그아웃 되었습니다")
-                     }}>
-                        <div className="left">로그아웃</div>
-                        <div className="chev"></div>
-                     </MenuItem>
-
-                    }
+          {/* 로그인 상태에 따라 로그인/로그아웃 */}
+          {!isAuthenticated ? (
+            <MenuItem
+              onClick={() => {
+                navigate("/user/login");
+                setOpen(false);
+              }}
+            >
+              <div className="left">로그인</div>
+              <div className="chev">›</div>
+            </MenuItem>
+          ) : (
+            <MenuItem
+              onClick={() => {
+                dispatch(logout());
+                setOpen(false);
+                navigate("/");
+                alert("로그아웃 되었습니다");
+              }}
+            >
+              <div className="left">로그아웃</div>
+              <div className="chev"></div>
+            </MenuItem>
+          )}
 
           {/* 섹션: 마이페이지 */}
-                    {isauthenticated ?
-                    <>
-          <SectionTitle
-            className="cursor-pointer"
-            onClick={() => {
-              navigate("/user/mypage");
-              setOpen(false);
-            }}
-          >
-            <span>
-              <RxPerson size="17" />
-            </span>
-            <span>마이페이지</span>
-          </SectionTitle>
+          {isAuthenticated ? (
+            <>
+              <SectionTitle
+                className="cursor-pointer"
+                onClick={() => {
+                  navigate("/user/mypage");
+                  setOpen(false);
+                }}
+              >
+                <span>
+                  <RxPerson size="17" />
+                </span>
+                <span>마이페이지</span>
+              </SectionTitle>
 
-          <MenuItem
-            className="submenu"
-            onClick={() => {
-              navigate("/user/mypage/edit");
-              setOpen(false);
-            }}
-          >
-            <div className="left">회원 정보 수정</div>
-            <div className="chev">›</div>
-          </MenuItem>
-          <MenuItem
-            className="submenu"
-            onClick={() => {
-              navigate("/user/mypage/bookmark");
-              setOpen(false);
-            }}
-          >
-            <div className="left">북마크 목록</div>
-            <div className="chev">›</div>
-          </MenuItem>
-          <MenuItem
-            className="submenu"
-            onClick={() => {
-              navigate("/user/mypage/post");
-              setOpen(false);
-            }}
-          >
-            <div className="left">내 작성 글 목록</div>
-            <div className="chev">›</div>
-          </MenuItem>
-          <MenuItem
-            className="submenu"
-            onClick={() => {
-              navigate("/user/mypage/reservation");
-              setOpen(false);
-            }}
-          >
-            <div className="left">예약 목록</div>
-            <div className="chev">›</div>
-          </MenuItem>
-                    </>:<></>}
+              <MenuItem
+                className="submenu"
+                onClick={() => {
+                  navigate("/user/mypage/edit");
+                  setOpen(false);
+                }}
+              >
+                <div className="left">회원 정보 수정</div>
+                <div className="chev">›</div>
+              </MenuItem>
+              <MenuItem
+                className="submenu"
+                onClick={() => {
+                  navigate("/user/mypage/bookmark");
+                  setOpen(false);
+                }}
+              >
+                <div className="left">북마크 목록</div>
+                <div className="chev">›</div>
+              </MenuItem>
+              <MenuItem
+                className="submenu"
+                onClick={() => {
+                  navigate("/user/mypage/post");
+                  setOpen(false);
+                }}
+              >
+                <div className="left">내 작성 글 목록</div>
+                <div className="chev">›</div>
+              </MenuItem>
+              <MenuItem
+                className="submenu"
+                onClick={() => {
+                  navigate("/user/mypage/reservation");
+                  setOpen(false);
+                }}
+              >
+                <div className="left">예약 목록</div>
+                <div className="chev">›</div>
+              </MenuItem>
+            </>
+          ) : (
+            <></>
+          )}
 
           {/* 섹션: 게시판 */}
           <SectionTitle

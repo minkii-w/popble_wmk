@@ -1,6 +1,8 @@
 import axios from "axios";
 import { getCookie, setCookie } from "./cookieUtill";
 import { API_SERVER_HOST } from "../api/popupstoreApi";
+import store from "../store";
+import { refreshTokenSuccess, logout } from "../slice/authSlice";
 
 const jwtAxios = axios.create();
 
@@ -56,6 +58,10 @@ const beforeRes = async (res) => {
 
   if (data && data.error === "ERROR_ACCESS_TOKEN") {
     const userCookieValue = getCookie("user");
+    if (!userCookieValue) {
+      store.dispatch(logout());
+      return Promise.reject({ response: { data: { error: "REQUIRE_LOGIN" } } });
+    }
 
     const result = await refreshJWT(
       userCookieValue.accessToken,
@@ -64,10 +70,12 @@ const beforeRes = async (res) => {
 
     console.log("refreshJWT RESULT", result);
 
-    userCookieValue.accessToken = result.accessToken;
-    userCookieValue.refreshToken = result.refreshToken;
+    // userCookieValue.accessToken = result.accessToken;
+    // userCookieValue.refreshToken = result.refreshToken;
 
-    setCookie("user", JSON.stringify(userCookieValue), 1);
+    // setCookie("user", JSON.stringify(userCookieValue), 1);
+
+    store.dispatch(refreshTokenSuccess(result));
 
     const originalRequest = res.config;
 
