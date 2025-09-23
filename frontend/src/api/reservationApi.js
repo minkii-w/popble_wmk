@@ -2,6 +2,8 @@ import axios from "axios";
 import { API_SERVER_HOST } from "./popupstoreApi";
 
 const host = `${API_SERVER_HOST}/api/popup`;
+const reservationHost = `${API_SERVER_HOST}/api/reservation`;
+const reservationTimeHost = `${API_SERVER_HOST}/api/reservationTime`;
 
 
 
@@ -42,7 +44,7 @@ export const getReservationByPopupStore = async (popupStoreId) => {
 
 //잔여인원조회
 export const getRemaining = async (popupStoreId, date, startTime, endTime) => {
-  const res = await axios.get(`${host}/remaining`,{
+  const res = await axios.get(`${reservationHost}/remaining`,{
     params:{
       popupStoreId,
       date,
@@ -62,10 +64,22 @@ export const getAvailableReservationDates = async (popupStoreId, date) => {
 
 // 예약 삭제
 export const cancelReservation = async (id) => {
-  const res = await axios.delete(`${host}/reservation/${id}`);
+  const res = await axios.delete(`${reservationHost}/${id}`);
   return res.data;
 };
 
+//예약 시간 슬롯 등록하기
+export const registerTimeSlots = async (dtoList) => {
+    const res = await axios.post(`${reservationTimeHost}/register`, dtoList, {
+        headers: { 'Content-Type': 'application/json' }
+    });
+    return res.data;
+};
 
+//팝업스토어 id와 날짜로 예약 가능 시간 조회
+export const getAvailableTimesByDate = async (popupStoreId, date) => {
+    const res = await axios.get(`${reservationTimeHost}/popup/${popupStoreId}/date/${date}`);
+    return res.data;
+};
 
 

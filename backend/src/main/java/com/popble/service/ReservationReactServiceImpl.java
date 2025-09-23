@@ -10,9 +10,11 @@ import com.popble.dto.ReservationReactDTO;
 import com.popble.repository.ReservationRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
+
 public class ReservationReactServiceImpl implements ReservationReactService {
 
     private final ReservationRepository reservationRepository;

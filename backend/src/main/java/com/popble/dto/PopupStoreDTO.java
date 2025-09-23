@@ -57,10 +57,6 @@ public class PopupStoreDTO {
 	
 	//추천수
 	private Integer recommend;
-	
-	//최대 인원수
-	private Integer maxCount;
-	
 
 	private List<ReservationTimeDTO> reservationTimes;
 

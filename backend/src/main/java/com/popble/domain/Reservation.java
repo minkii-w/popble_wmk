@@ -4,6 +4,8 @@ package com.popble.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,6 +37,7 @@ public class Reservation {
 	private Long id;
 	
 	//팝업 번호
+	@JsonBackReference("popupStoreRef")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "popup_id")
 	private PopupStore popupStore;
@@ -55,6 +58,7 @@ public class Reservation {
 	private LocalDate reservationDate;
 	
 	//예약시간
+	@JsonBackReference("reservationTimeRef")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "reservation_time_id")
 	private ReservationTime reservationTime;

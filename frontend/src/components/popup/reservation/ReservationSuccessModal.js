@@ -7,21 +7,27 @@ import { ko } from "date-fns/locale";
 const ReservationSuccessModal = ({ popupStore = {}, reservationDate, reservationTime }) => {
   const navigate = useNavigate();
 
-  // 시간을 오전/오후 + 12시간으로 안전하게 포맷
-  const formatReservationTime = (timeString) => {
-    if (!timeString || typeof timeString !== "string") return "";
-    const [hours, minutes] = timeString.split(":").map(Number);
-    if (isNaN(hours) || isNaN(minutes)) return "";
-    const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    return format(date, "aa hh:mm",{locale: ko}); // ex: 오전 10:30, 오후 02:30
+  const formatReservationTime = (timeObject) => {
+    if (!timeObject || !timeObject.startTime || !timeObject.endTime) return "";
+
+    const formatHourMinute = (timeString) => {
+      const [hours, minutes] = timeString.split(":").map(Number);
+      if (isNaN(hours) || isNaN(minutes)) return "";
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return format(date, "aa hh:mm", { locale: ko });
+    };
+
+    const formattedStartTime = formatHourMinute(timeObject.startTime);
+    const formattedEndTime = formatHourMinute(timeObject.endTime);
+
+    return `${formattedStartTime} ~ ${formattedEndTime}`;
   };
 
-  // 날짜 안전 포맷
   const formatReservationDate = (dateValue) => {
     if (!dateValue) return "";
     const dateObj = isDate(dateValue) ? dateValue : parseISO(dateValue);
-    return format(dateObj, "M월 d일", {locale:ko}); // ex: 9월 20일
+    return format(dateObj, "M월 d일", { locale: ko });
   };
 
   return (
@@ -29,7 +35,7 @@ const ReservationSuccessModal = ({ popupStore = {}, reservationDate, reservation
       <div className="bg-hashTagColor p-1 rounded-lg relative">
         <button
           className="absolute top-5 right-5 text-black hover:text-black text-5xl"
-          onClick={() => navigate(`/popup/detail`)}
+          onClick={() => navigate(`/popble/popup/detail`)}
         >
           <IoIosClose />
         </button>

@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 
 const TossPayment = ({ price, ordername, onSuccess, onFail }) => {
-  const clientKey = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq"; // 테스트용
+  const clientKey = "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq"; 
 
   useEffect(() => {
     if (!window.TossPayments) {
-      alert("토스 결제 SDK가 로드되지 않았습니다.");
+      alert("토스 결제가 로드되지 않았습니다.");
       return;
     }
 
@@ -17,7 +17,6 @@ const TossPayment = ({ price, ordername, onSuccess, onFail }) => {
         orderId: `order_${new Date().getTime()}`,
         orderName: ordername,
         customerName: "예약자",
-        // successUrl, failUrl 제거 → 팝업 모드
       })
       .then((result) => {
         console.log("결제 성공:", result);

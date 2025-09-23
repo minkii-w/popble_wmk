@@ -1,26 +1,56 @@
 import BasicMenu from "../../components/BasicMenu";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BasicInfo from "../../components/popup/detail/BasicInfo";
 import DetailImages from "../../components/popup/detail/DetailImages";
 import MapInfo from "../../components/popup/detail/MapInfo";
 import ReserveInfo from "../../components/popup/detail/ReserveInfo";
 import ReviewInfo from "../../components/popup/detail/ReviewInfo";
+import { getOne } from "../../api/popupstoreApi";
 
 import Sanrio from "../../assets/img/Sanrio MediaArt_1.jpeg";
 
 import { PiHeartBold } from "react-icons/pi";
 import { FaRegBookmark } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
+import axios from "axios";
 
 const AboutPage = () => {
   const [activeTab, setActiveTab] = useState("basic"); // 기본 탭: 기본정보
+  const [popupStore, setPopupStore] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const popupStoreId = 25; //임시 확인용 데이터 -> 수정해야함
+
+  useEffect( ()=> {
+
+    const fetchStoreData = async () => {
+      try {
+        const data = await getOne(popupStoreId)
+        setPopupStore(data);
+      }catch(error){
+        console.error("데이터 불러오기 실패", error)
+      }finally{
+        setLoading(false)
+      }
+    }
+    fetchStoreData()
+  },[popupStoreId]);
+  
+  if(loading){
+    return <div>로딩중</div>
+  }
+
+  if(!popupStore){
+    return <div>데이터가 없습니다</div>
+  }
 
   return (
     <div>
       {/* 이미지 삽입 및 여백 지정 */}
       <div className="flex justify-center mt-10">
-        <img src={Sanrio} height="400px" width="400px"></img>
+        <img src={`http://localhost:8080/api/view/${popupStore.mainImage}`} 
+        height="400px" width="400px"></img>
         {/* <Link to={'/about'}></Link> */}
       </div>
 

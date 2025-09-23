@@ -29,7 +29,6 @@ public interface ReservationService {
 	//특정 날짜,시간의 예약 내역을 조회 -> 실시간 예약가능여부 확인 가능함
 	List<ReservationDTO> getByPopupStoreAndDateTime(Long popupStoreId, LocalDate date, LocalTime startTime);
 	
-	int getRemaining(Long popupStoreId, LocalDate date, LocalTime startTime, LocalTime endTime);
+	int getRemainingSeats(Long popupStoreId, LocalDate date, LocalTime startTime, LocalTime endTime);
 	
-	List<ReservationTime> getAvailableDate(Long popupStoreId, LocalDate date);
 }

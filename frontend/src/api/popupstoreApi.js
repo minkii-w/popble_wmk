@@ -29,7 +29,6 @@ export const putOne = async (id, popupStore) => {
 //팝업스토어 정보 삭제
 export const deleteOne = async (id) => {
   const res = await axios.delete(`${prefix}/${id}`);
-  
   return res.data;
 };
 

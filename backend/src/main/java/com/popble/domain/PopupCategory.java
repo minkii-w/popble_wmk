@@ -31,13 +31,13 @@ public class PopupCategory {
 	
 	//카테고리 번호
 	@ManyToOne
-	@JsonBackReference
+	@JsonBackReference(("categories"))
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
 	//스토어 번호
 	@ManyToOne
-	@JsonBackReference
+	@JsonBackReference("popupCategoryRef")
 	@JoinColumn(name = "popup_id")
 	private PopupStore popupStore;
 }

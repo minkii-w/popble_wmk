@@ -22,10 +22,12 @@ import com.popble.repository.ReservationTimeRepository;
 import com.popble.repository.UserProfileRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Log4j2
 public class ReservationServiceImpl implements ReservationService{
 
     private final UserProfileRepository userProfileRepository;
@@ -130,7 +132,11 @@ public class ReservationServiceImpl implements ReservationService{
     
     //잔여인원조회 -> 실시간예약 연결?
     @Override
-    public int getRemaining(Long popupStoreId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public int getRemainingSeats(Long popupStoreId, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    	log.info("조회할 팝업스토어 ID :" + popupStoreId);
+    	log.info("조회할 날짜 : " + date);
+    	log.info("조회할 시작 시간 : "+ startTime);
+    	log.info("조회할 종료 시간 : "+ endTime);
     	ReservationTime rTime = reservationTimeRepository
     			.findByPopupStoreIdAndDateAndStartTimeAndEndTime(popupStoreId, date, startTime, endTime)
     			.orElseThrow(() -> new IllegalArgumentException("예약가능시간대없음메세지"));
@@ -208,18 +214,5 @@ public class ReservationServiceImpl implements ReservationService{
     	
     }
     
-    //팝업스토어의 행사기간내에서만 시간이 나오게
-    public List<ReservationTime> getAvailableDate(Long popupStoreId, LocalDate date) {
-        PopupStore popupStore = popupStoreRepository.findById(popupStoreId)
-                .orElseThrow(() -> new RuntimeException("PopupStore not found"));
-
-        List<ReservationTime> allDates = reservationTimeRepository.findByPopupStore(popupStore);
-        List<Reservation> reservationsOnDate = reservationRepository.findByPopupStoreAndReservationTime_Date(popupStore, date);
-
-        // Corrected logic: Filters out times that have been reserved.
-        return allDates.stream()
-                .filter(onDate -> reservationsOnDate.stream()
-                        .noneMatch(r -> r.getReservationTime().getId().equals(onDate.getId())))
-                .collect(Collectors.toList());
-    }
+ 
 }
