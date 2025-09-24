@@ -2,10 +2,13 @@ import { FcDocument } from "react-icons/fc";
 import { useState, useEffect } from "react";
 import { getList } from "../../../api/BoardApi";
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
 
 const MyPagePost = () => {
   const [posts, setPosts] = useState([]);
   const [category, setCategory] = useState("ALL");
+
+  const userId = useSelector((state) => state.auth?.user?.id);
 
   useEffect(() => {
     const type = category === "ALL" ? null : category;
@@ -35,7 +38,7 @@ const MyPagePost = () => {
       {/* 게시글 목록 */}
       <table className="w-full font-normal text-sm">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-secondaryColor">
             <th className="p-2 border w-2/12">카테고리</th>
             <th className="p-2 border w-7/12">제목</th>
             <th className="p-2 border w-2/12">작성일</th>

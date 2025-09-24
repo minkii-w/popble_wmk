@@ -16,12 +16,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.popble.repository.UserRepository;
 import com.popble.security.filter.JWTCheckFilter;
 import com.popble.security.handlr.APILoginFailHandler;
 import com.popble.security.handlr.APILoginSussessHandler;
 import com.popble.security.handlr.Oauth2AuthenticationSuccessHandler;
 import com.popble.service.UserOauth2Service;
-import com.popble.service.UserServiceImpl;
+//import com.popble.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -32,10 +33,10 @@ import lombok.extern.log4j.Log4j2;
 public class CustomSecurityConfig {
 
 	private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
-
 	private final UserOauth2Service userOauth2Service;
+//	private final UserServiceImpl userServiceImpl;
+	private final UserRepository userRepository;
 
-	private final UserServiceImpl userServiceImpl;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -57,14 +58,14 @@ public class CustomSecurityConfig {
 
 // oauth2 -----------------------------	
 
-		http.oauth2Login(
-				oauth2 -> oauth2.defaultSuccessUrl("/login/success").successHandler(oauth2AuthenticationSuccessHandler)
-						.userInfoEndpoint(userInfo -> userInfo.userService(userOauth2Service)
+		http.oauth2Login(oauth2 -> oauth2.failureUrl("/login?error=true").defaultSuccessUrl("/user/success")
+				.successHandler(oauth2AuthenticationSuccessHandler).userInfoEndpoint(userInfo -> userInfo
 
-						));
+						.userService(userOauth2Service)
 
-//	http.addFilterBefore(new JWTCheckFilter(),
-//			 UsernamePasswordAuthenticationFilter.class);
+				));
+
+		http.addFilterBefore(new JWTCheckFilter(userRepository), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
@@ -73,8 +74,8 @@ public class CustomSecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD"));
+		configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH","HEAD", "OPTIONS"));
 		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
 		configuration.setAllowCredentials(true);
 

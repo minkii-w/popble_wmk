@@ -1,8 +1,10 @@
 import axios from "axios";
+import jwtAxios from "../utill/jwtUtill";
 import { API_SERVER_HOST } from "./popupstoreApi";
 
 const prefix = `${API_SERVER_HOST}/api/search`;
 
+//Todo: 목록보기 로그인하면 -> jwtAxios 로그인 안하면 axios로
 //목록보기
 export const getList = async (filterData) => {
   console.log("categoryType:", filterData.categoryType);

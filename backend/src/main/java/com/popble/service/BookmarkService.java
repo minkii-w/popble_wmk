@@ -1,9 +1,11 @@
+//
 //package com.popble.service;
 //
 //import org.springframework.data.domain.Page;
 //import org.springframework.data.domain.Pageable;
 //
 //import com.popble.domain.UserProfile;
+//import com.popble.dto.BookmarkDTO;
 //import com.popble.dto.PopupStoreDTO;
 //
 //public interface BookmarkService{
@@ -18,6 +20,5 @@
 //	boolean isBookmark(Long userId, Long popupId);
 //	
 //	//User의 북마크
-//	Page<PopupStoreDTO> bookmarkList(Long userId, Pageable pageable);
+//	Page<BookmarkDTO> bookmarkList(Long userId, Pageable pageable);
 //	
-//}

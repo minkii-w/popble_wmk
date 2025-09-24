@@ -80,7 +80,7 @@ public class PopupStoreDTO {
 	private List<PopupCategory> categories = new ArrayList<>();
 	
 	//북마크수
-//	private int bookmarkCount = 0;
+	private int bookmarkCount = 0;
 	
 	
 	//2025-09-09 wmk 수정

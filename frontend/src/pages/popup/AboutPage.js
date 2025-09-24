@@ -13,7 +13,6 @@ import Sanrio from "../../assets/img/Sanrio MediaArt_1.jpeg";
 import { PiHeartBold } from "react-icons/pi";
 import { FaRegBookmark } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
-import axios from "axios";
 
 const AboutPage = () => {
   const [activeTab, setActiveTab] = useState("basic"); // 기본 탭: 기본정보
@@ -49,7 +48,7 @@ const AboutPage = () => {
     <div>
       {/* 이미지 삽입 및 여백 지정 */}
       <div className="flex justify-center mt-10">
-        <img src={`http://localhost:8080/api/view/${popupStore.mainImage}`} 
+        <img src={`http://localhost:8080/api/view/${popupStore.fileName}`} 
         height="400px" width="400px"></img>
         {/* <Link to={'/about'}></Link> */}
       </div>
