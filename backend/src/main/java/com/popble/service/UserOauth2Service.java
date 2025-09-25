@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.popble.dto.SocialLoginDTO;
 import com.popble.dto.UserDTO;
 
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +26,8 @@ public class UserOauth2Service extends DefaultOAuth2UserService {
 
 	private final HttpSession httpSession;
 	
-
+	@Autowired
+	UserDTO userDTO;
 	
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -46,10 +46,6 @@ public class UserOauth2Service extends DefaultOAuth2UserService {
 		
 		
 	}
-	
-	
-	
-	
 	
 	
 	

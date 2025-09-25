@@ -1,10 +1,11 @@
-// src/api/BoardApi.js
 import axios from "axios";
 
 export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/boards`;
 
+// =======================
 // 절대 URL 보정 헬퍼
+// =======================
 const toAbs = (url) => {
   if (!url) return url;
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
@@ -13,7 +14,9 @@ const toAbs = (url) => {
   return `${API_SERVER_HOST}${path}`;
 };
 
-// 이미지 배열 절대경로화
+// =======================
+// 이미지 URL 보정
+// =======================
 const mapImagesAbs = (post) => {
   if (!post?.images) return post;
   return {
@@ -39,11 +42,18 @@ export const getList = async ({ type, order = "date" }) => {
   return list.map(mapImagesAbs);
 };
 
-// ✅ 전체 게시물 목록 (고정공지 상단 + 정렬)
-export const getAll = async ({ order = "date" } = {}) => {
-  const res = await axios.get(`${prefix}/all`, { params: { order } });
-  const list = res.data || [];
-  return list.map(mapImagesAbs);
+// ✅ 전체 게시물 목록 (페이지네이션 + pinned 상단)
+//    → 백엔드에서 PageResponseDTO 구조 반환
+export const getAll = async ({ order = "date", page = 1, size = 10 } = {}) => {
+  const res = await axios.get(`${prefix}/all`, { params: { order, page, size } });
+  const data = res.data;
+
+  // dtoList의 이미지 경로 보정
+  if (data?.dtoList) {
+    data.dtoList = data.dtoList.map(mapImagesAbs);
+  }
+
+  return data; // PageResponseDTO { dtoList, pageNumList, totalCount, ... }
 };
 
 // 하위 호환 별칭
@@ -69,7 +79,7 @@ export const postAddWithImages = async (boardObj, files = []) => {
   form.append("board", new Blob([JSON.stringify(boardObj)], { type: "application/json" }));
   for (const f of files) form.append("images", f); // @RequestPart("images")
 
-  // ⚠️ 헤더 직접 지정하지 않기! (boundary 자동 추가 필요)
+  // ⚠️ headers 지정하지 말 것 → axios가 boundary 자동 처리
   const res = await axios.post(`${prefix}`, form);
   return res.data;
 };

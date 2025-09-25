@@ -1,5 +1,5 @@
-
 package com.popble.service;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,41 +16,25 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserServiceImpl implements UserService {
 
+    private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
 
+    @Override
+    public UserDTO create(UserDTO userDTO) {
 
-	
-		private final UserRepository userRepository;
-		private final PasswordEncoder encoder;
-		
-	public UserDTO create(UserDTO userDTO) {
-		
-		
-		log.info("------백앤드 객채 생성----------------------------");
-		Users users = Users.builder()
-				.name(userDTO.getName())
-				.loginId(userDTO.getLoginId())
-				.password(encoder.encode(userDTO.getPassword()))
-				.email(userDTO.getEmail())
-				.phonenumber(userDTO.getPhonenumber())
-				.role(Role.MEMBER)
-				
-				.build();
-	
-		
-		
-		this.userRepository.save(users);
-		
-		return userDTO;
-				
-	
-						
-	}
-		
-			
-			
-					
-							
-					
-			
-		}
-	
+        log.info("------백앤드 객체 생성----------------------------");
+
+        Users users = Users.builder()
+                .name(userDTO.getName())
+                .loginId(userDTO.getLoginId())
+                .password(encoder.encode(userDTO.getPassword()))
+                .email(userDTO.getEmail())
+                .phonenumber(userDTO.getPhonenumber())
+                .role(Role.MEMBER) // ✅ 기본 가입 시 MEMBER 권한 부여
+                .build();
+
+        this.userRepository.save(users);
+
+        return userDTO;
+    }
+}

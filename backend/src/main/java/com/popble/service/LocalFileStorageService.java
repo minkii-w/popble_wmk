@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 public class LocalFileStorageService implements FileStorageService {
 
-    // ✅ com.popble.upload.path 로 통일
+    // ✅ com.popble.upload.path 로 통일 (yml 없어도 기본값 C:/popble-uploads 사용됨)
     @Value("${com.popble.upload.path:C:/popble-uploads}")
     private String uploadRoot;
 
@@ -55,6 +55,7 @@ public class LocalFileStorageService implements FileStorageService {
                 Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
             }
 
+            // ✅ 이 URL이 프론트에서 접근 가능한 경로 (/uploads/**)랑 맞아야 함
             String url = "/uploads/" + folder + "/" + storedName;
             return new StoredFile(folder, storedName, url,
                     file.getSize(), file.getContentType(), file.getOriginalFilename());

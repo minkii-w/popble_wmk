@@ -1,22 +1,12 @@
-// src/main/java/com/popble/service/BoardServiceImpl.java
 package com.popble.service;
 
-import com.popble.domain.AdBoard;
-import com.popble.domain.Board;
-import com.popble.domain.BoardImage;
-import com.popble.domain.GeneralBoard;
-import com.popble.domain.NoticeBoard;
-import com.popble.domain.QnaBoard;
-import com.popble.domain.ReviewBoard;
-import com.popble.domain.UserProfile;
-import com.popble.dto.BoardCreateRequest;
-import com.popble.dto.BoardResponse;
-import com.popble.dto.BoardUpdateRequest;
+import com.popble.domain.*;
+import com.popble.dto.*;
 import com.popble.repository.BoardImageRepository;
 import com.popble.repository.BoardRepository;
 import com.popble.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,13 +35,11 @@ public class BoardServiceImpl implements BoardService {
         String key = order.trim().toLowerCase();
 
         return switch (key) {
-            // ✅ 과거순(오래된순) 추가
-            case "oldest", "asc", "오래된순", "과거순" ->
+            case "oldest", "asc", "과거순" ->
                     Sort.by(Sort.Order.asc("createTime"), Sort.Order.asc("id"));
-
             case "view", "views", "조회수" ->
                     Sort.by(Sort.Order.desc("view"), Sort.Order.desc("id"));
-            case "rec", "recommend", "recommends", "추천" ->
+            case "rec", "recommend", "추천" ->
                     Sort.by(Sort.Order.desc("recommend"), Sort.Order.desc("id"));
             case "latest", "date", "time", "일자", "날짜", "created" ->
                     Sort.by(Sort.Order.desc("createTime"), Sort.Order.desc("id"));
@@ -66,15 +54,16 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Long create(BoardCreateRequest req) {
         if (req.getType() == null) throw new IllegalArgumentException("type is required");
-        if (req.getTitle() == null || req.getTitle().isBlank()) throw new IllegalArgumentException("title is required");
-        if (req.getContent() == null || req.getContent().isBlank()) throw new IllegalArgumentException("content is required");
+        if (req.getTitle() == null || req.getTitle().isBlank())
+            throw new IllegalArgumentException("title is required");
+        if (req.getContent() == null || req.getContent().isBlank())
+            throw new IllegalArgumentException("content is required");
 
         Board entity = switch (req.getType()) {
             case GENERAL -> new GeneralBoard();
-            case QNA     -> new QnaBoard();
-            case REVIEW  -> new ReviewBoard();
-            case NOTICE  -> new NoticeBoard();
-            case AD      -> new AdBoard();
+            case QNA -> new QnaBoard();
+            case NOTICE -> new NoticeBoard();
+            case AD -> new AdBoard();
         };
 
         UserProfile profile = null;
@@ -88,7 +77,6 @@ public class BoardServiceImpl implements BoardService {
         entity.setContent(req.getContent());
         entity.setWriter(req.getWriterId() != null ? String.valueOf(req.getWriterId()) : "anonymous");
 
-        // 핀(pinned*) 값은 전용 API(/{id}/pin)에서만 변경
         return boardRepository.save(entity).getId();
     }
 
@@ -112,7 +100,6 @@ public class BoardServiceImpl implements BoardService {
         return toResponse(e);
     }
 
-    // (하위호환) 타입별 최신순
     @Override
     @Transactional(readOnly = true)
     public List<BoardResponse> listLatest(Board.Type type) {
@@ -120,7 +107,6 @@ public class BoardServiceImpl implements BoardService {
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    // (하위호환) 타입별 기본 조회
     @Override
     @Transactional(readOnly = true)
     public List<BoardResponse> list(Board.Type type) {
@@ -128,7 +114,6 @@ public class BoardServiceImpl implements BoardService {
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    // ✅ 타입별 정렬 목록
     @Override
     @Transactional(readOnly = true)
     public List<BoardResponse> listByType(Board.Type type, String order) {
@@ -137,46 +122,59 @@ public class BoardServiceImpl implements BoardService {
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    // (하위호환) 전체 최신순: pinned 최상단 + 나머지 최신
     @Override
     @Transactional(readOnly = true)
     public List<BoardResponse> listAllLatest() {
         return listAll("latest");
     }
 
-    // ✅ 전체 목록 정렬 (고정 공지는 항상 최상단 + pinnedAt 내림차순)
     @Override
     @Transactional(readOnly = true)
     public List<BoardResponse> listAll(String order) {
         var now = java.time.LocalDateTime.now();
-
-        // pinned: pinnedAt desc, 그다음 createTime desc
-        Sort pinnedSort = Sort.by(
-                Sort.Order.desc("pinnedAt"),
-                Sort.Order.desc("createTime"),
-                Sort.Order.desc("id")
-        );
+        Sort pinnedSort = Sort.by(Sort.Order.desc("pinnedAt"), Sort.Order.desc("createTime"), Sort.Order.desc("id"));
         var pinned = boardRepository.findPinnedNotices(now, pinnedSort);
 
-        // 나머지는 요청 정렬
         Sort restSort = resolveSort(order);
         var rest = boardRepository.findRestForAll(now, restSort);
 
-        var result = new java.util.ArrayList<BoardResponse>(pinned.size() + rest.size());
+        var result = new ArrayList<BoardResponse>(pinned.size() + rest.size());
         pinned.stream().map(this::toResponse).forEach(result::add);
         rest.stream().map(this::toResponse).forEach(result::add);
         return result;
     }
 
-    // ✅ 간단 전체 정렬(핀 무시, 레거시/간편용)
-    //    -> 네가 준 getAll(String order) 로직을 그대로 통합
+    // ✅ 새 listAll (Page 기반) → AD 제외 + 항상 size 만큼 채움
+    @Override
     @Transactional(readOnly = true)
-    public List<BoardResponse> getAll(String order) {
+    public PageResponseDTO<BoardResponse> listAll(PageRequestDTO pageRequestDTO, String order) {
         Sort sort = resolveSort(order);
-        return boardRepository.findAll(sort)
-                .stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort);
+
+        var now = java.time.LocalDateTime.now();
+
+        // 📌 고정 공지글
+        Sort pinnedSort = Sort.by(Sort.Order.desc("pinnedAt"), Sort.Order.desc("createTime"), Sort.Order.desc("id"));
+        var pinned = boardRepository.findPinnedNotices(now, pinnedSort)
+                .stream().map(this::toResponse).toList();
+
+        // 📌 AD 제외 일반글 (페이징)
+        Page<Board> restPage = boardRepository.findByTypeNot(Board.Type.AD, pageable);
+        Page<BoardResponse> mappedPage = restPage.map(this::toResponse);
+
+        var dtoList = new ArrayList<BoardResponse>();
+        if (pageRequestDTO.getPage() == 1) {
+            dtoList.addAll(pinned);
+        }
+        dtoList.addAll(mappedPage.getContent());
+
+        long totalCount = mappedPage.getTotalElements();
+
+        return PageResponseDTO.<BoardResponse>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(totalCount)
+                .build();
     }
 
     // ==========================
@@ -187,9 +185,8 @@ public class BoardServiceImpl implements BoardService {
         Board e = boardRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found: " + id));
 
-        if (req.getTitle() != null)   e.setTitle(req.getTitle());
+        if (req.getTitle() != null) e.setTitle(req.getTitle());
         if (req.getContent() != null) e.setContent(req.getContent());
-        // 핀(pinned*) 값은 전용 API에서만 변경
     }
 
     @Override
@@ -203,38 +200,20 @@ public class BoardServiceImpl implements BoardService {
                 boolean keep = (keepIds != null && keepIds.contains(img.getId()));
                 if (!keep) {
                     fileStorageService.delete(img.getFolder(), img.getStoredName());
-                    board.getImages().remove(img);
+                    board.removeImage(img);
                     boardImageRepository.delete(img);
                 }
             }
         }
 
         if (newImages != null && !newImages.isEmpty()) {
-            int nextOrder = (board.getImages() == null) ? 0 : board.getImages().size();
-            for (MultipartFile file : newImages) {
-                if (file == null || file.isEmpty()) continue;
-
-                var sf = fileStorageService.store(file);
-                BoardImage img = BoardImage.builder()
-                        .board(board)
-                        .originalName(sf.originalName())
-                        .storedName(sf.storedName())
-                        .folder(sf.folder())
-                        .url(sf.url())
-                        .contentType(sf.contentType())
-                        .size(sf.size())
-                        .sortOrder(nextOrder++)
-                        .build();
-
-                boardImageRepository.save(img);
-                if (board.getImages() != null) {
-                    board.getImages().add(img);
-                }
-            }
+            saveImages(board, newImages);
         }
     }
 
-    // 공지 전역 고정/해제
+    // ==========================
+    // 공지 고정
+    // ==========================
     @Override
     public void setPinned(Long id, boolean pinned, java.time.LocalDateTime pinUntil) {
         Board e = boardRepository.findById(id)
@@ -244,10 +223,14 @@ public class BoardServiceImpl implements BoardService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only NOTICE can be pinned globally");
         }
 
+        if (e instanceof NoticeBoard nb) {
+            nb.setPin(pinned);
+        }
+
         e.setPinnedGlobal(pinned);
         if (pinned) {
             e.setPinnedAt(java.time.LocalDateTime.now());
-            e.setPinUntil(pinUntil); // null이면 무기한
+            e.setPinUntil(pinUntil);
         } else {
             e.setPinUntil(null);
             e.setPinnedAt(null);
@@ -265,7 +248,7 @@ public class BoardServiceImpl implements BoardService {
         if (board.getImages() != null) {
             for (BoardImage img : new ArrayList<>(board.getImages())) {
                 fileStorageService.delete(img.getFolder(), img.getStoredName());
-                board.getImages().remove(img);
+                board.removeImage(img);
                 boardImageRepository.delete(img);
             }
         }
@@ -273,14 +256,16 @@ public class BoardServiceImpl implements BoardService {
     }
 
     // ==========================
-    // 매핑 (이미지 + 핀 포함)
+    // 매핑
     // ==========================
     private BoardResponse toResponse(Board e) {
         Long writerId = null;
         if (e.getUserProfile() != null) {
             writerId = e.getUserProfile().getId();
         } else if (e.getWriter() != null) {
-            try { writerId = Long.valueOf(e.getWriter()); } catch (NumberFormatException ignore) {}
+            try {
+                writerId = Long.valueOf(e.getWriter());
+            } catch (NumberFormatException ignore) {}
         }
 
         List<BoardResponse.ImageDto> imageDtos =
@@ -323,12 +308,12 @@ public class BoardServiceImpl implements BoardService {
 
     private void saveImages(Board board, List<MultipartFile> images) {
         int order = (board.getImages() == null) ? 0 : board.getImages().size();
+
         for (MultipartFile file : images) {
             if (file == null || file.isEmpty()) continue;
 
             var sf = fileStorageService.store(file);
             BoardImage img = BoardImage.builder()
-                    .board(board)
                     .originalName(sf.originalName())
                     .storedName(sf.storedName())
                     .folder(sf.folder())
@@ -338,10 +323,8 @@ public class BoardServiceImpl implements BoardService {
                     .sortOrder(order++)
                     .build();
 
+            board.addImage(img);
             boardImageRepository.save(img);
-            if (board.getImages() != null) {
-                board.getImages().add(img);
-            }
         }
     }
 }

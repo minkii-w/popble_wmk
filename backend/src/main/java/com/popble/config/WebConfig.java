@@ -1,4 +1,3 @@
-// src/main/java/com/popble/config/WebConfig.java
 package com.popble.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,34 +16,31 @@ import java.time.Duration;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    // 설정이 없으면 기본값으로 사용자 홈 디렉터리 아래 uploads 사용
-    // 예) Windows: C:/Users/계정/uploads, Linux/Mac: /home/계정/uploads
-    @Value("${app.upload-root:${user.home}/uploads}")
+    // ✅ LocalFileStorageService 와 같은 키 사용
+    @Value("${com.popble.upload.path:C:/popble-uploads}")
     private String uploadRoot;
 
     @PostConstruct
     void ensureUploadDir() {
         try {
             Path p = Paths.get(uploadRoot).toAbsolutePath();
-            Files.createDirectories(p); // 폴더 없으면 생성 (선택이지만 유용)
+            Files.createDirectories(p);
         } catch (Exception ignore) {}
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // "file:/C:/uploads/" 또는 "file:/var/www/uploads/" 형태로 변환
         String location = Paths.get(uploadRoot).toAbsolutePath().toUri().toString();
         if (!location.endsWith("/")) location += "/";
 
-        registry.addResourceHandler("/files/**")
-                .addResourceLocations(location)
-                .setCacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePublic()); // 캐시(선택)
+        registry.addResourceHandler("/uploads/**") // ✅ 프론트에서 접근할 경로
+                .addResourceLocations(location)    // ✅ 실제 파일 경로
+                .setCacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePublic());
     }
 
-    // 이미지 태그로 불러오면 대체로 CORS 불필요하지만, 개발 환경에서 안전하게 허용(선택)
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/files/**")
+        registry.addMapping("/uploads/**")
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET");
     }

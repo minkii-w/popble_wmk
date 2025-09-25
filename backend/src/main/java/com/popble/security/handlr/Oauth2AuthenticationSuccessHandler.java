@@ -8,16 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.popble.util.JWTUtill;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.log4j.Log4j2;
-@Component
-@Log4j2
+
 public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 		
@@ -29,9 +26,6 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			,Authentication authentication) throws IOException {
 		// login 성공한 사용자 목록
 		OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-		
-		log.info("==========================Oauth2AuthenticationSuccessHandler=================================="
-				+ "==============================================================================================");
 		
 		Map<String, Object> kakao_account = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
 		String email = (String) kakao_account.get("email");

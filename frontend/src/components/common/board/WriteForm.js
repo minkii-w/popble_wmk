@@ -1,3 +1,4 @@
+// src/pages/boards/common/WriteForm.jsx
 import { useEffect, useRef, useState } from "react";
 import { postAddWithImages } from "../../../api/BoardApi"; // ← 이미지 포함 등록 함수 사용
 import useCustomMove from "../../../hooks/useCustomMove";
@@ -45,7 +46,6 @@ const WriteForm = () => {
   }, [files]);
 
   const handleClickAdd = async () => {
-    // 필수값 간단 검증
     if (!board.title.trim()) return alert("제목을 입력하세요.");
     if (!board.content.trim()) return alert("내용을 입력하세요.");
     if (!board.writerId) return alert("작성자 ID를 입력하세요.");
@@ -63,17 +63,14 @@ const WriteForm = () => {
           : {}),
       };
 
-      // 🔹 이미지가 있으면 멀티파트, 없으면 JSON 자동 전송
       const res = await postAddWithImages(payload, files);
       const createId =
         typeof res === "number" ? res : res?.id ?? res?.boardId ?? res?.tno ?? null;
 
       setResult(createId);
 
-      // 폼 초기화
       setBoard((prev) => ({ ...initState, type: prev.type }));
       setFiles([]);
-      // 파일 인풋도 시각적으로 초기화
       if (fileInputRef.current) fileInputRef.current.value = null;
     } catch (e) {
       console.error(e);
@@ -195,13 +192,13 @@ const WriteForm = () => {
                 <div className="mt-2 text-sm text-neutral-600">
                   {files.length}개 선택됨: {files.map((f) => f.name).join(", ")}
                 </div>
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mt-3">
+                <div className="flex flex-col gap-4 mt-3 items-start">
                   {previews.map((src, i) => (
                     <img
                       key={i}
                       src={src}
                       alt=""
-                      className="w-full h-24 object-cover rounded"
+                      className="w-full max-w-[600px] h-auto rounded"
                     />
                   ))}
                 </div>

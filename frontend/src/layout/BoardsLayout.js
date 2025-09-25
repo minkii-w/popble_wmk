@@ -5,10 +5,9 @@ const BoardsLayout = () => {
   const location = useLocation();
 
   const menus = [
-    { path: "all", label: "전체" },          // ✅ 전체 버튼 추가
+    { path: "all", label: "전체" },          // ✅ 전체 버튼
     { path: "general", label: "자유게시판" },
     { path: "qna", label: "질문게시판" },
-    { path: "review", label: "리뷰게시판" },
     { path: "notice", label: "공지게시판" },
     { path: "ad", label: "홍보게시판" },
   ];

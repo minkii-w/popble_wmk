@@ -77,7 +77,12 @@ const NoticeDetail = () => {
     <div className="p-6 bg-white rounded shadow">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">
-          {post.title} {post.pinnedGlobal && <span className="ml-2 text-sm px-2 py-1 bg-purple-100 text-purple-700 rounded">고정</span>}
+          {post.title}{" "}
+          {post.pinnedGlobal && (
+            <span className="ml-2 text-sm px-2 py-1 bg-purple-100 text-purple-700 rounded">
+              고정
+            </span>
+          )}
         </h1>
 
         {/* 🔹 공지에서만 핀 버튼 노출 */}
@@ -85,7 +90,11 @@ const NoticeDetail = () => {
           <button
             type="button"
             onClick={onTogglePin}
-            className={`px-4 py-2 rounded ${post.pinnedGlobal ? "bg-gray-500 hover:bg-gray-600" : "bg-purple-600 hover:bg-purple-700"} text-white`}
+            className={`px-4 py-2 rounded ${
+              post.pinnedGlobal
+                ? "bg-gray-500 hover:bg-gray-600"
+                : "bg-purple-600 hover:bg-purple-700"
+            } text-white`}
           >
             {post.pinnedGlobal ? "고정 해제" : "상단 고정"}
           </button>
@@ -93,25 +102,31 @@ const NoticeDetail = () => {
       </div>
 
       <div className="text-sm text-gray-500 mb-6">
-        작성자: <span className="font-semibold">{post.writer ?? post.writerId ?? "-"}</span> | {fmtDate(post.createTime)}
+        작성자:{" "}
+        <span className="font-semibold">
+          {post.writer ?? post.writerId ?? "-"}
+        </span>{" "}
+        | {fmtDate(post.createTime)}
       </div>
 
-      {/* 🔹 이미지 영역 */}
+      {/* 🔹 이미지 영역 (세로 배치 + 최대 600px 제한 + 반응형) */}
       {post.images?.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+        <div className="flex flex-col gap-4 items-center mb-6">
           {post.images.map((im) => (
             <img
               key={im.id}
               src={im.url}
               alt=""
               loading="lazy"
-              className="w-full h-auto rounded-lg"
+              className="w-full max-w-[600px] h-auto rounded-lg"
             />
           ))}
         </div>
       )}
 
-      <div className="mb-8 leading-relaxed whitespace-pre-wrap">{post.content}</div>
+      <div className="mb-8 leading-relaxed whitespace-pre-wrap">
+        {post.content}
+      </div>
 
       <div className="flex justify-between">
         <Link
@@ -133,7 +148,9 @@ const NoticeDetail = () => {
             onClick={onDelete}
             disabled={deleting}
             className={`px-4 py-2 text-white rounded ${
-              deleting ? "bg-red-300 cursor-not-allowed" : "bg-red-500 hover:bg-red-600"
+              deleting
+                ? "bg-red-300 cursor-not-allowed"
+                : "bg-red-500 hover:bg-red-600"
             }`}
           >
             {deleting ? "삭제중..." : "삭제"}
