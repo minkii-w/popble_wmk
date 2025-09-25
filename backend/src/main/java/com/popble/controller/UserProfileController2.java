@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -95,6 +96,7 @@ public class UserProfileController2 {
 	}
 	
 	//UserRepository로 아이디 조회해서 profile가져오기
+	@Transactional(readOnly = true)
 	@GetMapping("edit/{userId}")
 	public ResponseEntity<UserProfileDTO> getUserProfileByUserId(@PathVariable(name = "userId") Long userId){
 		return userRepository.findById(userId)

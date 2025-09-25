@@ -88,3 +88,19 @@ export const deleteOne = async (id) => {
   const res = await axios.delete(`${prefix}/${id}`);
   return res.data;
 };
+
+//팝업스토어 홍보 게시판 등록하기(사진첨부)
+export const postAdd = async (formData) => {
+  const res = await axios.post(`${prefix}/`, formData);
+
+  return res.data;
+};
+
+//팝업스토어정보수정(사진변경)
+export const putOne = async (id, popupStore) => {
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
+
+  const res = await axios.put(`${prefix}/${id}`, popupStore, header);
+
+  return res.data;
+};

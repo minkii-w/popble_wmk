@@ -1,14 +1,18 @@
 package com.popble.service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.popble.domain.Role;
+import com.popble.domain.UserProfile;
 import com.popble.domain.Users;
 import com.popble.dto.UserDTO;
+import com.popble.repository.UserProfileRepository;
 import com.popble.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,22 +27,29 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder encoder;
 
     @Override
-    public UserDTO create(UserDTO userDTO) {
+    @Transactional
+	public UserDTO create(UserDTO userDTO) {
 
-        log.info("------백앤드 객체 생성----------------------------");
-        Users users = Users.builder()
-                .name(userDTO.getName())
-                .loginId(userDTO.getLoginId())
-                .password(encoder.encode(userDTO.getPassword()))
-                .email(userDTO.getEmail())
-                .phonenumber(userDTO.getPhonenumber())
-                .role(Role.MEMBER) // 기본 가입 시 MEMBER 권한 부여
-                .build();
+		log.info("------백앤드 객채 생성----------------------------");
+		Users users = Users.builder().name(userDTO.getName()).loginId(userDTO.getLoginId())
+				.password(encoder.encode(userDTO.getPassword())).email(userDTO.getEmail())
+				.phonenumber(userDTO.getPhonenumber()).role(Role.MEMBER)
 
-        this.userRepository.save(users);
+				.build();
 
-        return userDTO;
-    }
+		Users savedUser = userRepository.save(users);
+		
+		//UserProfile 닉네임은 랜덤으로
+		UserProfile userProfile = new UserProfile();
+		userProfile.setNickname("user_"+ UUID.randomUUID().toString().substring(0,6));
+		userProfile.setUsers(savedUser);
+		savedUser.setUserProfile(userProfile);
+		userRepository.save(savedUser);
+		
+
+		return userDTO;
+
+	}
 
     // 모든 유저목록 불러오기
     public List<UserDTO> getAllUsers() {
