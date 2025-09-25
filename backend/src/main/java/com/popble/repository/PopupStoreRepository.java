@@ -1,12 +1,14 @@
 package com.popble.repository;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -55,9 +57,13 @@ public interface PopupStoreRepository extends JpaRepository<PopupStore, Long>, J
     @Query("update PopupStore p set p.deleted = :flag where p.id = :id")
     void updateToDelete(@Param("id") Long id, @Param("flag") boolean flag);
 
-    // ===== 목록 조회 (이미지 대표 1개만 포함, 이미지 없어도 나오게) =====
+    // ===== 목록 조회 (대표 이미지 1개만 포함, 이미지 없어도 나오게) =====
     @Query("select p, pi from PopupStore p " +
-           "left join p.imageList pi on pi.sortOrder = 0 " + // ✅ ord → sortOrder 로 수정
+           "left join p.imageList pi on pi.sortOrder = 0 " +
            "where p.deleted = false")
     Page<Object[]> selectList(Pageable pageable);
+
+    // ===== 필요 시 사용 가능 (주석 해제 후) =====
+    // @Query("select p from PopupStore p left join fetch p.reservationTimes where p.id = :id")
+    // Optional<PopupStore> findByIdWithReservationTimes(@Param("id") Long id);
 }

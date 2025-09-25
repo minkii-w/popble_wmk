@@ -1,23 +1,29 @@
-import { Link } from "react-router-dom";
-import NavBar from "./function/NavBar";
+import Footer from "./Footer";
+import Header from "./Header";
 
-const BasicMenu = () => {
-    return(
-        //상단 메뉴바 로고
-        //상단 색상 지정
-        <div id='menubar' className="flex bg-primaryColor">
-            {/* 로고 삽입 및 여백 지정 */}
-            <div className="ml-10 mt-2 mb-2">
-            <img className="logo" alt="POPBLE logo" src="img/POPBLE Logo.png"
-                width='160' height='20'></img>
-                        <Link to={'/'}></Link>
-            </div>
+import { FiArrowUp } from "react-icons/fi";
 
-            {/* 햄버거 버튼 */}
-            <div className="ml-auto mt-5">
-                <NavBar/>
-            </div>
-        </div>
-    );
-}
+const BasicMenu = ({ children }) => {
+  return (
+    <>
+      {/* 상단 메뉴바 + 네비바*/}
+      <Header />
+
+      {/* 페이지 내용과 Footer 겹치지 않도록 padding-bottom */}
+      <div className="pb-20">{children}</div>
+
+      {/* 고정 메뉴(채팅, 위로이동) */}
+
+      <button
+        className="fixed bottom-10 right-10 m-10 z-50 p-1 shadow-md rounded-full bg-secondaryAccentColor w-[50px] h-[50px] items-center flex justify-center"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      >
+        <FiArrowUp size={30} className="items-center justify-center" />
+      </button>
+
+      {/* 저작권 */}
+      <Footer />
+    </>
+  );
+};
 export default BasicMenu;

@@ -16,7 +16,7 @@ import java.time.Duration;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    // ✅ LocalFileStorageService 와 같은 키 사용
+    // ✅ LocalFileStorageService 와 같은 키 사용 (환경변수/프로퍼티 없으면 기본값)
     @Value("${com.popble.upload.path:C:/popble-uploads}")
     private String uploadRoot;
 
@@ -33,8 +33,8 @@ public class WebConfig implements WebMvcConfigurer {
         String location = Paths.get(uploadRoot).toAbsolutePath().toUri().toString();
         if (!location.endsWith("/")) location += "/";
 
-        registry.addResourceHandler("/uploads/**") // ✅ 프론트에서 접근할 경로
-                .addResourceLocations(location)    // ✅ 실제 파일 경로
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations(location, "file:" + uploadRoot) // 🔹 main 코드도 함께 반영
                 .setCacheControl(CacheControl.maxAge(Duration.ofDays(7)).cachePublic());
     }
 

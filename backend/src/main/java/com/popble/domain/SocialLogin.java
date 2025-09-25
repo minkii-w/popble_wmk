@@ -27,6 +27,7 @@ public class SocialLogin {
 	private Long id;
 	
 	@OneToOne
+	
 	@JoinColumn(name = "user_id")
 	private Users users;
 	

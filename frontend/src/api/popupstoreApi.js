@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// 스프링부트
-export const API_SERVER_HOST = "http://localhost:8000";
+// 스프링부트 서버 주소
+export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/popup`;
 
 // ===== 목록 조회 =====
@@ -54,7 +54,12 @@ export const updatePopupStore = async (id, payload) => {
 };
 
 // ===== 수정 (이미지 포함) =====
-export const updatePopupStoreWithImages = async (id, payload, files = [], keepImages = []) => {
+export const updatePopupStoreWithImages = async (
+  id,
+  payload,
+  files = [],
+  keepImages = []
+) => {
   try {
     const fd = new FormData();
     fd.append(
@@ -62,7 +67,7 @@ export const updatePopupStoreWithImages = async (id, payload, files = [], keepIm
       new Blob([JSON.stringify(payload)], { type: "application/json" })
     );
 
-    // 기존 이미지 유지 목록 (백엔드에서 keepImages 처리할 경우)
+    // 기존 이미지 유지 목록
     keepImages.forEach((img) => fd.append("keepImages", img));
 
     // 신규 이미지 추가
@@ -76,4 +81,10 @@ export const updatePopupStoreWithImages = async (id, payload, files = [], keepIm
     console.error("[updatePopupStoreWithImages]", err);
     throw err;
   }
+};
+
+// ===== 삭제 =====
+export const deleteOne = async (id) => {
+  const res = await axios.delete(`${prefix}/${id}`);
+  return res.data;
 };

@@ -1,6 +1,7 @@
 package com.popble.repository;
 
 import com.popble.domain.AdBoard;
+import com.popble.domain.UserProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -26,4 +27,7 @@ public interface AdBoardRepository extends JpaRepository<AdBoard, Long> {
     // ===== 전체 목록 페이지네이션 =====
     @EntityGraph(attributePaths = {"imageList", "userProfile"})
     Page<AdBoard> findAll(Pageable pageable);
+
+    // ===== 기업이 작성한 AD 게시글 =====
+    List<AdBoard> findByUserProfile(UserProfile userProfile);
 }

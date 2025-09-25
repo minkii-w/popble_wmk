@@ -1,8 +1,7 @@
 // src/router/BoardsRouter.js
 import { Suspense, lazy } from "react";
 import { Navigate } from "react-router-dom";
-
-const Loading = <div>Loading...</div>;
+import LoadingComponent from "../components/common/LoadingComponent";
 
 const AllBoardList  = lazy(() => import("../pages/boards/AllBoardList")); // 전체 글
 
@@ -37,23 +36,22 @@ const BoardsRouter = () => [
   { path: "general/:id", element: <Suspense fallback={Loading}><GeneralDetail /></Suspense> },
   { path: "general/:id/modify", element: <Suspense fallback={Loading}><ModifyPage/></Suspense> },
 
-  // QnA
   { path: "qna",         element: <Suspense fallback={Loading}><QnaList /></Suspense> },
   { path: "qna/:id",     element: <Suspense fallback={Loading}><QnaDetail /></Suspense> },
   { path: "qna/:id/modify", element: <Suspense fallback={Loading}><ModifyPage/></Suspense> },
 
-  // 공지
+  { path: "review",      element: <Suspense fallback={Loading}><ReviewList /></Suspense> },
+  { path: "review/:id",  element: <Suspense fallback={Loading}><ReviewDetail /></Suspense> },
+  { path: "review/:id/modify", element: <Suspense fallback={Loading}><ModifyPage /></Suspense> },
+
   { path: "notice",      element: <Suspense fallback={Loading}><NoticeList /></Suspense> },
   { path: "notice/:id",  element: <Suspense fallback={Loading}><NoticeDetail /></Suspense> },
   { path: "notice/:id/modify", element: <Suspense fallback={Loading}><ModifyPage /></Suspense> },
 
-  // 홍보
   { path: "ad",          element: <Suspense fallback={Loading}><AdList /></Suspense> },
-  { path: "ad/write",    element: <Suspense fallback={Loading}><AdWriteForm /></Suspense> },
   { path: "ad/:id",      element: <Suspense fallback={Loading}><AdDetail /></Suspense> },
-  { path: "ad/:id/modify", element: <Suspense fallback={Loading}><AdModifyForm/></Suspense> }, // ✅ 수정 라우트 추가
+  { path: "ad/:id/modify", element: <Suspense fallback={Loading}><ModifyPage/></Suspense>},
 
-  // 공용
   { path: "write",       element: <Suspense fallback={Loading}><WritePage /></Suspense> },
   { path: "read/:id",    element: <Suspense fallback={Loading}><ReadPage /></Suspense> },
 ];

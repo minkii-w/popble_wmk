@@ -7,16 +7,21 @@ import java.util.stream.Collectors;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.popble.domain.Category;
+import com.popble.domain.PopupStore;
+import com.popble.domain.SortType;
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
+import com.popble.dto.PopupFilterDTO;
 import com.popble.dto.PopupStoreDTO;
 import com.popble.service.PopupStoreService;
 import com.popble.util.CustomFileUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,11 +31,37 @@ public class PopupStoreController {
 
     private final CustomFileUtil fileUtil;
     private final PopupStoreService popupStoreService;
+    private final ObjectMapper objectMapper;
 
-    // ===== 목록 조회 =====
+    // ===== 목록 조회 (필터링 지원) =====
     @GetMapping("/list")
-    public PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO) {
-        return popupStoreService.getList(pageRequestDTO);
+    public PageResponseDTO<PopupStoreDTO> getList(
+            @RequestParam(required = false, name = "status") PopupStore.Status status,
+            @RequestParam(required = false, name = "sort") SortType sort,
+            @RequestParam(required = false, name = "categoryType") Category.CategoryType categoryType,
+            @RequestParam(required = false, name = "categoryId") Integer categoryId,
+            @RequestParam(required = false, name = "keyword") String keyword,
+            @RequestParam(defaultValue = "1", name = "page") int page,
+            @RequestParam(defaultValue = "10", name = "size") int size) {
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        PopupFilterDTO popupFilterDTO = PopupFilterDTO.builder()
+                .status(status)
+                .sort(sort)
+                .categoryType(categoryType)
+                .categoryId(categoryId)
+                .keyword(keyword)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
+
+        log.info("Popup list filter: status={}, sort={}, categoryType={}, categoryId={}, keyword={}",
+                status, sort, categoryType, categoryId, keyword);
+
+        return popupStoreService.getFilteredList(popupFilterDTO);
     }
 
     // ===== 단건 조회 =====
@@ -39,29 +70,30 @@ public class PopupStoreController {
         return popupStoreService.get(id);
     }
 
-    // ===== 등록 =====
-    @PostMapping
-    public Map<String, String> register(PopupStoreDTO popupStoreDTO) {
-        log.info("팝업스토어 등록: {}", popupStoreDTO);
+    // ===== 등록 (JSON + 파일 분리) =====
+    @PostMapping(value = "/", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, Object>> register(
+            @RequestPart("dto") String popupStoreDtoStr,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) throws Exception {
 
-        List<MultipartFile> files = popupStoreDTO.getFiles();
+        PopupStoreDTO popupStoreDTO = objectMapper.readValue(popupStoreDtoStr, PopupStoreDTO.class);
+
+        // 이미지 파일 처리
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         popupStoreDTO.setUploadFileNames(uploadFileNames);
 
         Long id = popupStoreService.register(popupStoreDTO);
-        log.info("등록된 팝업 ID: {}", id);
 
-        return Map.of("결과", "성공");
+        return ResponseEntity.ok(Map.of("id", id, "message", "팝업스토어 등록 완료"));
     }
 
     // ===== 파일 조회 =====
-    @GetMapping("/view/{fileName}")
+    @GetMapping("/viewFile/{fileName}")
     public ResponseEntity<Resource> viewFileGet(@PathVariable("fileName") String fileName) {
         return fileUtil.getFile(fileName);
     }
 
-    // ===== 수정 (당장 필요 없다면 주석 처리) =====
-    /*
+    // ===== 수정 =====
     @PutMapping("/{id}")
     public Map<String, String> modify(@PathVariable("id") Long id, PopupStoreDTO popupStoreDTO) {
         popupStoreDTO.setId(id);
@@ -89,10 +121,8 @@ public class PopupStoreController {
 
         return Map.of("결과", "성공");
     }
-    */
 
-    // ===== 삭제 (당장 필요 없다면 주석 처리) =====
-    /*
+    // ===== 삭제 =====
     @DeleteMapping("/{id}")
     public Map<String, String> remove(@PathVariable("id") Long id) {
         List<String> oldFileNames = popupStoreService.get(id).getUploadFileNames();
@@ -100,5 +130,4 @@ public class PopupStoreController {
         fileUtil.deleteFile(oldFileNames);
         return Map.of("결과", "성공");
     }
-    */
 }

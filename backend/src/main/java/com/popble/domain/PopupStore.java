@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,7 +35,7 @@ public class PopupStore {
     @Column(name = "store_name")
     private String storeName; // 팝업스토어 이름
 
-    @Column(name = "description")
+    @Column(name = "description", length = 1000)
     private String desc; // 상세정보
 
     @Column(name = "address")
@@ -74,30 +75,37 @@ public class PopupStore {
     @Builder.Default
     private boolean deleted = false;
 
-    // ===== 필요 없는 필드 (주석 처리 유지) =====
-    /*
-    @OneToMany(mappedBy = "popupStore")
+    // ===== 예약 관련 =====
+    @OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ReservationTime> reservationTimes = new ArrayList<>();
 
     @OneToMany(mappedBy = "popupStore")
+    @JsonManagedReference("popupStoreRef")
     private List<Reservation> reservations = new ArrayList<>();
 
-    private Double latitude;
-    private Double longitude;
-
+    // ===== 카테고리 연관 =====
     @OneToMany(mappedBy = "popupStore")
-    @JsonManagedReference
+    @JsonManagedReference("popupCategoryRef")
     private List<PopupCategory> categories = new ArrayList<>();
 
+    // ===== 위치 좌표 =====
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    // ===== 북마크 수 =====
     @Column(name = "bookmark_count")
     private int bookmarkCount = 0;
 
+    // ===== 작성자 (기업 사용자) =====
     @ManyToOne
     @JoinColumn(name = "userProfile_id")
     private UserProfile owner;
-    */
 
-    // ===== 이미지 연관 (BoardImage 기반) =====
+    // ===== 이미지 (BoardImage 기준으로 통일) =====
     @OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<BoardImage> imageList = new ArrayList<>();

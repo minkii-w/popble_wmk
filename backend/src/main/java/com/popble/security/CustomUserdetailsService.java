@@ -44,6 +44,9 @@ public class CustomUserdetailsService implements UserDetailsService {
                 .collect(Collectors.toList())
         );
 
+        // ✅ UserDTO에 id 세팅 (main에서만 있었던 부분)
+        userDTO.setId(users.getId());
+
         log.info(userDTO);
 
         return userDTO;

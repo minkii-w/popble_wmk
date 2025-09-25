@@ -2,13 +2,13 @@ package com.popble.service;
 
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
-//import com.popble.dto.PopupFilterDTO;
+import com.popble.dto.PopupFilterDTO;
 import com.popble.dto.PopupStoreDTO;
 
 public interface PopupStoreService {
 
     // 🔹 필터 조회
-//    PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO);
+    PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO);
 
     // 🔹 단건 조회
     PopupStoreDTO get(Long id);
@@ -16,7 +16,7 @@ public interface PopupStoreService {
     // 🔹 목록 조회 (페이징)
     PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO);
 
-    // 🔹 팝업스토어 등록 (+ 동시에 AdBoard에도 반영)
+    // 🔹 팝업스토어 등록
     Long register(PopupStoreDTO popupStoreDTO);
 
     // 🔹 팝업스토어 수정

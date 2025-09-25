@@ -20,6 +20,8 @@ import lombok.ToString;
 @ToString
 public class UserDTO extends User {
 
+    private Long id;
+
     @NotEmpty
     private String loginId;
 
@@ -62,8 +64,8 @@ public class UserDTO extends User {
 
     public Map<String, Object> getClaims() {
         Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("id", id);
         dataMap.put("loginId", loginId);
-        dataMap.put("password", password);
         dataMap.put("name", name);
         dataMap.put("social", social);
         dataMap.put("email", email);

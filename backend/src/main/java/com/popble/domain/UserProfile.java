@@ -1,5 +1,7 @@
 package com.popble.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +22,9 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_profile")
+@Builder
 public class UserProfile {
 
 	
@@ -34,6 +38,7 @@ public class UserProfile {
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "user_id")
+	@JsonBackReference
 	private Users users;
 	
 	
