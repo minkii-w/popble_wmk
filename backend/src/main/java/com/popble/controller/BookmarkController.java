@@ -15,8 +15,7 @@ import com.popble.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-
-//여기 있는 내용 전부 나중에 Principal로 바꿔야함
+// 여기 있는 내용 전부 나중에 Principal로 바꿔야함
 @RestController
 @RequiredArgsConstructor
 @Log4j2

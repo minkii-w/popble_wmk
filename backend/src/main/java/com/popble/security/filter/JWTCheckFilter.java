@@ -1,4 +1,3 @@
-
 package com.popble.security.filter;
 
 import java.io.IOException;
@@ -12,7 +11,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.google.gson.Gson;
 import com.popble.dto.UserDTO;
-import com.popble.repository.UserRepository;
 import com.popble.util.JWTUtill;
 
 import jakarta.servlet.FilterChain;
@@ -26,95 +24,103 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class JWTCheckFilter extends OncePerRequestFilter {
 
-	private final UserRepository userRepository;
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        // ✅ CORS preflight 무조건 통과
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
 
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        log.info("check uri...............{}", path);
 
-		if (request.getMethod().equals("OPTIONS")) {
-			return true;
-		}
+        // ✅ 인증 없이 접근 허용할 공개 API
+        if (path.startsWith("/api/user")) {
+            return true;
+        }
+        if (path.startsWith("/api/search") || path.startsWith("/api/filter")) {
+            return true;
+        }
 
-		String path = request.getRequestURI();
+        // ✅ 개발 편의 (boards 전체 통과 → 배포 시 제거 권장)
+        if (path.startsWith("/api/boards")) {
+            return true;
+        }
 
-		log.info("check uri..............." + path);
+        return false;
+    }
 
-		if (path.startsWith("/api/user")) {
-			return true;
-		}
-		if (path.startsWith("/api/search") || path.startsWith("/api/filter")) {
-			return true;
-		}
-		return false;
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-	}
+        log.info("----------------------JWTCheckFilter-------------------------");
 
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+        String authHeaderStr = request.getHeader("Authorization");
 
-		log.info("----------------------JWTCheckFilter-------------------------");
+        if (authHeaderStr == null || !authHeaderStr.startsWith("Bearer ")) {
+            log.warn("Authorization header is missing or invalid. authHeaderStr={}", authHeaderStr);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		String authHeaderStr = request.getHeader("Authorization");
+        try {
+            String accessToken = authHeaderStr.substring(7);
+            Map<String, Object> claims = JWTUtill.validateToken(accessToken);
 
-		if (authHeaderStr == null || !authHeaderStr.startsWith("Bearer ")) {
-			log.info("Authorization 헤더가 없거나 Bearer 타입이 아닙니다. 다음 필터로 이동합니다.");
-			filterChain.doFilter(request, response);
-			return;
-		}
+            log.info("JWT claims: {}", claims);
 
-		try {
-			String accessToken = authHeaderStr.substring(7);
-			Map<String, Object> claims = JWTUtill.validateToken(accessToken);
+            String loginId = (String) claims.get("loginId");
+            String name = (String) claims.get("name");
+            String email = (String) claims.get("email");
+            String phonenumber = (String) claims.get("phonenumber");
 
-			log.info("JWT claims:" + claims);
+            // ✅ null-safe 처리
+            Boolean social = claims.get("social") != null ? (Boolean) claims.get("social") : false;
+            List<String> roleNames = claims.get("roleNames") != null
+                    ? (List<String>) claims.get("roleNames")
+                    : List.of("MEMBER");
 
-			String loginId = (String) claims.get("loginId");
-//			String password = (String) claims.get("password");
-			String name = (String) claims.get("name");
-//			Boolean social = (Boolean) claims.get("social");
-			String email = (String) claims.get("email");
-			String phonenumber = (String) claims.get("phonenumber");
-//			List<String> roleNames = (List<String>) claims.get("roleNames");
+            Long id = null;
+            Object idObj = claims.get("id");
+            if (idObj != null) {
+                id = Long.valueOf(String.valueOf(idObj));
+            }
 
-			// social null 체크
-			Boolean social = claims.get("social") != null ? (Boolean) claims.get("social") : false;
+            UserDTO userDTO = new UserDTO(
+                    loginId,
+                    "N/A", // ✅ password는 토큰에서 꺼내 쓰지 않음
+                    name,
+                    social,
+                    email,
+                    phonenumber,
+                    roleNames
+            );
+            userDTO.setId(id);
 
-			// roleNames null 체크
-			List<String> roleNames = claims.get("roleNames") != null ? (List<String>) claims.get("roleNames")
-					: List.of("MEMBER");
-			// id못받아와서 따로 추가한부분
-			Long id = null;
-			Object idObj = claims.get("id");
-			if (idObj != null) {
-				id = Long.valueOf(String.valueOf(idObj));
-			}
+            log.info("-----------------------");
+            log.info(userDTO);
+            log.info(userDTO.getAuthorities());
 
-			UserDTO userDTO = new UserDTO(loginId, "N/A", name, social, email,  phonenumber, roleNames);
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(userDTO, null, userDTO.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-			// 추가분
-			userDTO.setId(id);
+            filterChain.doFilter(request, response);
 
-			log.info("-----------------------");
-			log.info(userDTO);
-			log.info(userDTO.getAuthorities());
+        } catch (Exception e) {
+            log.error("JWT Check Error---------------------");
+            log.error(e.getMessage());
+            writeErrorJson(response, "ERROR_ACCESS_TOKEN");
+        }
+    }
 
-			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDTO,
-					null, userDTO.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-			filterChain.doFilter(request, response);
-		} catch (Exception e) {
-			log.error("JWT Check Error---------------------");
-			log.error(e.getMessage());
-
-			Gson gson = new Gson();
-			String msg = gson.toJson(Map.of("error", "ERROR_ACCESS_TOKEN"));
-
-			response.setContentType("application/json");
-			PrintWriter printWriter = response.getWriter();
-			printWriter.println(msg);
-			printWriter.close();
-		}
-
-	}
-
+    private void writeErrorJson(HttpServletResponse response, String message) throws IOException {
+        Gson gson = new Gson();
+        String msg = gson.toJson(Map.of("error", message));
+        response.setContentType("application/json");
+        PrintWriter printWriter = response.getWriter();
+        printWriter.println(msg);
+        printWriter.close();
+    }
 }

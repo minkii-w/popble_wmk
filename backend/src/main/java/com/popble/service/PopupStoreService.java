@@ -1,6 +1,5 @@
 package com.popble.service;
 
-
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
 import com.popble.dto.PopupFilterDTO;
@@ -8,21 +7,21 @@ import com.popble.dto.PopupStoreDTO;
 
 public interface PopupStoreService {
 
-	
-PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO);
-	
-	//팝업스토어 예약 조회
-	PopupStoreDTO get(Long id);
+    // 🔹 필터 조회
+    PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO);
 
-//	PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO);
-	
-	//팝업스토어 예약 등록
-	Long register(PopupStoreDTO popupStoreDTO);
-	
-	
-	void modify (PopupStoreDTO popupStoreDTO);
-	
-	void remove (Long id);
+    // 🔹 단건 조회
+    PopupStoreDTO get(Long id);
 
+    // 🔹 목록 조회 (페이징)
+    PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO);
 
+    // 🔹 팝업스토어 등록
+    Long register(PopupStoreDTO popupStoreDTO);
+
+    // 🔹 팝업스토어 수정
+    void modify(PopupStoreDTO popupStoreDTO);
+
+    // 🔹 팝업스토어 삭제
+    void remove(Long id);
 }

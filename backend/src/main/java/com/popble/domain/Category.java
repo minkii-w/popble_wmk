@@ -27,26 +27,26 @@ import lombok.Setter;
 @Table(name = "category")
 public class Category {
 
-	public enum CategoryType {
-		MAIN, LOCALE, THEME
-	}
-	
-	//카테고리 번호
-	@Id
-	//1-100 카테고리 101-200 지역 201-300 테마? 이런식은 어떤지
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "category_id")
-	private Integer id;
-	
-	//카테고리 이름
-	@Column(name = "name")
-	private String name;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "type")
-	private CategoryType type;
-	
-	@OneToMany(mappedBy = "category")
-	@JsonManagedReference("categories")
-	private List<PopupCategory> categories = new ArrayList<>();
+    public enum CategoryType {
+        MAIN, LOCALE, THEME
+    }
+
+    // 카테고리 번호
+    @Id
+    // 1-100 카테고리, 101-200 지역, 201-300 테마? 이런식
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id")
+    private Integer id;
+
+    // 카테고리 이름
+    @Column(name = "name")
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private CategoryType type;
+
+    @OneToMany(mappedBy = "category")
+    @JsonManagedReference("categories") // 🔹 main 버전 유지
+    private List<PopupCategory> categories = new ArrayList<>();
 }
