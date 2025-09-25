@@ -157,6 +157,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .maxCount(popupStore.getMaxCount())
                 .desc(popupStore.getDesc())
                 .price(popupStore.getPrice())
+                .parking(popupStore.isParking())
                 .deleted(popupStore.isDeleted())
                 .build();
 
@@ -190,6 +191,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .maxCount(popupStoreDTO.getMaxCount())
                 .desc(popupStoreDTO.getDesc())
                 .price(popupStoreDTO.getPrice())
+                .parking(popupStoreDTO.isParking())
                 .deleted(popupStoreDTO.isDeleted())
                 .build();
 

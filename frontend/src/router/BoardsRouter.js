@@ -1,7 +1,7 @@
 // src/router/BoardsRouter.js
 import { Suspense, lazy } from "react";
 import { Navigate } from "react-router-dom";
-import LoadingComponent from "../components/common/LoadingComponent";
+import LoadingComponent from "../components/common/LoadingComponent"; // ✅ 올바른 경로 수정
 
 const AllBoardList  = lazy(() => import("../pages/boards/AllBoardList")); // 전체 글
 
@@ -29,31 +29,31 @@ const BoardsRouter = () => [
   { index: true, element: <Navigate replace to="all" /> },
 
   // 전체 글
-  { path: "all", element: <Suspense fallback={Loading}><AllBoardList /></Suspense> },
+  { path: "all", element: <Suspense fallback={<LoadingComponent />}><AllBoardList /></Suspense> },
 
   // 일반 게시판
-  { path: "general",     element: <Suspense fallback={Loading}><GeneralList /></Suspense> },
-  { path: "general/:id", element: <Suspense fallback={Loading}><GeneralDetail /></Suspense> },
-  { path: "general/:id/modify", element: <Suspense fallback={Loading}><ModifyPage/></Suspense> },
+  { path: "general",     element: <Suspense fallback={<LoadingComponent />}><GeneralList /></Suspense> },
+  { path: "general/:id", element: <Suspense fallback={<LoadingComponent />}><GeneralDetail /></Suspense> },
+  { path: "general/:id/modify", element: <Suspense fallback={<LoadingComponent />}><ModifyPage/></Suspense> },
 
-  { path: "qna",         element: <Suspense fallback={Loading}><QnaList /></Suspense> },
-  { path: "qna/:id",     element: <Suspense fallback={Loading}><QnaDetail /></Suspense> },
-  { path: "qna/:id/modify", element: <Suspense fallback={Loading}><ModifyPage/></Suspense> },
+  { path: "qna",         element: <Suspense fallback={<LoadingComponent />}><QnaList /></Suspense> },
+  { path: "qna/:id",     element: <Suspense fallback={<LoadingComponent />}><QnaDetail /></Suspense> },
+  { path: "qna/:id/modify", element: <Suspense fallback={<LoadingComponent />}><ModifyPage/></Suspense> },
 
-  { path: "review",      element: <Suspense fallback={Loading}><ReviewList /></Suspense> },
-  { path: "review/:id",  element: <Suspense fallback={Loading}><ReviewDetail /></Suspense> },
-  { path: "review/:id/modify", element: <Suspense fallback={Loading}><ModifyPage /></Suspense> },
+  // { path: "review",      element: <Suspense fallback={<LoadingComponent />}><ReviewList /></Suspense> },
+  // { path: "review/:id",  element: <Suspense fallback={<LoadingComponent />}><ReviewDetail /></Suspense> },
+  // { path: "review/:id/modify", element: <Suspense fallback={<LoadingComponent />}><ModifyPage /></Suspense> },
 
-  { path: "notice",      element: <Suspense fallback={Loading}><NoticeList /></Suspense> },
-  { path: "notice/:id",  element: <Suspense fallback={Loading}><NoticeDetail /></Suspense> },
-  { path: "notice/:id/modify", element: <Suspense fallback={Loading}><ModifyPage /></Suspense> },
+  { path: "notice",      element: <Suspense fallback={<LoadingComponent />}><NoticeList /></Suspense> },
+  { path: "notice/:id",  element: <Suspense fallback={<LoadingComponent />}><NoticeDetail /></Suspense> },
+  { path: "notice/:id/modify", element: <Suspense fallback={<LoadingComponent />}><ModifyPage /></Suspense> },
 
-  { path: "ad",          element: <Suspense fallback={Loading}><AdList /></Suspense> },
-  { path: "ad/:id",      element: <Suspense fallback={Loading}><AdDetail /></Suspense> },
-  { path: "ad/:id/modify", element: <Suspense fallback={Loading}><ModifyPage/></Suspense>},
+  { path: "ad",          element: <Suspense fallback={<LoadingComponent />}><AdList /></Suspense> },
+  { path: "ad/:id",      element: <Suspense fallback={<LoadingComponent />}><AdDetail /></Suspense> },
+  { path: "ad/:id/modify", element: <Suspense fallback={<LoadingComponent />}><ModifyPage/></Suspense>},
 
-  { path: "write",       element: <Suspense fallback={Loading}><WritePage /></Suspense> },
-  { path: "read/:id",    element: <Suspense fallback={Loading}><ReadPage /></Suspense> },
+  { path: "write",       element: <Suspense fallback={<LoadingComponent />}><WritePage /></Suspense> },
+  { path: "read/:id",    element: <Suspense fallback={<LoadingComponent />}><ReadPage /></Suspense> },
 ];
 
 export default BoardsRouter;

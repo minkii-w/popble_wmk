@@ -56,6 +56,9 @@ public class PopupStore {
 
     @Column(name = "view")
     private Integer view;
+    
+    @Column(name = "parking")
+    private boolean parking;
 
     @Column(name = "recommend")
     private Integer recommend;

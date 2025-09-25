@@ -1,7 +1,7 @@
-// frontend/src/components/board/ModifyComponent.jsx
+// frontend/src/components/common/board/ModifyComponent.jsx
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";            
-import { getOne, patchOne, patchImages } from "../../api/BoardApi";
+import { getOne, patchOne, patchImages } from "../../../api/BoardApi"; // ✅ 경로 수정
 
 const ModifyComponent = ({ id }) => {
   const navigate = useNavigate();

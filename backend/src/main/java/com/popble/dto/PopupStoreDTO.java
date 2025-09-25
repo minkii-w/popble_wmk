@@ -49,6 +49,9 @@ public class PopupStoreDTO {
 
     // 조회수
     private Integer view;
+    
+    //주차여부
+    private boolean parking;
 
     // 추천수
     private Integer recommend;
