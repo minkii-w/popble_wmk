@@ -63,5 +63,24 @@ public class ReservationTimeServiceImpl implements ReservationTimeService{
                 .build())
             .collect(Collectors.toList());
     }
+    
+    //팝업스토어의 첫타임,마지막타임 정보 조회(상세보기용)
+    public List<ReservationTimeDTO>getAllTimes(Long popupStoreId){
+    	List<ReservationTime> result = reservationTimeRepository.findAllByPopupStoreId(popupStoreId);
+    	return result.stream()
+    			.map(this::entityToDTO)
+    			.collect(Collectors.toList());
+    	
+    }
+    
+    private ReservationTimeDTO entityToDTO(ReservationTime entity) {
+       
+        return ReservationTimeDTO.builder()
+                .id(entity.getId())
+                .popupStoreId(entity.getPopupStore().getId())
+                .startTime(entity.getStartTime())
+                .endTime(entity.getEndTime())
+                .build();
+    }
 
 }

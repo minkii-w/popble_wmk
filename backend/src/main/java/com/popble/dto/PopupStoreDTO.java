@@ -90,6 +90,8 @@ public class PopupStoreDTO {
 	
 	@Builder.Default
 	private List<String>uploadFileNames = new ArrayList<>();
+	
+	private boolean parking;
 
 	
 	}

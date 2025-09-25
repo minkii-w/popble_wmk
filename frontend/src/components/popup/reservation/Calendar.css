@@ -4,7 +4,7 @@
   font-family: 'Arial', sans-serif;
   font-size: 30px;
   padding: 20px;
-  background-color: #fffcf8;   
+  background-color: #ffffff;   
   border: none;
   box-sizing: border-box;
 }
@@ -18,7 +18,7 @@
 /* 헤더 */
 .react-datepicker__header {
   position: relative;
-  background-color: #fffcf8;
+  background-color: #ffffff;
   text-align: center;
   font-size: 50px !important;
   font-weight: bold;
@@ -149,13 +149,13 @@
 
 .react-datepicker__day--disabled {
   color: #ccc;          /* 글씨 색을 연하게 */
-  background-color: #fffcf8; /* 배경도 살짝 흐리게 */
+  background-color: #ffffff; /* 배경도 살짝 흐리게 */
   cursor: not-allowed;  /* 마우스 포인터 변경 */
 }
 
 /* hover 효과 제거 */
 .react-datepicker__day--disabled:hover {
-  background-color: #fffcf8; 
+  background-color: #ffffff; 
 }
 
 

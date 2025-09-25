@@ -8,6 +8,7 @@ const initState = {
   endDate: '',
   desc: '',
   price: 0,
+  parking: false,
   files: []
 };
 
@@ -16,9 +17,13 @@ const AdBoardComponent = ({onRegisterSuccess}) => {
   const uploadRef = useRef();
   
   const handleChangePopupstore = (e) => {
+    const {name, value, type, checked} = e.target;
+
+    const parkingCheck = type === 'checkbox'?checked:value;
+
     setPopupstore({
       ...popupstore,
-      [e.target.name]: e.target.value
+      [name]:parkingCheck
     });
   };
 
@@ -42,6 +47,7 @@ const AdBoardComponent = ({onRegisterSuccess}) => {
       endDate: popupstore.endDate,
       desc: popupstore.desc,
       price: popupstore.price,
+      parking: popupstore.parking,
     };
     formData.append("dto", JSON.stringify(popupstoreData));
 
@@ -59,7 +65,7 @@ const AdBoardComponent = ({onRegisterSuccess}) => {
 
 
   return (
-    <form>
+    <div>
       <div className="border-2 border-sky-200 mt-10 m-2 p-4">
         <div className="flex justify-center">
           <div className="relative mb-4 flex w-full flex-wrap items-stretch">
@@ -141,6 +147,20 @@ const AdBoardComponent = ({onRegisterSuccess}) => {
 
         <div className="flex justify-center">
           <div className="relative mb-4 flex w-full flex-wrap items-stretch">
+            <div className="w-1/5 p-6 text-right font-bold">주차여부</div>
+            <input
+              className="rounded-r border border-solid border-neutral-500 shadow-md"
+              type='checkbox'
+              name="parking"
+              value={popupstore.parking}
+              onChange={handleChangePopupstore}>
+            </input>
+                <label className="ml-2 text-sm font-medium text-gray-900">주차 가능</label>
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <div className="relative mb-4 flex w-full flex-wrap items-stretch">
             <div className="w-1/5 p-6 text-right font-bold">이미지첨부</div>
             <input
               ref={uploadRef}
@@ -163,7 +183,7 @@ const AdBoardComponent = ({onRegisterSuccess}) => {
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

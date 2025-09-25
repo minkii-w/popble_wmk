@@ -153,7 +153,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                           key={t.id}
                           className={`inline-flex items-center px-3 py-1 m-1 border rounded-full ${
                             selected.time && selected.time.id === t.id
-                              ? "bg-primaryColor text-white"
+                              ? "bg-primaryColor text-black"
                               : "bg-subSecondColor"
                           } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                           onClick={() => setSelected((prev) => ({ ...prev, time: t }))}
@@ -180,7 +180,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                           key={t.id}
                           className={`inline-flex items-center px-3 py-1 m-1 border rounded-full ${
                             selected.time && selected.time.id === t.id
-                              ? "bg-primaryColor text-white"
+                              ? "bg-primaryColor text-black"
                               : "bg-subSecondColor"
                           } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                           onClick={() => setSelected((prev) => ({ ...prev, time: t }))}
@@ -212,7 +212,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                 </div>
                 <div className="flex justify-end mt-4">
                   <button
-                    className="py-2 px-4 bg-primaryColor text-xl rounded text-white"
+                    className="py-2 px-4 bg-primaryColor text-xl rounded text-black"
                     onClick={onNext}
                     disabled={!selected.date || !selected.time || selected.count === 0}
                   >

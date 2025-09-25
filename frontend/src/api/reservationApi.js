@@ -82,4 +82,9 @@ export const getAvailableTimesByDate = async (popupStoreId, date) => {
     return res.data;
 };
 
+//팝업스토어 모든 타임 가져오기(첫,마지막타임 정보 확인용->상세보기)
+export const getAllTimes = async (popupStoreId) => {
+  const res = await axios.get(`${reservationTimeHost}/popup/${popupStoreId}/allTimes`);
+  return res.data;
+}
 

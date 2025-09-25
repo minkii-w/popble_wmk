@@ -189,6 +189,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 		    .endDate(popupStore.getEndDate())
 		    .desc(popupStore.getDesc())
 		    .price(popupStore.getPrice())
+		    .parking(popupStore.isParking())
 		    .build();
 
 		List<Image> imageList = popupStore.getImageList();
@@ -222,6 +223,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .endDate(popupStoreDTO.getEndDate())
                 .desc(popupStoreDTO.getDesc())
                 .price(popupStoreDTO.getPrice())
+                .parking(popupStoreDTO.isParking())
                 .build();
         
         

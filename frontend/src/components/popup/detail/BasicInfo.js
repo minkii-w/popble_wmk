@@ -2,30 +2,78 @@ import React, { useState } from "react";
 
 import { FaRegEye } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
-import { MdEmail, MdOutlineWatchLater } from "react-icons/md";
+import { MdOutlineWatchLater } from "react-icons/md";
 import { LuTimerReset } from "react-icons/lu";
+import { RiAlarmWarningLine } from "react-icons/ri";
+import { BsStars } from "react-icons/bs";
+
 import { FiInstagram } from "react-icons/fi";
 import { MdOutlineEmail } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
-import { Fragment } from "react";
 
 import Car from "../../../assets/img/icon_car.png"
-import noCar from "../../../assets/img/icon_car_no.png"
+import NoCar from "../../../assets/img/icon_car_no.png"
 import Card from "../../../assets/img/icon_card_free.png"
 import Paid from "../../../assets/img/icon_card_paid.png"
 
-const BasicInfo = ({popupStore}) => {
-    
-    const [text] = useState("애니 / 캐릭터");
+const formatTime = (timeString) => {
+    if (!timeString) return "정보 없음";
 
+    const timeOnly = timeString.substring(0,5)
+
+    const [hour, minute] = timeOnly.split(':')
+
+    return `${parseInt(hour, 10)}시 ${parseInt(minute, 10)}분`;
+}
+
+const calculatePopupTimes = (timeSlots) => {
+    let firstTime = "정보 없음";
+    let lastTime = "정보 없음";
+
+    if (!timeSlots || timeSlots.length === 0) {
+        return { firstTime, lastTime };
+    }
+
+    const startTimes = timeSlots.map(slot => slot.startTime).filter(t => t); 
+    const endTimes = timeSlots.map(slot => slot.endTime).filter(t => t);     
+
+    if (startTimes.length === 0 || endTimes.length === 0) {
+        return { firstTime, lastTime };
+    }
+
+
+    const firstStartTime = startTimes.reduce((min, current) => (current < min ? current : min), startTimes[0]);
+    const lastEndTime = endTimes.reduce((max, current) => (current > max ? current : max), endTimes[0]);
+
+
+    firstTime = formatTime(firstStartTime);
+    lastTime = formatTime(lastEndTime);
+
+    return { firstTime, lastTime };
+}
+
+
+const BasicInfo = ({popupStore}) => {
+    // 카테고리 태그
+    // const [text] = useState("애니 / 캐릭터");
+
+    //주차가능여부 아이콘
+    const parkingIcon = popupStore.parking;
+
+    //가격여부 아이콘
+    const priceIcon = popupStore.price === 0;
+
+    const timeSlots = popupStore.timeSlots || []; 
+    const { firstTime, lastTime } = calculatePopupTimes(timeSlots);
+    
     return (
         <div>
-            {/* 카테고리 */}
+            {/* 카테고리
             <div className="flex mb-4">
                 <span className="inline-block px-3 py-1 rounded-3xl bg-subButtonColor shadow-md text-center text-sm">
-                    애니 / 캐릭터
+                    {text}
                 </span>
-            </div>
+            </div> */}
 
             {/* 조회수 */}
             <div className="flex justify-end">
@@ -45,30 +93,42 @@ const BasicInfo = ({popupStore}) => {
                 <div className="flex items-start gap-2">
                     <MdOutlineWatchLater className="mt-0.5" size={17}/>
                     <div className="flex flex-col gap-1">
-                        {/* 수정필요 */}
-                        <span>첫 타임 : </span>
-                        <span>마지막 타임 : </span>
+                        <span>첫 타임  : {firstTime}</span>
+                        <span>마지막 타임  : {lastTime}</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <LuTimerReset size={17}/>
-                    <span>러닝타임: 약 60 ~ 90분</span>
+                    <span>러닝타임 : 약 60 분</span>
                 </div>
+            </div>
 
             {/* 주차, 입장료 */}
             <div className="mt-5 mb-4 ml-6 text-sm flex items-center gap-20">
                 <div className="flex flex-col items-center gap-2">
-                    <img src={Car} height='65px' width= '65px'></img>
-                    <span>주차 가능</span>
+                    {parkingIcon ? (
+                    <img src={Car} alt="주차 가능" style={{ width: 60, height: 60 }} />
+                    ) : (
+                    <img src={NoCar} alt="주차 불가" style={{ width: 60, height: 60 }} />
+                    )}
+                    <span>
+                        {parkingIcon?"주차가능":"주차불가"}
+                    </span>
                 </div>
                 <div className="flex flex-col items-center gap-2">
-                    <img src={Paid} height='60px' width= '60px'></img>
-                    <span>입장료 유료</span>
+                    {priceIcon?(
+                        <img src={Card} alt="입장료 유료" style={{ width: 60, height: 60}}/>
+                    ):(
+                        <img src={Paid} alt="입장료 무료" style={{ width: 60, height: 60}}/>
+                    )}
+                    <span>
+                        {priceIcon ? "입장료 무료":"입장료 유료"}
+                    </span>
                 </div>
             </div>
 
             {/* 콘텐츠 */}
-            <h3 className="text-r font-semibold mt-5">콘텐츠</h3>
+            <h3 className="flex text-r font-semibold mt-5 mb-5 gap-2"><BsStars size={20}/>콘텐츠</h3>
             <p className="leading-6 mb-5">
                 {popupStore.desc.split('\\n').map((line,index) => (
                     <React.Fragment key={index}>
@@ -78,8 +138,8 @@ const BasicInfo = ({popupStore}) => {
                 ))}
             </p>
 
-            {/* 관람 유의사항_이건 그대로 둬도 될 듯!*/}
-            <h3 className="text-r font-semibold mt-5">관람 유의사항</h3>
+            {/* 관람 유의사항 */}
+            <h3 className="flex text-r font-semibold mt-10 mb-5 gap-2"><RiAlarmWarningLine size={20}/>관람 유의사항</h3>
             <p className="leading-6 mb-5">
                 • 외부 음식물 및 음료는 반입이 불가합니다.<br/>
                 • 쾌적한 관람 환경을 위해 개인 촬영 장비(ex.액션캠, DSLR, 삼각대, 셀카봉), 대형 쇼핑백은 전시장 반입이 제한됩니다.<br/>
@@ -91,9 +151,9 @@ const BasicInfo = ({popupStore}) => {
 
             {/* sns 아이콘 */}
             <div className="mt-5 mb-5 text-sm flex items-center gap-3">
-                    <FiInstagram size={25}/>
-                    <MdOutlineEmail size={27}/>
-                    <FiPhone size={25}/>
+                <FiInstagram size={25}/>
+                <MdOutlineEmail size={27}/>
+                <FiPhone size={25}/>
             </div>
 
             {/* 해시태그 */}
@@ -112,7 +172,6 @@ const BasicInfo = ({popupStore}) => {
                 </span>
             </div>
         </div>
-    </div>
-  );
+    );
 };
 export default BasicInfo;

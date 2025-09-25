@@ -8,7 +8,7 @@ import ReservationCheckComponent from "../../popup/reservation/ReservationCheckC
 const ReserveInfo = () => {
 
 
-  const id = "25"; //임의로 넣은 데이터 -> 실제 데이터로 변경해야함
+  const id = "29"; //임의로 넣은 데이터 -> 실제 데이터로 변경해야함
 
   const currentUserId = 1;
 

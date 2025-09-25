@@ -146,5 +146,8 @@ public class PopupStore {
 	public void clearList() {
 		this.imageList.clear();
 	}
+	
+	@Column(name="parking")
+	private boolean parking;
 
 }
