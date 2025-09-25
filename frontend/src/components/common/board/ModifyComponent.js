@@ -1,7 +1,7 @@
 // frontend/src/components/board/ModifyComponent.jsx
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";            
-import { getOne, patchOne, patchImages } from "../../api/BoardApi";
+import { getOne, patchOne, patchImages } from "../../../api/BoardApi";
 
 const ModifyComponent = ({ id }) => {
   const navigate = useNavigate();

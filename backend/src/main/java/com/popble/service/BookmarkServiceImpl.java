@@ -61,7 +61,7 @@ public class BookmarkServiceImpl implements BookmarkService{
 	//북마크 삭제
 	public boolean deleteBookmark(Long userId, Long popupId) {
 		UserProfile user = userProfileRepository.findById(userId)
-							.orElseThrow();
+							.orElseThrow(() -> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다: " + userId));
 		
 		PopupStore popup = popupStoreRepository.findById(popupId)
 							.orElseThrow();
@@ -100,7 +100,7 @@ public class BookmarkServiceImpl implements BookmarkService{
 								.build();
 			
 			List<String> fileNames = popupStore.getImageList().stream()
-									.map(image -> image.getFileName())
+									.map(image -> image.getUrl()) //안되면 get originalName, storedName시도
 									.collect(Collectors.toList());
 			dto.setImageFileNames(fileNames);
 			

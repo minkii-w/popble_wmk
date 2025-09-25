@@ -31,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/userProfile")
 public class UserProfileController2 {
+
+    private final AdBoardController adBoardController;
 	
 	private final ReservationService reservationServie;
 	
@@ -41,10 +43,8 @@ public class UserProfileController2 {
 	private final UserRepository userRepository;
 	
 	private final CustomFileUtil fileUtil;
-	
-	
-	
-	
+
+
 	//유저프로필조회
 	@GetMapping("/{id}")
     public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable("id") Long id) {
@@ -83,12 +83,24 @@ public class UserProfileController2 {
 		return ResponseEntity.ok(response);
 	}
 	
-	@PatchMapping("/{id}")
+	//프로필 수정
+	@PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<UserProfileDTO> updateUserProfile(
-			@PathVariable("id") Long id,
-			@RequestBody UserProfileDTO userProfileDTO){
-		return ResponseEntity.ok(userProfileService.updateUserProfile(id, userProfileDTO));
+			@PathVariable("id") Long userId,
+			@RequestParam(name = "nickname") String nickname,
+			@RequestParam(value = "profileImg", required = false)MultipartFile profileImg){
+		UserProfileDTO updatedProfile = userProfileService.updateUserProfile(userId,nickname,profileImg);
+		
+		return ResponseEntity.ok(updatedProfile);
 	}
 	
-
+	//UserRepository로 아이디 조회해서 profile가져오기
+	@GetMapping("edit/{userId}")
+	public ResponseEntity<UserProfileDTO> getUserProfileByUserId(@PathVariable(name = "userId") Long userId){
+		return userRepository.findById(userId)
+				.map(user -> user.getUserProfile())
+				.map(userProfile -> UserProfileDTO.builder().id(userProfile.getId()).nickname(userProfile.getNickname()).profileImg(userProfile.getProfileImg()).build())
+				.map(userProfileDTO -> ResponseEntity.ok(userProfileDTO))
+				.orElse(ResponseEntity.notFound().build());
+	}
 }

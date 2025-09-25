@@ -118,7 +118,7 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("url: {}", url);
 
         if (response.isCommitted()) {
-            logger.debug("응답이 이미 커밋된 상태입니다. {} 로 리다이렉트 불가", url);
+            logger.debug("응답이 이미 커밋된 상태입니다." + url + "로 리다이렉트 불가");
             return;
         }
         getRedirectStrategy().sendRedirect(request, response, url);

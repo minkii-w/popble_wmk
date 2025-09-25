@@ -19,7 +19,7 @@ const AboutPage = () => {
   const [popupStore, setPopupStore] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const popupStoreId = 26;
+  const popupStoreId = 1;
 
   useEffect( () => {
     const fetchStoreData = async () => {
