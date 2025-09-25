@@ -6,15 +6,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.popble.domain.Role;
-import com.popble.domain.UserProfile;
 import com.popble.domain.Users;
 import com.popble.dto.UserDTO;
-import com.popble.repository.BookmarkRepository;
-import com.popble.repository.ReservationRepository;
-import com.popble.repository.UserProfileRepository;
 import com.popble.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,15 +20,9 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserServiceImpl implements UserService {
 
-	private final UserProfileRepository userProfileRepository;
-
 	private final UserRepository userRepository;
 	private final PasswordEncoder encoder;
 
-	private final ReservationRepository reservationRepository;
-	private final BookmarkRepository bookmarkRepository;
-
-	@Transactional
 	public UserDTO create(UserDTO userDTO) {
 
 		log.info("------백앤드 객채 생성----------------------------");
@@ -43,67 +32,53 @@ public class UserServiceImpl implements UserService {
 
 				.build();
 
-		// User저장
-		Users savedUser = userRepository.save(users);
-		// UserProfile 생성
-		UserProfile userProfile = new UserProfile();
-		// 연관관계설정
-		userProfile.setNickname(userDTO.getName());
-		userProfile.setUsers(savedUser);
-
-		UserProfile savedProfile = userProfileRepository.save(userProfile);
-		// 저장
-		savedUser.setUserProfile(savedProfile);
-		userRepository.save(savedUser);
+		this.userRepository.save(users);
 
 		return userDTO;
 
 	}
 
-	// 모든 유저목록 불러오기
-	public List<UserDTO> getAllUsers() {
-		return userRepository.findAll().stream().map(user -> entityToDTO(user)).collect(Collectors.toList());
+	//모든 유저목록 불러오기
+	public List<UserDTO> getAllUsers(){
+		return userRepository.findAll().stream()
+				.map(user -> entityToDTO(user))
+				.collect(Collectors.toList());
 	}
-
-	// id로 유저 조회
+	
+	//id로 유저 조회
 	public UserDTO getUserById(Long id) {
-		Users user = userRepository.findById(id).orElseThrow();
+		Users user = userRepository.findById(id)
+					.orElseThrow();
 		return entityToDTO(user);
 	}
-
-	// 회원 정보 수정
+	
+	
 	public UserDTO updateUser(Long id, UserDTO userDTO) {
-		Users user = userRepository.findById(id).orElseThrow();
-
+		Users user = userRepository.findById(id)
+				.orElseThrow();
+				
 		user.setName(userDTO.getName());
 		user.setEmail(userDTO.getEmail());
 		user.setPhonenumber(userDTO.getPhonenumber());
 		user.setSocial(userDTO.isSocial());
-
-		if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+		
+		Users updateUser = userRepository.save(user);
+		
+		if(userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
 			user.setPassword(encoder.encode(userDTO.getPassword()));
 		}
-
-		Users updateUser = userRepository.save(user);
-
+		
 		return entityToDTO(updateUser);
 	}
 
-	// 회원 삭제
-	// 각각 연결때문에 안지워짐
-	@Transactional
+	
 	public void deleteUser(Long id) {
-
-		Users user = userRepository.findById(id).orElseThrow();
-		UserProfile profile = user.getUserProfile();
-		if (user.getUserProfile() != null) {
-			bookmarkRepository.deleteByUserProfile(profile);
-			userProfileRepository.delete(profile);
-			user.setUserProfile(null);
-		}
-
+		
+		Users user = userRepository.findById(id)
+				.orElseThrow();
+		
 		userRepository.delete(user);
-
+		
 	}
 
 	public UserDTO entityToDTO(Users user) {
@@ -113,10 +88,27 @@ public class UserServiceImpl implements UserService {
 		dto.setPassword(user.getPassword());
 		dto.setName(user.getName());
 		dto.setEmail(user.getEmail());
-		dto.setPhonenumber(user.getPhonenumber());
+		dto.setPhonenumber(formatPhoneNumber(user.getPhonenumber()));
 		dto.setSocial(user.isSocial());
 		dto.setRoleNames(List.of(user.getRole().name()));
 		return dto;
 	}
+	
+	//유저 핸드폰번호 문자열 받으면 자동으로 '-'추가하기
+	private String formatPhoneNumber(String number) {
+        if (number == null) return null;
+        number = number.replaceAll("\\D", "");
+        if (number.length() == 11) {
+            return number.substring(0, 3) + "-" 
+                 + number.substring(3, 7) + "-" 
+                 + number.substring(7);
+        } else if (number.length() == 10) {
+            return number.substring(0, 3) + "-" 
+                 + number.substring(3, 6) + "-" 
+                 + number.substring(6);
+        }
+        return number;
 
+	}
+	
 }

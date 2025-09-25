@@ -47,6 +47,6 @@ public class Category {
 	private CategoryType type;
 	
 	@OneToMany(mappedBy = "category")
-	@JsonManagedReference
+	@JsonManagedReference("categories")
 	private List<PopupCategory> categories = new ArrayList<>();
 }
