@@ -1,7 +1,6 @@
 
 package com.popble.controller;
 
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -43,51 +42,41 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequestMapping("/api/popup")
 public class PopupStoreController {
-	
-	
+
 	private final CustomFileUtil fileUtil;
 
 	private final PopupStoreService popupStoreService;
-	
+
 	private final ObjectMapper objectMapper;
 
-	
-	//리스트
+	// 리스트
 	@GetMapping("/list")
 	public PageResponseDTO<PopupStoreDTO> getList(
 			@RequestParam(required = false, name = "status") PopupStore.Status status,
 			@RequestParam(required = false, name = "sort") SortType sort,
-			@RequestParam(required = false, name = "categoryType") Category.CategoryType categoryType, 
+			@RequestParam(required = false, name = "categoryType") Category.CategoryType categoryType,
 			@RequestParam(required = false, name = "categoryId") Integer categoryId,
 			@RequestParam(required = false, name = "keyword") String keyword,
-			@RequestParam(defaultValue = "1", name = "page") int page, 
-			@RequestParam(defaultValue = "10",name = "size") int size){
-		
-		PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-				.page(page)
-				.size(size)
-				.build();
-		
-		
-		PopupFilterDTO popupFilterDTO = PopupFilterDTO.builder()
-				.status(status)
-				.sort(sort)
-				.categoryType(categoryType)
-				.categoryId(categoryId)
-				.keyword(keyword)
-				.pageRequestDTO(pageRequestDTO)
-				.build();
+			@RequestParam(defaultValue = "1", name = "page") int page,
+			@RequestParam(defaultValue = "10", name = "size") int size) {
+
+		PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(page).size(size).build();
+
+		PopupFilterDTO popupFilterDTO = PopupFilterDTO.builder().status(status).sort(sort).categoryType(categoryType)
+				.categoryId(categoryId).keyword(keyword).pageRequestDTO(pageRequestDTO).build();
+
 		log.info("--------------------------------------------------------------");
-		log.info("status={}, sort={}, categoryType={}, categoryId={}, keyword = {}", status, sort, categoryType, categoryId, keyword);
+		log.info("status={}, sort={}, categoryType={}, categoryId={}, keyword = {}", status, sort, categoryType,
+				categoryId, keyword);
 		return popupStoreService.getFilteredList(popupFilterDTO);
 	}
-	
-	
-	//팝업 상세보기
+
+	// 팝업 상세보기
 	@GetMapping("/{id}")
 	public PopupStoreDTO get(@PathVariable("id") Long id) {
 		return popupStoreService.get(id);
 	}
+
 
 	//팝업등록하기
 	@PostMapping(value="/", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -113,49 +102,47 @@ public class PopupStoreController {
 	
 	@GetMapping("/viewFile/{fileName}")
 	public ResponseEntity<Resource> viewFileGet(@PathVariable("fileName") String fileName){
-		
+
 		return fileUtil.getFile(fileName);
 	}
-	
+
 	@PutMapping("/{id}")
-	public Map<String, String> modify(@PathVariable("id") Long id, PopupStoreDTO popupStoreDTO){
+	public Map<String, String> modify(@PathVariable("id") Long id, PopupStoreDTO popupStoreDTO) {
 		popupStoreDTO.setId(id);
-		
+
 		PopupStoreDTO oldPopupStoreDTO = popupStoreService.get(id);
-		
-		List<String>oldFileNames = oldPopupStoreDTO.getUploadFileNames();
+
+		List<String> oldFileNames = oldPopupStoreDTO.getUploadFileNames();
 		List<MultipartFile> files = popupStoreDTO.getFiles();
 		List<String> currentUploadFileNames = fileUtil.saveFiles(files);
 		List<String> uploadFileNames = popupStoreDTO.getUploadFileNames();
-		
-		if(currentUploadFileNames != null && currentUploadFileNames.size() > 0) {
+
+		if (currentUploadFileNames != null && currentUploadFileNames.size() > 0) {
 			uploadFileNames.addAll(currentUploadFileNames);
 		}
-		
+
 		popupStoreService.modify(popupStoreDTO);
-		
-		if(oldFileNames != null && oldFileNames.size()> 0 ) {
-			
-			List<String> removeFiles = oldFileNames
-					.stream()
-					.filter(fileName -> uploadFileNames.indexOf(fileName) == -1).collect(Collectors.toList());
-			
+
+		if (oldFileNames != null && oldFileNames.size() > 0) {
+
+			List<String> removeFiles = oldFileNames.stream().filter(fileName -> uploadFileNames.indexOf(fileName) == -1)
+					.collect(Collectors.toList());
+
 			fileUtil.deleteFile(removeFiles);
 		}
-		
-		return Map.of("결과","성공");
-	}
-	
-	@DeleteMapping("/{id}")
-	public Map<String, String> remove(@PathVariable("id")Long id){
-		List<String>oldFileNames = popupStoreService.get(id).getUploadFileNames();
-		
-		popupStoreService.remove(id);
-		
-		fileUtil.deleteFile(oldFileNames);
-		
-		return Map.of("결과","성공");
-	}
-	
-}
 
+		return Map.of("결과", "성공");
+	}
+
+	@DeleteMapping("/{id}")
+	public Map<String, String> remove(@PathVariable("id") Long id) {
+		List<String> oldFileNames = popupStoreService.get(id).getUploadFileNames();
+
+		popupStoreService.remove(id);
+
+		fileUtil.deleteFile(oldFileNames);
+
+		return Map.of("결과", "성공");
+	}
+
+}

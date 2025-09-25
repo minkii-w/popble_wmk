@@ -43,13 +43,20 @@ const authSlice = createSlice({
 
     //유저프로필 수정
     updateUserProfileRedux(state, action) {
-      // MyPageEdit에서 프로필 수정 후 호출
-      state.userProfile = action.payload;
+      //action.payload 업데이트된 userProfile 정보가 있음
+      state.user = {
+        ...state.user, //기존 user정보
+        ...action.payload, //업데이트된 프로필 정보 추가(nickname, profileImg)
+      };
+
+      //현재 토큰, 갱신된 user가져옴
       const { accessToken, refreshToken, user } = state;
+
+      //변경된 상태를 쿠키에 저장
       setCookie(
         "user",
         JSON.stringify(
-          { accessToken, refreshToken, user, userProfile: state.userProfile },
+          { accessToken, refreshToken, user, userProfile: null },
           1
         )
       );

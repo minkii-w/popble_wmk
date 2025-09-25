@@ -44,8 +44,8 @@ public class BookmarkController {
 	}
 	
 	//내 북마크 목록
-//	@GetMapping("list/{userId}")
-//	public Page<PopupStoreDTO> getBookmarkList(@PathVariable("userId")Long userId, Pageable pageable){
-//		return bookmarkService.bookmarkList(userId, pageable);
-//	}
+	@GetMapping("list/{userId}")
+	public Page<PopupStoreDTO> getBookmarkList(@PathVariable("userId")Long userId, Pageable pageable){
+		return bookmarkService.bookmarkList(userId, pageable);
+	}
 }
