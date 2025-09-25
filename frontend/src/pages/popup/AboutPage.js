@@ -11,7 +11,7 @@ import { getOne } from "../../api/popupstoreApi";
 import Sanrio from "../../assets/img/Sanrio MediaArt_1.jpeg";
 
 import { PiHeartBold } from "react-icons/pi";
-import { FaRegBookmark } from "react-icons/fa6";
+import { FaRegBookmark, FaHeart } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
 
 const AboutPage = () => {

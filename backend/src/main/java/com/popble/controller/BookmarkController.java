@@ -22,29 +22,29 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping("/api/bookmark")
 public class BookmarkController {
 
-    private final BookmarkService bookmarkService;
-
-    // 북마크 추가
-    @PostMapping("/{userId}/{popupId}")
-    public boolean addBookmark(@PathVariable("userId") Long userId, @PathVariable("popupId") Long popupId) {
-        return bookmarkService.addBookmark(userId, popupId);
-    }
-
-    // 북마크 삭제
-    @DeleteMapping("/{userId}/{popupId}")
-    public boolean deleteBookmark(@PathVariable("userId") Long uesrId, @PathVariable("popupId") Long popupId) {
-        return bookmarkService.deleteBookmark(uesrId, popupId);
-    }
-
-    // 북마크 여부 확인
-    @GetMapping("/check/{userId}/{popupId}")
-    public boolean isBookmark(@PathVariable("userId") Long userId, @PathVariable("popupId") Long popupId) {
-        return bookmarkService.isBookmark(userId, popupId);
-    }
-
-    // 내 북마크 목록 → main 쪽은 주석 처리 상태 유지
-    // @GetMapping("list/{userId}")
-    // public Page<PopupStoreDTO> getBookmarkList(@PathVariable("userId") Long userId, Pageable pageable) {
-    //     return bookmarkService.bookmarkList(userId, pageable);
-    // }
+	private final BookmarkService bookmarkService;
+	
+	//북마크 추가
+	@PostMapping("/{userId}/{popupId}")
+	public boolean addBookmark(@PathVariable("userId") Long userId,@PathVariable("popupId") Long popupId) {
+		return bookmarkService.addBookmark(userId, popupId);
+	}
+	
+	//북마크 삭제
+	@DeleteMapping("/{userId}/{popupId}")
+	public boolean deleteBookmark(@PathVariable("userId") Long uesrId, @PathVariable("popupId") Long popupId) {
+		return bookmarkService.deleteBookmark(uesrId, popupId);
+	}
+	
+	//북마크 여부 확인
+	@GetMapping("/check/{userId}/{popupId}")
+	public boolean isBookmark(@PathVariable("userId") Long userId, @PathVariable("popupId") Long popupId) {
+		return bookmarkService.isBookmark(userId, popupId);
+	}
+	
+	//내 북마크 목록
+	@GetMapping("list/{userId}")
+	public Page<PopupStoreDTO> getBookmarkList(@PathVariable("userId")Long userId, Pageable pageable){
+		return bookmarkService.bookmarkList(userId, pageable);
+	}
 }
