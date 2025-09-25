@@ -138,6 +138,70 @@ public class PopupStoreServiceImpl implements PopupStoreService {
         popupStoreRepository.save(popupStore);
     }
 
+	
+	public PopupStoreDTO get(Long id) {
+		
+		Optional<PopupStore> result = popupStoreRepository.findById(id);
+		PopupStore popupStore = result.orElse(null);
+		if(popupStore == null) {
+			return null;
+		}
+		return entityToDTO(popupStore);
+	}
+	
+
+	@Transactional
+	public PopupStoreDTO get(Long id) {
+		Optional<PopupStore> result = popupStoreRepository.findById(id);
+		
+		PopupStore popupStore = result.orElseThrow();
+		
+		//조회수 증가(조회수가 null일 경우 1로 바꿔주고 아닌 경우는 +1)
+		popupStore.setView(popupStore.getView() == null ? 1: popupStore.getView() + 1);
+		popupStoreRepository.save(popupStore);
+		
+		PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
+		
+		return dto;
+	}
+
+	
+	private PopupStoreDTO entityToDTO(PopupStore popupStore) {
+
+		PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
+		    .id(popupStore.getId())
+		    .storeName(popupStore.getStoreName())
+		    .address(popupStore.getAddress())
+		    .startDate(popupStore.getStartDate())
+		    .endDate(popupStore.getEndDate())
+		    .desc(popupStore.getDesc())
+		    .price(popupStore.getPrice())
+		    .build();
+
+		List<Image> imageList = popupStore.getImageList();
+		if (imageList != null && !imageList.isEmpty()) {
+			List<String> fileNameList = imageList.stream()
+			        .map(Image::getFileName)
+			        .toList();
+			popupStoreDTO.setUploadFileNames(fileNameList);
+		}
+
+		return popupStoreDTO;
+	}
+	
+	
+	
+	public Long register(PopupStoreDTO popupStoreDTO) {
+		PopupStore popupStore = dtoEntity(popupStoreDTO);
+		PopupStore result = popupStoreRepository.save(popupStore);
+		return result.getId();
+	}
+	
+	
+	
+	private PopupStore dtoEntity(PopupStoreDTO popupStoreDTO) {
+
+
     // 🔹 단건 조회
     @Override
     public PopupStoreDTO get(Long id) {
