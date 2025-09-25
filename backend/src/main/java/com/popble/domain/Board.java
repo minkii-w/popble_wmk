@@ -23,7 +23,7 @@ import lombok.Setter;
 public abstract class Board {
 
     public enum Type {
-        NOTICE, GENERAL, QNA, AD  
+        NOTICE, GENERAL, QNA, AD   // ✅ REVIEW 제거됨
     }
 
     @Id
