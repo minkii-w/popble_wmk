@@ -77,37 +77,31 @@ public class PopupStoreController {
 		return popupStoreService.get(id);
 	}
 
-	@PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<PopupStoreDTO> register(@RequestParam("storeName") String storeName,
-			@RequestParam("address") String address,
-			@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-			@RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-			@RequestParam("maxCount") Integer maxCount, @RequestParam("desc") String desc,
-			@RequestParam("price") Integer price, @RequestParam("reservationTimes") String reservationTimesJson,
-			@RequestParam(value = "file", required = false) List<MultipartFile> files) throws Exception {
 
-		System.out.println("reservationTimeJson=" + reservationTimesJson);
+	//팝업등록하기
+	@PostMapping(value="/", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, Object>> register(
+        @RequestPart("dto") String popupStoreDtoStr, 
+        @RequestPart(value = "files", required = false) List<MultipartFile> files) throws Exception {
 
-		List<ReservationTimeDTO> reservationTimes = objectMapper.readValue(reservationTimesJson,
-				new TypeReference<List<ReservationTimeDTO>>() {
-				});
 
-		PopupStoreDTO dto = PopupStoreDTO.builder().storeName(storeName).address(address).startDate(startDate)
-				.endDate(endDate).maxCount(maxCount).desc(desc).price(price).reservationTimes(reservationTimes)
-				.files(files).build();
+        PopupStoreDTO popupStoreDTO = objectMapper.readValue(popupStoreDtoStr, PopupStoreDTO.class);
+        
+        // 이미지 파일 처리
+        List<String> uploadFileNames = fileUtil.saveFiles(files);
+        popupStoreDTO.setUploadFileNames(uploadFileNames);
 
-		List<String> uploadFileNames = fileUtil.saveFiles(files);
+   
+        Long id = popupStoreService.register(popupStoreDTO);
+        
+        return ResponseEntity.ok(Map.of("id", id, "message", "팝업스토어 등록 완료"));
+    }
 
-		dto.setUploadFileNames(uploadFileNames);
-
-		Long id = popupStoreService.register(dto);
-
-		return ResponseEntity.ok(dto);
-
-	};
-
-	@GetMapping("/view/{fileName}")
-	public ResponseEntity<Resource> viewFileGet(@PathVariable("fileName") String fileName) {
+	
+	
+	
+	@GetMapping("/viewFile/{fileName}")
+	public ResponseEntity<Resource> viewFileGet(@PathVariable("fileName") String fileName){
 
 		return fileUtil.getFile(fileName);
 	}

@@ -1,171 +1,352 @@
 
-
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { postReservation } from "../../../api/popupstoreApi"; 
+import { useEffect, useState } from "react";
 import ReservationSuccessModal from "./ReservationSuccessModal";
-import TossPayment from "../reservation/TossPayment";
+import TossPayment from "./TossPayment";
+import LoadingComponent from "../../common/LoadingComponent";
 import axios from "axios";
+import { getRemaining } from "../../../api/reservationApi";
 
-const ReservationCheckComponent = ({popupStore, selected, userProfileId}) => {
+const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack }) => {
 
-    console.log("reservationCheckComponenet userProfileID: ", userProfileId)
-    console.log("popupstore :", popupStore)
-    console.log("selected :", selected)
-
-
-    
-    const [userName, setUserName] = useState("");
-
-    const [phonenumber, setPhonenumber] = useState("");
-
-    const [success, setSuccess] = useState(false)
-
-    // 토스로 넘길 예약성공 데이터 id
+    // 임의로 넣은 데이터 -> 실제 DB데이터로 변경해야 함
+    const [userName, setUserName] = useState("우민경");
+    const [phonenumber, setPhonenumber] = useState("010-1111-1111");
     const [reservationId, setReservationId] = useState(null);
 
-    //토스 결제 완료 여부
-    const [tossCompleted, setTossCompleted] = useState(null);
-    
-    
+    const [showLoadingPayment, setShowLoadingPayment] = useState(false);
+    const [showPayment, setShowPayment] = useState(false);
+    const [tossCompleted, setTossCompleted] = useState(false);
 
-    const totalPrice = Number(popupStore?.price)* Number(selected.count)
+    const [editMode, setEditMode] = useState(false);
+    const [editedName, setEditedName] = useState("");
+    const [editedPhone, setEditedPhone] = useState("");
+    const [remainingSeats, setRemainingSeats] = useState(null);
+    const [isBookingAvailable, setIsBookingAvailable] = useState(false);
 
-    const navigate = useNavigate();
+    // 날짜 및 시간 형식 변환 로직
+    const reservationDate = selected.date;
+    const reservationTime = selected.time?.startTime;
 
+    const year = reservationDate.getFullYear().toString().slice(-2);
+    const month = (reservationDate.getMonth() + 1).toString();
+    const day = reservationDate.getDate().toString();
+    const [hour, minute] = reservationTime?.split(':') || [];
+    const ampm = (hour && hour >= 12) ? '오후' : '오전';
+    const displayHour = (hour && hour % 12 === 0) ? 12 : hour % 12;
 
-    useEffect( () => {
-        if(!userProfileId) return;
-        console.log("useEffect 실행됨, userID:", userProfileId)
-        axios.get(`http://localhost:8080/api/userProfile/${userProfileId}`)
-        .then(res => {
-            console.log("유저프로필데이터:",res.data)
-            const userData = res.data;
-            setUserName(userData.username)
-            setPhonenumber(userData.phonenumber)
-        })
-        .catch(err=> {
-            console.error("유저정보가져오기실패", err)
-        })
-    },[userProfileId])
+    const formattedDateTime = reservationDate && reservationTime 
+        ? `${year}년 ${month}월 ${day}일 ${ampm} ${displayHour}시 ${minute}분`
+        : "";
 
-
-    //예약 성공 할 때의 상태를 변환함
-    const handleReservationSuccess = async() => {
-        console.log("select확인 :", selected)
-
-        if(!selected.date || !selected.time || !selected.count){
-
-            console.log(selected.date, selected.time, selected.count)
-
-            alert("날짜, 시간, 인원을 모두 선택해 주세요.")
+    const fetchRemainingSeats = async () => {
+        if (!selected.date || !selected.time) {
+            setRemainingSeats(null);
             return;
         }
-        try{
-            const dateStr = selected.date.toISOString().split('T')[0]; 
-            const timeStr = selected.time.padStart(5,'0');
-            const reservationTime = `${dateStr}T${timeStr}`;
 
-            const payload ={
-            popupStoreId:popupStore.id,
-            userProfileId:userProfileId,
-            userName: userName,
-            phonenumber:phonenumber,
-            reservationCount: Number(selected.count),
-            reservationTime: reservationTime
+        const { startTime, endTime } = selected.time;
+        if (!startTime || !endTime) {
+            setRemainingSeats(null);
+            return;
         }
 
-        // console.log("팝업스토어id타입확인: ",typeof popupStore.id, popupStore.id)
-        // console.log("userProfileID타입확인 :", typeof userProfileId, userProfileId)
-        // console.log("전송할 payload :" , JSON.stringify(payload, null, 2))
+        try {
+            const formattedDate = selected.date instanceof Date
+                ? selected.date.toISOString().split("T")[0]
+                : selected.date;
 
-        const res = await postReservation(payload);
-        setReservationId(res.id);
-        // setSuccess(true);
+            const formattedStartTime = selected.time.startTime.padStart(5, '0').substring(0, 5);
+            const formattedEndTime = selected.time.endTime === '00:00'
+                ? '24:00'
+                : selected.time.endTime.padStart(5, '0').substring(0, 5);
 
-    }catch(err){
-        console.error(err);
-        alert("예약실패 : " + err.message);
-    }
-}
+            const data = await getRemaining(
+                popupStore.id,
+                formattedDate,
+                formattedStartTime,
+                formattedEndTime
+            );
+            setRemainingSeats(data);
+        } catch (error) {
+            console.error("잔여 인원 조회 실패:", error);
+            setRemainingSeats(0);
+        }
+    };
 
-//결제 완료했을 때 상태 변환함
-    const handleTossComplete = () => {
-        setTossCompleted(true);
+    useEffect(() => {
+        fetchRemainingSeats();
+    }, [selected.date, selected.time, popupStore.id]);
 
-    }
+    useEffect(() => {
+        if (remainingSeats !== null && selected.count) {
+            setIsBookingAvailable(selected.count <= remainingSeats);
+        } else {
+            setIsBookingAvailable(false);
+        }
+    }, [remainingSeats, selected.count]);
 
-    return(
-        <>
-        {tossCompleted &&(
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <ReservationSuccessModal popupStore={popupStore}/>
-        </div>
-        )}
 
-            <div className="flex justify-center">
-                <div className="mt-10 mb-10 w-4/5 border rounded-2xl border-gray-200">
-                    <div className="text-sm m-1 p-2">id{popupStore.id}</div>
-                    <div className="text-3xl m-1 p-2">{popupStore.storeName}</div>
-                    {/* ------------사진가져오기----------- */}
-                    {/* <div className="w-full justify-center flex flex-col m-auto items-center">
-                    {popupstore.uploadFileNames.map((imgFile,i)=>
-                    <img
-                    key={i}
-                    alt="popupStore"
-                    className="p-4 w-1/2"
-                    src={`${host}/api/popup/view/${imgFile}`}></img>
-                    )}
-                    </div> */}
-                    <div className="text-xl p-2 w-1/5 m-5">일정&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{selected.date?.toLocaleDateString()}</div>
-                    <div className="text-xl p-2 w-1/5 m-5">인원&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{selected.count}</div>
-                    <div className="text-xl p-2 w-1/5 m-5">가격&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    {popupStore?.price > 0 ? `${popupStore.price*selected.count}원`:'무 료'}</div>
-                </div>
-            </div>
+    const formatPhone = (value) => {
+        const digits = value.replace(/\D/g, "");
+        if (digits.length < 4) return digits;
+        if (digits.length < 8) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+        return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+    };
 
-            {/* --------------------------------예약된 정보의 데이터로 수정하기 */}
+    // 예약하기 상태
+    const handleReservation = async () => {
+        if (!selected.date || !selected.time || !selected.count) {
+            alert("날짜, 시간, 인원을 모두 선택해주세요.");
+            return;
+        }
 
-            <div className="justify-left">
-                <div className="text-3xl m-3">예약자 정보</div><br/>
-                <div className="text-2xl m-5">예약자 이름{userName}</div>
-                <div className="flex items-center justify-between w-full p-2">
-                    <span>연락처{phonenumber}</span>
-                    <button
-                    type="button"
-                    className="border border-gray-300 rounded px-3 mr-10 bg-backgroundColor">
-                    변경</button>
-                </div>     
-            </div>
+        if (remainingSeats === null) {
+            alert("잔여 인원 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+            return;
+        }
+        if (selected.count > remainingSeats) {
+            alert(`예약 가능한 인원은 ${remainingSeats}명입니다. 인원수를 다시 확인해주세요.`);
+            return;
+        }
+        if (selected.count <= 0) {
+            alert("예약 인원은 최소 1명 이상이어야 합니다.");
+            return;
+        }
 
-                {/*-----------이전, 확인 버튼--------------*/}
-                <div className="flex justify-between gap-10">
-                        <button 
-                        type="button"
-                        className="border border-gray-300 rounded p-2 w-1/5 bg-backgroundColor text-xl text-black"
-                        onClick={()=>navigate(-1)}>이 전
-                        </button>
+        try {
+            setShowLoadingPayment(true);
+            setTimeout(() => {
+                setShowLoadingPayment(false);
+                setShowPayment(true);
+            }, 200);
+        } catch (err) {
+            console.error(err);
+            alert("예약 준비 중 오류가 발생했습니다: " + err.message);
+        }
+    };
 
-                        {reservationId?(
-                            <div className="w-full mt-4">
-                                <TossPayment
-                                price = {Number(popupStore.price)*Number(selected.count)}
-                                ordername={popupStore.storeName}
-                                onSuccess={handleTossComplete}></TossPayment>
-                            </div>
-                      
-                        ):( 
-                            <button 
-                            type="button"
-                            className="rounded p-2 w-4/5 bg-primaryColor text-xl text-black"
-                            onClick={handleReservationSuccess}>
-                        예약하기
-                        </button>
+
+    // 토스결제 성공시 
+    const handleTossComplete = async () => {
+        try {
+            const { startTime, endTime } = selected.time;
+
+            if (!startTime || !endTime) {
+                alert("예약 확정 중 시간 정보가 누락되었습니다. 고객센터에 문의해 주세요");
+                onBack();
+                return;
+            }
+
+
+            const cleanedStartTime = startTime.substring(0, 5);
+            const cleanedEndTime = endTime.substring(0, 5);
+
+            const formattedStartTimeForPayload = cleanedStartTime + ":00";
+            const formattedEndTimeForPayload = cleanedEndTime === '00:00'
+                ? '24:00:00'
+                : cleanedEndTime + ":00";
+
+            const payload = {
+                popupStoreId: popupStore.id,
+                userProfileId,
+                userName,
+                phonenumber: phonenumber.replace(/\D/g, ""),
+                reservationCount: Number(selected.count),
+                reservationDate: selected.date instanceof Date
+                    ? selected.date.toISOString().split("T")[0]
+                    : selected.date,
+                startTime: formattedStartTimeForPayload,
+                endTime: formattedEndTimeForPayload,
+            };
+
+            const res = await axios.post("http://localhost:8080/api/reservation/register", payload);
+
+            setReservationId(res.data.id);
+            setShowPayment(false);
+            setShowLoadingPayment(false);
+            setTossCompleted(true);
+
+            await fetchRemainingSeats();
+
+        } catch (err) {
+            console.error("예약 확정 중 오류 발생:", err);
+            alert("예약 확정 중 오류가 발생했습니다. 고객센터에 문의해주세요.");
+            setShowPayment(false);
+            setShowLoadingPayment(false);
+            setTossCompleted(false);
+            onBack();
+        }
+    };
+
+
+    // 토스결제실패
+    const handleTossFail = () => {
+        alert("결제 실패! 예약 화면으로 돌아갑니다.");
+        setShowPayment(false);
+        setShowLoadingPayment(false);
+        setReservationId(null);
+        setTossCompleted(false);
+        onBack();
+    };
+
+    return (
+        <div>
+            {showLoadingPayment && <LoadingComponent />}
+            {showPayment && !tossCompleted && (
+                <TossPayment
+                    price={popupStore.price * selected.count}
+                    ordername={popupStore.storeName}
+                    onSuccess={handleTossComplete}
+                    onFail={handleTossFail}
+                />
+            )}
+            {tossCompleted && (
+                <ReservationSuccessModal
+                    popupStore={popupStore}
+                    reservationDate={selected.date}
+                    reservationTime={selected.time}
+                />
+            )}
+
+            {!showPayment && !showLoadingPayment && !tossCompleted && (
+                <div className="flex flex-col items-center">
+                    <div className="mt-10 mb-10 w-4/5 border rounded-2xl border-gray-200 p-4">
+                        <div className="text-sm hidden">id: {popupStore.id}</div>
+                        <div className="text-4xl font-bold ml-5 mt-8 mb-8">{popupStore.storeName}</div>
+                        <div className="text-xl mt-2 ml-5">
+                            <span>일정</span>
+                            <span style={{ marginLeft: "30px" }}>
+                                {formattedDateTime}
+                            </span>
+                        </div>
+                        <div className="text-xl mt-4 ml-5">
+                            <span>인원</span>
+                            <span style={{ marginLeft: "30px" }}>{selected.count}명</span>
+                            {remainingSeats !== null && (
+                                <span className="ml-4 text-gray-500 text-base">
+                                    (잔여: {remainingSeats}명)
+                                </span>
+                            )}
+                        </div>
+                        <div className="text-xl mt-4 ml-5 mb-8">
+                            <span>가격</span>
+                            <span style={{ marginLeft: "30px" }}>
+                                {popupStore.price > 0
+                                    ? `${popupStore.price * selected.count}원`
+                                    : "무료"}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="w-4/5 p-4">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="text-2xl">예약자 정보</div>
+                            {!editMode && (
+                                <button
+                                    className="border border-gray-300 rounded px-3 bg-backgroundColor"
+                                    onClick={() => {
+                                        setEditedName(userName);
+                                        setEditedPhone(phonenumber.replace(/\D/g, ""));
+                                        setEditMode(true);
+                                    }}
+                                >
+                                    변경
+                                </button>
+                            )}
+                        </div>
+
+                        {!editMode ? (
+                            <>
+                                <div className="text-xl mb-2">이름 : {userName}</div>
+                                <div className="text-xl mb-2">
+                                    연락처 : {formatPhone(phonenumber)}
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="mb-2">
+                                    <label className="block text-xl">이름</label>
+                                    <input
+                                        type="text"
+                                        value={editedName}
+                                        onChange={(e) => setEditedName(e.target.value)}
+                                        className="border p-1 rounded w-full"
+                                    />
+                                </div>
+                                <div className="mb-2">
+                                    <label className="block text-xl">연락처</label>
+                                    <input
+                                        type="text"
+                                        value={formatPhone(editedPhone)}
+                                        onChange={(e) =>
+                                            setEditedPhone(e.target.value.replace(/\D/g, ""))
+                                        }
+                                        className="border p-1 rounded w-full"
+                                    />
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        className="border rounded px-3 bg-green-200"
+                                        onClick={async () => {
+                                            try {
+                                                const res = await axios.patch(
+                                                    `http://localhost:8080/api/userProfile/${userProfileId}`,
+                                                    {
+                                                        name: editedName,
+                                                        phonenumber: editedPhone,
+                                                    }
+                                                );
+                                                setUserName(res.data.name);
+                                                setPhonenumber(res.data.phonenumber);
+                                                setEditMode(false);
+                                            } catch (err) {
+                                                console.error(err);
+                                                alert("변경에 실패했습니다");
+                                            }
+                                        }}
+                                    >
+                                        저장
+                                    </button>
+                                    <button
+                                        className="border rounded px-3 bg-red-200"
+                                        onClick={() => setEditMode(false)}
+                                    >
+                                        취소
+                                    </button>
+                                </div>
+                            </>
                         )}
-                </div>
-            </>
+                    </div>
 
+                    <div className="flex justify-between w-4/5 mt-4 gap-4">
+                        <button
+                            className="border border-gray-300 rounded p-2 w-1/5 bg-backgroundColor text-xl text-black"
+                            onClick={onBack}
+                        >
+                            이전
+                        </button>
+                        <button
+                            className={`rounded p-2 w-4/5 text-xl text-black
+                                ${!selected.date || !selected.time || selected.count === 0 || remainingSeats === null || !isBookingAvailable
+                                    ? "bg-gray-400 cursor-not-allowed"
+                                    : "bg-primaryColor hover:bg-primaryColor-dark"
+                                }`}
+                            onClick={handleReservation}
+                            disabled={
+                                !selected.date ||
+                                !selected.time ||
+                                selected.count === 0 ||
+                                remainingSeats === null ||
+                                !isBookingAvailable
+                            }
+                        >
+                            예약하기
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
     );
-}
+};
 
 export default ReservationCheckComponent;

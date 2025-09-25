@@ -22,7 +22,7 @@ import com.popble.security.handlr.APILoginFailHandler;
 import com.popble.security.handlr.APILoginSussessHandler;
 import com.popble.security.handlr.Oauth2AuthenticationSuccessHandler;
 import com.popble.service.UserOauth2Service;
-import com.popble.service.UserServiceImpl;
+//import com.popble.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -34,7 +34,7 @@ public class CustomSecurityConfig {
 
 	private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
 	private final UserOauth2Service userOauth2Service;
-	private final UserServiceImpl userServiceImpl;
+//	private final UserServiceImpl userServiceImpl;
 	private final UserRepository userRepository;
 
 

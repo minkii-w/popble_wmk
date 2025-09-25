@@ -1,3 +1,4 @@
+
 package com.popble.service;
 
 import java.time.LocalDateTime;
@@ -108,6 +109,8 @@ public class BookmarkServiceImpl implements BookmarkService{
 			return dto;
 		});
 	}
+
+
 	//북마크 여부
 	public boolean isBookmark(Long userId, Long popupId) {
 		

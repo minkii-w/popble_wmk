@@ -54,5 +54,9 @@ public interface PopupStoreRepository extends JpaRepository<PopupStore, Long>, J
 	@Query("select p, pi from PopupStore p left join p.imageList pi where pi.ord = 0 and p.deleted = false")
 	Page<Object[]> selectList(Pageable pageable);
 	
+//	//팝업스토어 시간 데이터 가져오기
+//	@Query("select p from PopupStore p left join fetch p.reservationTimes where p.id = :id")
+//    Optional<PopupStore> findByIdWithReservationTimes(@Param("id") Long id);
+//	
 
 }
