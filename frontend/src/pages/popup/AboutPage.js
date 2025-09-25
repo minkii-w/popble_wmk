@@ -15,26 +15,25 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
 
 const AboutPage = () => {
-  const [activeTab, setActiveTab] = useState("basic"); // 기본 탭: 기본정보
+  const [activeTab, setActiveTab] = useState("basic");
   const [popupStore, setPopupStore] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const popupStoreId = 25; //임시 확인용 데이터 -> 수정해야함
+  const popupStoreId = 26;
 
-  useEffect( ()=> {
-
+  useEffect( () => {
     const fetchStoreData = async () => {
       try {
         const data = await getOne(popupStoreId)
         setPopupStore(data);
-      }catch(error){
+      } catch(error) {
         console.error("데이터 불러오기 실패", error)
-      }finally{
+      } finally {
         setLoading(false)
       }
     }
     fetchStoreData()
-  },[popupStoreId]);
+  }, [popupStoreId]);
   
   if(loading){
     return <div>로딩중</div>
@@ -48,9 +47,15 @@ const AboutPage = () => {
     <div>
       {/* 이미지 삽입 및 여백 지정 */}
       <div className="flex justify-center mt-10">
-        <img src={`http://localhost:8080/api/view/${popupStore.fileName}`} 
-        height="400px" width="400px"></img>
-        {/* <Link to={'/about'}></Link> */}
+        {/* 수정된 코드 */}
+        {popupStore && popupStore.uploadFileNames && popupStore.uploadFileNames.length > 0 && (
+          <img 
+            src={`http://localhost:8080/uploads/${popupStore.uploadFileNames[0]}`} 
+            height="600px" 
+            width="600px"
+            alt="팝업 스토어 이미지"
+          />
+        )}
       </div>
 
       {/* 아이콘 버튼 */}
@@ -116,11 +121,11 @@ const AboutPage = () => {
 
       {/* 내용 영역 */}
       <div className="p-6">
-        {activeTab === "basic" && <BasicInfo />}
-        {activeTab === "image" && <DetailImages />}
-        {activeTab === "map" && <MapInfo />}
-        {activeTab === "reserve" && <ReserveInfo />}
-        {activeTab === "review" && <ReviewInfo />}
+        {activeTab === "basic" && <BasicInfo popupStore={popupStore} />}
+        {activeTab === "image" && <DetailImages uploadFileNames={popupStore.uploadFileNames} />}
+        {activeTab === "map" && <MapInfo popupStore={popupStore} />}
+        {activeTab === "reserve" && <ReserveInfo popupStore={popupStore} />}
+        {activeTab === "review" && <ReviewInfo popupStore={popupStore} />}
       </div>
     </div>
   );

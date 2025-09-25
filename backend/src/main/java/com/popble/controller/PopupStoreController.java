@@ -92,17 +92,17 @@ public class PopupStoreController {
 	//팝업등록하기
 	@PostMapping(value="/", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> register(
-        @RequestPart("dto") String popupStoreDtoStr, // dto를 JSON 문자열로 직접 받습니다.
+        @RequestPart("dto") String popupStoreDtoStr, 
         @RequestPart(value = "files", required = false) List<MultipartFile> files) throws Exception {
 
-        // ObjectMapper를 사용해 JSON 문자열을 PopupStoreDTO 객체로 수동 변환합니다.
+
         PopupStoreDTO popupStoreDTO = objectMapper.readValue(popupStoreDtoStr, PopupStoreDTO.class);
         
         // 이미지 파일 처리
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         popupStoreDTO.setUploadFileNames(uploadFileNames);
 
-        // 서비스 계층으로 DTO 전달
+   
         Long id = popupStoreService.register(popupStoreDTO);
         
         return ResponseEntity.ok(Map.of("id", id, "message", "팝업스토어 등록 완료"));
@@ -111,7 +111,7 @@ public class PopupStoreController {
 	
 	
 	
-	@GetMapping("/view/{fileName}")
+	@GetMapping("/viewFile/{fileName}")
 	public ResponseEntity<Resource> viewFileGet(@PathVariable("fileName") String fileName){
 		
 		return fileUtil.getFile(fileName);

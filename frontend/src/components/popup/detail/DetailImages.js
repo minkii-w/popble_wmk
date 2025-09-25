@@ -1,16 +1,14 @@
 import { useState } from "react";
-import Sanrio_1 from "../../../assets/img/Sanrio MediaArt_1.jpeg";
-import Sanrio_2 from "../../../assets/img/Sanrio_mediaArt_2.avif";
-import Sanrio_3 from "../../../assets/img/Sanrio_mediaArt_3.avif";
-import Sanrio_4 from "../../../assets/img/Sanrio_mediaArt_4.avif";
-import Sanrio_5 from "../../../assets/img/Sanrio_mediaArt_5.avif";
 
-//이미지 배열로 묶어서 map으로 순회하면서 렌더링
-const images = [Sanrio_1, Sanrio_2, Sanrio_3, Sanrio_4, Sanrio_5];
 
-const DetailImages = () => {
+
+const DetailImages = ({uploadFileNames, popupStore}) => {
+
   const [selectImage, setSelectImage] = useState(null); //null -> 아무것도 선택안된 상태
   //selectImage:클릭한 이미지 저장 setSelectImage:확대하기 위해 사용
+  
+  //이미지 배열로 묶어서 map으로 순회하면서 렌더링
+  const images = uploadFileNames;
 
   return (
     <div className="flex flex-col items-center justify-center text-neutral-500">
@@ -20,17 +18,17 @@ const DetailImages = () => {
       <div className="flex flex-col items-center">
         {images.map(
           (
-            img,
+            fileName,
             idx //map -> 이미지 순서대로 렌더링
           ) => (
             //img:현재 순회중인 이미지 값 idx:순서대로 중가하는 숫자로 배열에서 몇번째 요소인지 알려줌
             <img
               key={idx}
-              src={img}
+              src={`http://localhost:8080/uploads/${fileName}`}
               height={500}
               width={500} //cursor-pointer:커서 올르면 손 모양  hover:scale:커서 올리면 살짝 확대
               className="cursor-pointer hover:scale-105 transition-transform duration-200"
-              onClick={() => setSelectImage(img)} //transtion-transform duration:부드럽게 확대/축소되도록 애니메이션 효과
+              onClick={() => setSelectImage(fileName)} //transtion-transform duration:부드럽게 확대/축소되도록 애니메이션 효과
             />
           )
         )}
@@ -46,7 +44,7 @@ const DetailImages = () => {
           {" "}
           {/*클릭 시 닫힘*/}
           <img
-            src={selectImage}
+            src={`http://localhost:8080/uploads/${selectImage}`}
             className="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
           />{" "}
           {/*화면 최대 크기 제한*/}

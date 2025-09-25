@@ -35,7 +35,7 @@ const ReservationSuccessModal = ({ popupStore = {}, reservationDate, reservation
       <div className="bg-hashTagColor p-1 rounded-lg relative">
         <button
           className="absolute top-5 right-5 text-black hover:text-black text-5xl"
-          onClick={() => navigate(`/popble/popup/detail`)}
+          onClick={() => navigate(`/popup/detail`)}
         >
           <IoIosClose />
         </button>
