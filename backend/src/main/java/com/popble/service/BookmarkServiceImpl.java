@@ -33,7 +33,7 @@ public class BookmarkServiceImpl implements BookmarkService{
 	private final BookmarkRepository bookmarkRepository;
 	private final UserProfileRepository userProfileRepository;
 	private final PopupStoreRepository popupStoreRepository;
-//	private final ModelMapper modelMapper;
+
 	
 	//북마크 추가
 	public boolean addBookmark(Long userId, Long popupId) {
@@ -90,29 +90,6 @@ public class BookmarkServiceImpl implements BookmarkService{
 		return bookmarks.map(bookmark -> {
 			PopupStore popupStore = bookmark.getPopupStore();
 
-			//BookmarkDTO 만들어서 관리
-//			// ModelMapper 대신 PopupStoreDTO 객체를 직접 생성하고 수동으로 매핑
-//			PopupStoreDTO dto = PopupStoreDTO.builder()
-//					.id(popupStore.getId())
-//					.storeName(popupStore.getStoreName())
-//					.desc(popupStore.getDesc())
-//					.address(popupStore.getAddress())
-//					.startDate(popupStore.getStartDate())
-//					.endDate(popupStore.getEndDate())
-//					.price(popupStore.getPrice())
-//					.status(popupStore.getStatus())
-//					.view(popupStore.getView())
-//					.recommend(popupStore.getRecommend())
-//					.maxCount(popupStore.getMaxCount())
-////					.reservationTimes(popupStore.getReservationTimes()) // 복잡한 컬렉션 필드 직접 매핑//안하면 에러나는듯.ㅠ
-////					.reservations(popupStore.getReservations())
-//					.latitude(popupStore.getLatitude())
-//					.longitude(popupStore.getLongitude())
-//					.deleted(popupStore.isDeleted())
-//					.categories(popupStore.getCategories()) // 복잡한 컬렉션 필드 직접 매핑 //에러남 ㅠ
-//					.bookmarkCount(popupStore.getBookmarkCount())
-//					.build();
-			
 			BookmarkDTO dto =  BookmarkDTO.builder()
 								.popupId(popupStore.getId())
 								.storeName(popupStore.getStoreName())

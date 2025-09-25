@@ -156,11 +156,15 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 	}
 	
 
-	
+	@Transactional
 	public PopupStoreDTO get(Long id) {
 		Optional<PopupStore> result = popupStoreRepository.findById(id);
 		
 		PopupStore popupStore = result.orElseThrow();
+		
+		//조회수 증가(조회수가 null일 경우 1로 바꿔주고 아닌 경우는 +1)
+		popupStore.setView(popupStore.getView() == null ? 1: popupStore.getView() + 1);
+		popupStoreRepository.save(popupStore);
 		
 		PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
 		
