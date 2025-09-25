@@ -9,12 +9,12 @@ import com.popble.dto.PopupStoreDTO;
 public interface PopupStoreService {
 
 	
-	PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO);
+PageResponseDTO<PopupStoreDTO> getFilteredList(PopupFilterDTO popupFilterDTO);
 	
 	//팝업스토어 예약 조회
 	PopupStoreDTO get(Long id);
 
-	PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO);
+//	PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO);
 	
 	//팝업스토어 예약 등록
 	Long register(PopupStoreDTO popupStoreDTO);
@@ -23,5 +23,6 @@ public interface PopupStoreService {
 	void modify (PopupStoreDTO popupStoreDTO);
 	
 	void remove (Long id);
+
 
 }

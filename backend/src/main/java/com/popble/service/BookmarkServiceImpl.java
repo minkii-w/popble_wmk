@@ -1,3 +1,4 @@
+
 package com.popble.service;
 
 import java.time.LocalDateTime;
@@ -81,16 +82,16 @@ public class BookmarkServiceImpl implements BookmarkService{
 		return false;
 	}
 	
-	@Transactional(readOnly = true)
-	public Page<BookmarkDTO> bookmarkList(Long userId, Pageable pageable){
-		UserProfile user = userProfileRepository.findById(userId).orElseThrow();
-		
-		Page<Bookmark> bookmarks = bookmarkRepository.findByUserProfileOrderByCreateDateDesc(user, pageable);
-		
-		return bookmarks.map(bookmark -> {
-			PopupStore popupStore = bookmark.getPopupStore();
-
-			//BookmarkDTO 만들어서 관리
+//	@Transactional(readOnly = true)
+//	public Page<BookmarkDTO> bookmarkList(Long userId, Pageable pageable){
+//		UserProfile user = userProfileRepository.findById(userId).orElseThrow();
+//		
+//		Page<Bookmark> bookmarks = bookmarkRepository.findByUserProfileOrderByCreateDateDesc(user, pageable);
+//		
+//		return bookmarks.map(bookmark -> {
+//			PopupStore popupStore = bookmark.getPopupStore();
+//
+//			//BookmarkDTO 만들어서 관리
 //			// ModelMapper 대신 PopupStoreDTO 객체를 직접 생성하고 수동으로 매핑
 //			PopupStoreDTO dto = PopupStoreDTO.builder()
 //					.id(popupStore.getId())
@@ -104,33 +105,33 @@ public class BookmarkServiceImpl implements BookmarkService{
 //					.view(popupStore.getView())
 //					.recommend(popupStore.getRecommend())
 //					.maxCount(popupStore.getMaxCount())
-////					.reservationTimes(popupStore.getReservationTimes()) // 복잡한 컬렉션 필드 직접 매핑//안하면 에러나는듯.ㅠ
-////					.reservations(popupStore.getReservations())
+//					.reservationTimes(popupStore.getReservationTimes()) // 복잡한 컬렉션 필드 직접 매핑//안하면 에러나는듯.ㅠ
+//					.reservations(popupStore.getReservations())
 //					.latitude(popupStore.getLatitude())
 //					.longitude(popupStore.getLongitude())
 //					.deleted(popupStore.isDeleted())
 //					.categories(popupStore.getCategories()) // 복잡한 컬렉션 필드 직접 매핑 //에러남 ㅠ
 //					.bookmarkCount(popupStore.getBookmarkCount())
 //					.build();
-			
-			BookmarkDTO dto =  BookmarkDTO.builder()
-								.popupId(popupStore.getId())
-								.storeName(popupStore.getStoreName())
-								.address(popupStore.getAddress())
-								.startDate(popupStore.getStartDate())
-								.endDate(popupStore.getEndDate())
-								.bookmarkCount(popupStore.getBookmarkCount())
-								.status(popupStore.getStatus())
-								.build();
-			
-			List<String> fileNames = popupStore.getImageList().stream()
-									.map(image -> image.getFileName())
-									.collect(Collectors.toList());
-			dto.setImageFileNames(fileNames);
-			
-			return dto;
-		});
-	}
+//			
+//			BookmarkDTO dto =  BookmarkDTO.builder()
+//								.popupId(popupStore.getId())
+//								.storeName(popupStore.getStoreName())
+//								.address(popupStore.getAddress())
+//								.startDate(popupStore.getStartDate())
+//								.endDate(popupStore.getEndDate())
+//								.bookmarkCount(popupStore.getBookmarkCount())
+//								.status(popupStore.getStatus())
+//								.build();
+//			
+//			List<String> fileNames = popupStore.getImageList().stream()
+//									.map(image -> image.getFileName())
+//									.collect(Collectors.toList());
+//			dto.setImageFileNames(fileNames);
+//			
+//			return dto;
+//		});
+//	}
 	//북마크 여부
 	public boolean isBookmark(Long userId, Long popupId) {
 		

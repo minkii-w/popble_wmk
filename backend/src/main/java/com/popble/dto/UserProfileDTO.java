@@ -10,6 +10,8 @@ import lombok.Setter;
 public class UserProfileDTO {
 
 	private Long id;
+	private String name;
 	private String nickname;
 	private String profileImg;
+	private String phonenumber;
 }
