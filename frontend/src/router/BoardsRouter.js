@@ -11,8 +11,6 @@ const GeneralList   = lazy(() => import("../pages/boards/general/GeneralList"));
 const GeneralDetail = lazy(() => import("../pages/boards/general/GeneralDetail"));
 const QnaList       = lazy(() => import("../pages/boards/qna/QnaList"));
 const QnaDetail     = lazy(() => import("../pages/boards/qna/QnaDetail"));
-const ReviewList    = lazy(() => import("../pages/boards/review/ReviewList"));
-const ReviewDetail  = lazy(() => import("../pages/boards/review/ReviewDetail"));
 const NoticeList    = lazy(() => import("../pages/boards/notice/NoticeList"));
 const NoticeDetail  = lazy(() => import("../pages/boards/notice/NoticeDetail"));
 
@@ -43,11 +41,6 @@ const BoardsRouter = () => [
   { path: "qna",         element: <Suspense fallback={Loading}><QnaList /></Suspense> },
   { path: "qna/:id",     element: <Suspense fallback={Loading}><QnaDetail /></Suspense> },
   { path: "qna/:id/modify", element: <Suspense fallback={Loading}><ModifyPage/></Suspense> },
-
-  // 리뷰
-  { path: "review",      element: <Suspense fallback={Loading}><ReviewList /></Suspense> },
-  { path: "review/:id",  element: <Suspense fallback={Loading}><ReviewDetail /></Suspense> },
-  { path: "review/:id/modify", element: <Suspense fallback={Loading}><ModifyPage /></Suspense> },
 
   // 공지
   { path: "notice",      element: <Suspense fallback={Loading}><NoticeList /></Suspense> },
