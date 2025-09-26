@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.popble.repository.UserRepository;
 import com.popble.security.filter.JWTCheckFilter;
 import com.popble.security.handlr.APILoginFailHandler;
 import com.popble.security.handlr.APILoginSussessHandler;
@@ -31,69 +32,55 @@ import lombok.extern.log4j.Log4j2;
 @EnableMethodSecurity
 public class CustomSecurityConfig {
 
-   private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+	private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+	private final UserOauth2Service userOauth2Service;
+	private final UserServiceImpl userServiceImpl;
+	private final UserRepository userRepository;
 
-   private final UserOauth2Service userOauth2Service;
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-   private final UserServiceImpl userServiceImpl;
+		http.cors(httpSecurityCorsConfigurer -> {
+			httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
+		});
 
-   @Bean
-   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.sessionManagement(SessionConfig -> SessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http.csrf(Config -> Config.disable());
 
-      http.cors(httpSecurityCorsConfigurer -> {
-         httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
-      });
+		http.formLogin(config -> {
+			config.loginPage("/api/user/login");
 
-      http.sessionManagement(SessionConfig -> SessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-      http.csrf(Config -> Config.disable());
+			config.successHandler(new APILoginSussessHandler());
+			config.failureHandler(new APILoginFailHandler());
 
-      http.formLogin(config -> {
-         config.loginPage("/api/user/login");
+		});
 
-         config.successHandler(new APILoginSussessHandler());
-         config.failureHandler(new APILoginFailHandler());
+// oauth2 -----------------------------	
 
-      });
+		http.oauth2Login(oauth2 -> oauth2.failureUrl("/login?error=true").defaultSuccessUrl("/user/success")
+				.successHandler(oauth2AuthenticationSuccessHandler).userInfoEndpoint(userInfo -> userInfo
 
-// oauth2 -----------------------------   
-   
-   http
-    .oauth2Login(oauth2 -> oauth2
-          .failureUrl("/login?error=true")
-        .defaultSuccessUrl("/user/success")
-        .successHandler(oauth2AuthenticationSuccessHandler)
-        .userInfoEndpoint(userInfo -> userInfo
-   
-            .userService(userOauth2Service)
-            
-            
-         
-            
-        )
-    );
-   
+						.userService(userOauth2Service)
 
-   
-   
-   http.addFilterBefore(new JWTCheckFilter(),
-          UsernamePasswordAuthenticationFilter.class);
+				));
 
-      return http.build();
-   }
+		http.addFilterBefore(new JWTCheckFilter(userRepository), UsernamePasswordAuthenticationFilter.class);
 
-   @Bean
-   public CorsConfigurationSource corsConfigurationSource() {
-      CorsConfiguration configuration = new CorsConfiguration();
+		return http.build();
+	}
 
-      configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-      configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
-      configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-      configuration.setAllowCredentials(true);
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
 
-      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-      source.registerCorsConfiguration("/**", configuration);
+		configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH","HEAD", "OPTIONS"));
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+		configuration.setAllowCredentials(true);
 
-      return source;
-   }
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
 
+		return source;
+	}
 }

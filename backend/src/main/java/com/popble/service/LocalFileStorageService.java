@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LocalFileStorageService implements FileStorageService {
 
-    @Value("${file.upload.path:/uploads}") // 절대경로 권장: D:/popble-uploads 같은
+    @Value("${com.popble.upload.path:C:/popble-uploads}") // 절대경로 권장: D:/popble-uploads 같은
     private String uploadRoot;
 
     @Override

@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { addBookmark, deleteBookmark } from "../../api/bookmarkApi";
 import { GoBookmark } from "react-icons/go";
 import { FcBookmark } from "react-icons/fc";
+import { useSelector } from "react-redux";
 
-//userId를 받아올수 없기때문에 임의로 id=4인 유저를 설정해둠
-const PopupCard = ({ item, userId = 4 }) => {
+const PopupCard = ({ item }) => {
   const [isBookmark, setIsBookmark] = useState(item.isBookmark);
+
+  // const userId = useSelector((state) => state.auth?.user?.id);
 
   useEffect(() => {
     setIsBookmark(item.isBookmark ?? false);
@@ -18,9 +20,9 @@ const PopupCard = ({ item, userId = 4 }) => {
 
     try {
       if (isBookmark) {
-        await deleteBookmark(userId, item.id);
+        await deleteBookmark(item.popupId);
       } else {
-        await addBookmark(userId, item.id);
+        await addBookmark(item.popupId);
       }
       setIsBookmark(!isBookmark);
     } catch (e) {
@@ -30,7 +32,7 @@ const PopupCard = ({ item, userId = 4 }) => {
 
   return (
     <Link
-      to={`/popup/detail/${item.id}`}
+      to={`/popup/detail/${item.popupId}`}
       className="relative flex flex-shrink-0 bg-secondaryColor w-[380px] h-[180px] rounded-lg shdow-md m-5 p-3 hover:shadow-lg transition border-secondaryAccentColor border-2"
     >
       {/* 북마크 */}

@@ -28,7 +28,6 @@ import com.popble.dto.PopupStoreDTO;
 import com.popble.dto.ReservationTimeDTO;
 import com.popble.repository.PopupStoreRepository;
 
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -170,37 +169,67 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 	
 	private PopupStoreDTO entityToDTO(PopupStore popupStore) {
 		
+//		List<ReservationTimeDTO> reservationTimeDTO = popupStore.getReservationTimes()
+//				.stream()
+//				.map(rt -> ReservationTimeDTO.builder()
+//						.startTime(rt.getStartTime())
+//						.endTime(rt.getEndTime())
+//						.build())
+//				.collect(Collectors.toList());
+//		
+//		PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
+//				.id(popupStore.getId())
+//				.storeName(popupStore.getStoreName())
+//				.address(popupStore.getAddress())
+//				.startDate(popupStore.getStartDate())
+//				.endDate(popupStore.getEndDate())
+//				.reservationTimes(reservationTimeDTO)
+//				.maxCount(popupStore.getMaxCount())
+//				.desc(popupStore.getDesc())
+//				.price(popupStore.getPrice())
+//				.build();
+//		
+//		List<Image> imageList = popupStore.getImageList();
+//		
+//		if(imageList == null || imageList.size() == 0) {
+//			return popupStoreDTO;
+//		}
+//		
+//		List<String> fileNameList = imageList.stream().map(image -> image.getFileName()).toList();
+//		
+//		popupStoreDTO.setUploadFileNames(fileNameList);
+//		
+//		return popupStoreDTO;
 		List<ReservationTimeDTO> reservationTimeDTO = popupStore.getReservationTimes()
-				.stream()
-				.map(rt -> ReservationTimeDTO.builder()
-						.startTime(rt.getStartTime())
-						.endTime(rt.getEndTime())
-						.build())
-				.collect(Collectors.toList());
-		
-		PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
-				.id(popupStore.getId())
-				.storeName(popupStore.getStoreName())
-				.address(popupStore.getAddress())
-				.startDate(popupStore.getStartDate())
-				.endDate(popupStore.getEndDate())
-				.reservationTimes(reservationTimeDTO)
-				.maxCount(popupStore.getMaxCount())
-				.desc(popupStore.getDesc())
-				.price(popupStore.getPrice())
-				.build();
-		
-		List<Image> imageList = popupStore.getImageList();
-		
-		if(imageList == null || imageList.size() == 0) {
-			return popupStoreDTO;
-		}
-		
-		List<String> fileNameList = imageList.stream().map(image -> image.getFileName()).toList();
-		
-		popupStoreDTO.setUploadFileNames(fileNameList);
-		
-		return popupStoreDTO;
+		        .stream()
+		        .map(rt -> ReservationTimeDTO.builder()
+		        .amPm(rt.getAmPm())
+		        .startTime(rt.getStartTime())
+		        .endTime(rt.getEndTime())
+		        .build())
+		        .collect(Collectors.toList());
+
+PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
+    .id(popupStore.getId())
+    .storeName(popupStore.getStoreName())
+    .address(popupStore.getAddress())
+    .startDate(popupStore.getStartDate())
+    .endDate(popupStore.getEndDate())
+    .reservationTimes(reservationTimeDTO)
+    .maxCount(popupStore.getMaxCount())
+    .desc(popupStore.getDesc())
+    .price(popupStore.getPrice())
+    .build();
+
+List<Image> imageList = popupStore.getImageList();
+if (imageList != null && !imageList.isEmpty()) {
+List<String> fileNameList = imageList.stream()
+        .map(Image::getFileName)
+        .toList();
+popupStoreDTO.setUploadFileNames(fileNameList);
+}
+
+return popupStoreDTO;
 	}
 	
 	public Long register(PopupStoreDTO popupStoreDTO) {
