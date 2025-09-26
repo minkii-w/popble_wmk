@@ -8,7 +8,7 @@ import ReserveInfo from "../../components/popup/detail/ReserveInfo";
 import ReviewInfo from "../../components/popup/detail/ReviewInfo";
 import { getOne } from "../../api/popupstoreApi";
 import { getAllTimes } from "../../api/reservationApi";
-import Sanrio from "../../assets/img/Sanrio MediaArt_1.jpeg";
+
 
 import { PiHeartBold } from "react-icons/pi";
 import { FaRegBookmark } from "react-icons/fa6";

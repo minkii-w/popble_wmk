@@ -3,16 +3,10 @@
   width: 100%;                
   font-family: 'Arial', sans-serif;
   font-size: 30px;
-  padding: 20px;
+  padding: 10px;
   background-color: #ffffff;   
   border: none;
   box-sizing: border-box;
-}
-
-.calendar-wrapper {
-  display: inline-block; /* 달력 자체 block 유지 */
-  vertical-align: top;
-  margin-right: 20px; /* 달력과 예약정보 구분 */
 }
 
 /* 헤더 */
@@ -128,17 +122,6 @@
   background-color: #ffe3e6;
   color: black;
   cursor: pointer;
-}
-
-.calendar-container {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap; /* 달력과 예약 정보 사이 간격 */
-}
-
-.calendar-box {
-  flex: 0 0 300px;
-  /* 달력 너비 비율 */
 }
 
 .reservation-info {

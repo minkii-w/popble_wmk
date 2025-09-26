@@ -17,6 +17,7 @@ import Card from "../../../assets/img/icon_card_free.png"
 import Paid from "../../../assets/img/icon_card_paid.png"
 
 const formatTime = (timeString) => {
+    
     if (!timeString) return "정보 없음";
 
     const timeOnly = timeString.substring(0,5)
@@ -57,14 +58,26 @@ const BasicInfo = ({popupStore}) => {
     // 카테고리 태그
     // const [text] = useState("애니 / 캐릭터");
 
+    //팝업스토어정보데이터(desc)
+    const store = popupStore || {};
+
     //주차가능여부 아이콘
-    const parkingIcon = popupStore.parking;
+    const parkingIcon = store.parking;
 
     //가격여부 아이콘
-    const priceIcon = popupStore.price === 0;
+    const priceIcon = store.price === 0;
 
-    const timeSlots = popupStore.timeSlots || []; 
-    const { firstTime, lastTime } = calculatePopupTimes(timeSlots);
+    const timeSlots = store.timeSlots || []; 
+
+    const { firstTime, lastTime } = calculatePopupTimes(timeSlots) || {firstTime:null, lastTime:null};
+
+    const getFormattedDesc = (desc) => {
+        if(typeof desc !== 'string' || !desc) return [];
+
+        return desc.split('\\n')
+    }
+
+    const formattedDesc = getFormattedDesc(store.desc)
     
     return (
         <div>
@@ -81,20 +94,20 @@ const BasicInfo = ({popupStore}) => {
             </div>
 
             {/* 이름, 기간 */}
-            <h2 className="text-3xl font-bold mb-2">{popupStore.storeName}</h2>
-            <h3 className="text-r font-semibold mb-2">{popupStore.startDate} ~ {popupStore.endDate}</h3>
+            <h2 className="text-3xl font-bold mb-2">{popupStore.storeName || ""}</h2>
+            <h3 className="text-r font-semibold mb-2">{popupStore.startDate || ""} ~ {popupStore.endDate || ""}</h3>
 
             {/* 위치, 시간, 러닝타임 */}
             <div className="mt-10 mb-4 text-sm flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                     <FiMapPin size={17}/>
-                    <span>{popupStore.address}</span>
+                    <span>{popupStore.address || "주소 정보 없음"}</span>
                 </div>
                 <div className="flex items-start gap-2">
                     <MdOutlineWatchLater className="mt-0.5" size={17}/>
                     <div className="flex flex-col gap-1">
-                        <span>첫 타임  : {firstTime}</span>
-                        <span>마지막 타임  : {lastTime}</span>
+                        <span>첫 타임  : {firstTime || "첫 타임 데이터 없음"}</span>
+                        <span>마지막 타임  : {lastTime || "마지막 타임 데이터 없음"}</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -130,12 +143,16 @@ const BasicInfo = ({popupStore}) => {
             {/* 콘텐츠 */}
             <h3 className="flex text-r font-semibold mt-5 mb-5 gap-2"><BsStars size={20}/>콘텐츠</h3>
             <p className="leading-6 mb-5">
-                {popupStore.desc.split('\\n').map((line,index) => (
-                    <React.Fragment key={index}>
-                        {line}
-                        {index<popupStore.desc.split('\\n').length -1 &&<br/>}
-                    </React.Fragment>
-                ))}
+                {formattedDesc.length > 0 ? (
+                    formattedDesc.map((line,index) => (
+                        <React.Fragment key={index}>
+                            {line}
+                            {index < formattedDesc.length - 1 && <br/>}
+                        </React.Fragment>
+                    ))
+                ):(
+                    "콘텐츠 정보가 없음"
+                )}
             </p>
 
             {/* 관람 유의사항 */}
@@ -149,14 +166,14 @@ const BasicInfo = ({popupStore}) => {
             </p>
 
 
-            {/* sns 아이콘 */}
+            {/* sns 아이콘
             <div className="mt-5 mb-5 text-sm flex items-center gap-3">
                 <FiInstagram size={25}/>
                 <MdOutlineEmail size={27}/>
                 <FiPhone size={25}/>
-            </div>
+            </div> */}
 
-            {/* 해시태그 */}
+            {/* 해시태그
             <div className="flex items-center mb-4 gap-3">
                 <span className="inline-block px-3 py-1 rounded-3xl bg-hashTagColor shadow-md text-center bg-hashTagColor text-black text-xs">
                     # 산리오
@@ -170,7 +187,7 @@ const BasicInfo = ({popupStore}) => {
                 <span className="inline-block px-3 py-1 rounded-3xl bg-hashTagColor shadow-md text-center text-black text-xs">
                     # FC몰
                 </span>
-            </div>
+            </div> */}
         </div>
     );
 };

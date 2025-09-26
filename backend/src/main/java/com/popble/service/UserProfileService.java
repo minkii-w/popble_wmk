@@ -20,6 +20,7 @@ public interface UserProfileService {
 	
 	//예약시 이름,번호 변경할 때
 	UserProfileDTO updateUserProfile(Long id, UserProfileDTO userProfileDTO);
+	
 
 	UserProfileDTO updateUserProfile(Long userId, String nickname, MultipartFile profileImg);
 

@@ -64,7 +64,7 @@ public class UserProfileServiceImpl implements UserProfileService{
                 .build();
     }
 	
-	
+	//예약시에 유저프로필 변경
 	@Override
 	public UserProfileDTO updateUserProfile(Long id, UserProfileDTO dto) {
 	    UserProfile userProfile = userProfileRepository.findById(id)
