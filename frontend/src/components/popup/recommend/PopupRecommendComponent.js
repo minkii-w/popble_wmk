@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import { FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import {
   getIsRecommended,
   postRecommend,
   deleteRecommend,
 } from "../../../api/popupRecommendApi";
-import { useStyleSheetContext } from "styled-components/dist/models/StyleSheetManager";
+import { useSelector } from "react-redux";
 
 //팝업 전용 추천 컴포넌트
 const PopupRecommendComponent = ({ popupId }) => {
-  const userId = useStyleSheetContext((state) => state.auth?.user?.id);
+  const userId = useSelector((state) => state.auth?.user?.id);
 
   const [isRecommended, setIsRecommended] = useState(false);
   const [Loading, setLoading] = useState(false);
@@ -19,13 +19,13 @@ const PopupRecommendComponent = ({ popupId }) => {
     async function fetchStatus() {
       try {
         const data = await getIsRecommended(popupId);
-        setIsRecommended(data.isRecommended);
+        setIsRecommended(data);
       } catch (e) {
-        console.eeror("추천 가져오기 실패", e);
+        console.error("추천 가져오기 실패", e);
       }
     }
     fetchStatus();
-  }, [popupId]);
+  }, [popupId, userId]);
 
   const handleClick = async () => {
     if (!userId) {
@@ -42,7 +42,11 @@ const PopupRecommendComponent = ({ popupId }) => {
         setIsRecommended(true);
       }
     } catch (e) {
-      alert("추천 오류 발생", e);
+      if (e.response?.data?.message) {
+        alert(e.response.data.message);
+      } else {
+        alert("추천 오류 발생");
+      }
     } finally {
       setLoading(false);
     }
@@ -50,7 +54,11 @@ const PopupRecommendComponent = ({ popupId }) => {
 
   return (
     <div onClick={handleClick} style={{ cursor: "pointer" }}>
-      <FaRegHeart color={isRecommended ? "red" : ""} size={25}></FaRegHeart>
+      {isRecommended ? (
+        <FaHeart size={25} color="red" />
+      ) : (
+        <FaRegHeart size={25} />
+      )}
     </div>
   );
 };

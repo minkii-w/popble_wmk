@@ -32,6 +32,7 @@ public class BookmarkController {
 		Long userId = userDTO.getId();
 
 		log.info("북마크 추가 요청 userId ={}, popupId = {}", userId, popupId);
+		
 		return bookmarkService.addBookmark(userId, popupId);
 	}
 
