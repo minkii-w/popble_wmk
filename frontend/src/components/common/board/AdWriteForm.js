@@ -1,7 +1,7 @@
 // src/pages/boards/ad/AdWriteForm.jsx
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createPopupStore, createAdWithImages } from "../../../api/AdBoardApi";
+import { createAd, createAdWithImages } from "../../../api/AdBoardApi";
 
 export default function AdWriteForm() {
   const navigate = useNavigate();

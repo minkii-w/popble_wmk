@@ -187,6 +187,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (req.getTitle() != null) e.setTitle(req.getTitle());
         if (req.getContent() != null) e.setContent(req.getContent());
+        if (req.getType() != null) e.setType(req.getType()); // ✅ 게시판 종류 수정 반영
     }
 
     @Override

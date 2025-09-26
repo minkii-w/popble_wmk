@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.popble.domain.BoardImage;
-import com.popble.domain.Image;
 import com.popble.domain.PopupStore;
 import com.popble.domain.PopupStore.Status;
 import com.popble.domain.SortType;
@@ -87,11 +86,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 
         List<PopupStoreDTO> dtoList = result.getContent().stream()
                 .map(popupStore -> {
-                    PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
-                    List<String> fileNames = popupStore.getImageList().stream()
-                            .map(BoardImage::getUrl) // ✅ BoardImage URL 사용
-                            .collect(Collectors.toList());
-                    dto.setUploadFileNames(fileNames);
+                    PopupStoreDTO dto = entityToDTO(popupStore);
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -118,6 +113,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
         popupStore.setMaxCount(popupStoreDTO.getMaxCount());
         popupStore.setDesc(popupStoreDTO.getDesc());
         popupStore.setPrice(popupStoreDTO.getPrice());
+        popupStore.setParking(popupStoreDTO.isParking()); // ✅ parking 반영
         popupStore.setDeleted(popupStoreDTO.isDeleted());
 
         // 기존 이미지 비우고 새로 추가
@@ -138,75 +134,17 @@ public class PopupStoreServiceImpl implements PopupStoreService {
         popupStoreRepository.save(popupStore);
     }
 
-	
-	public PopupStoreDTO get(Long id) {
-		
-		Optional<PopupStore> result = popupStoreRepository.findById(id);
-		PopupStore popupStore = result.orElse(null);
-		if(popupStore == null) {
-			return null;
-		}
-		return entityToDTO(popupStore);
-	}
-	
-
-	@Transactional
-	public PopupStoreDTO get(Long id) {
-		Optional<PopupStore> result = popupStoreRepository.findById(id);
-		
-		PopupStore popupStore = result.orElseThrow();
-		
-		//조회수 증가(조회수가 null일 경우 1로 바꿔주고 아닌 경우는 +1)
-		popupStore.setView(popupStore.getView() == null ? 1: popupStore.getView() + 1);
-		popupStoreRepository.save(popupStore);
-		
-		PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
-		
-		return dto;
-	}
-
-	
-	private PopupStoreDTO entityToDTO(PopupStore popupStore) {
-
-		PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
-		    .id(popupStore.getId())
-		    .storeName(popupStore.getStoreName())
-		    .address(popupStore.getAddress())
-		    .startDate(popupStore.getStartDate())
-		    .endDate(popupStore.getEndDate())
-		    .desc(popupStore.getDesc())
-		    .price(popupStore.getPrice())
-		    .build();
-
-		List<Image> imageList = popupStore.getImageList();
-		if (imageList != null && !imageList.isEmpty()) {
-			List<String> fileNameList = imageList.stream()
-			        .map(Image::getFileName)
-			        .toList();
-			popupStoreDTO.setUploadFileNames(fileNameList);
-		}
-
-		return popupStoreDTO;
-	}
-	
-	
-	
-	public Long register(PopupStoreDTO popupStoreDTO) {
-		PopupStore popupStore = dtoEntity(popupStoreDTO);
-		PopupStore result = popupStoreRepository.save(popupStore);
-		return result.getId();
-	}
-	
-	
-	
-	private PopupStore dtoEntity(PopupStoreDTO popupStoreDTO) {
-
-
-    // 🔹 단건 조회
+    // 🔹 단건 조회 (조회수 증가 포함)
     @Override
+    @Transactional
     public PopupStoreDTO get(Long id) {
         Optional<PopupStore> result = popupStoreRepository.findById(id);
         PopupStore popupStore = result.orElseThrow();
+
+        // 조회수 증가
+        popupStore.setView(popupStore.getView() == null ? 1 : popupStore.getView() + 1);
+        popupStoreRepository.save(popupStore);
+
         return entityToDTO(popupStore);
     }
 
@@ -221,7 +159,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .maxCount(popupStore.getMaxCount())
                 .desc(popupStore.getDesc())
                 .price(popupStore.getPrice())
-                .parking(popupStore.isParking())
+                .parking(popupStore.isParking())   // ✅ boolean getter 사용
                 .deleted(popupStore.isDeleted())
                 .build();
 
@@ -236,14 +174,6 @@ public class PopupStoreServiceImpl implements PopupStoreService {
         return popupStoreDTO;
     }
 
-    // 🔹 등록
-    @Override
-    public Long register(PopupStoreDTO popupStoreDTO) {
-        PopupStore popupStore = dtoEntity(popupStoreDTO);
-        PopupStore result = popupStoreRepository.save(popupStore);
-        return result.getId();
-    }
-
     // DTO → 엔티티
     private PopupStore dtoEntity(PopupStoreDTO popupStoreDTO) {
         PopupStore popupStore = PopupStore.builder()
@@ -255,7 +185,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .maxCount(popupStoreDTO.getMaxCount())
                 .desc(popupStoreDTO.getDesc())
                 .price(popupStoreDTO.getPrice())
-                .parking(popupStoreDTO.isParking())
+                .parking(popupStoreDTO.isParking())   // ✅ boolean getter 사용
                 .deleted(popupStoreDTO.isDeleted())
                 .build();
 
@@ -272,6 +202,14 @@ public class PopupStoreServiceImpl implements PopupStoreService {
             });
         }
         return popupStore;
+    }
+
+    // 🔹 등록
+    @Override
+    public Long register(PopupStoreDTO popupStoreDTO) {
+        PopupStore popupStore = dtoEntity(popupStoreDTO);
+        PopupStore result = popupStoreRepository.save(popupStore);
+        return result.getId();
     }
 
     // 🔹 삭제 (Soft Delete)

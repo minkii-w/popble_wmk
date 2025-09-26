@@ -56,7 +56,7 @@ public class PopupStore {
 
     @Column(name = "view")
     private Integer view;
-    
+
     @Column(name = "parking")
     private boolean parking;
 
@@ -112,6 +112,10 @@ public class PopupStore {
     @OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<BoardImage> imageList = new ArrayList<>();
+
+    // ✅ AdBoard와 1:1 연결 (역방향)
+    @OneToOne(mappedBy = "popupStore")
+    private AdBoard adBoard;
 
     // ===== 편의 메서드 =====
     public void addImage(BoardImage image) {

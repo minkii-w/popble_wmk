@@ -50,7 +50,7 @@ const root = createBrowserRouter(
       path: "boards",
       element: (
         <Suspense fallback={<LoadingComponent />}>
-          <Board></Board>
+          <BoardsLayout></BoardsLayout>
         </Suspense>
       ),
       children: BoardsRouter(),

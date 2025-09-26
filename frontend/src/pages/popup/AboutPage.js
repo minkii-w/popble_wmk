@@ -8,8 +8,6 @@ import ReserveInfo from "../../components/popup/detail/ReserveInfo";
 import ReviewInfo from "../../components/popup/detail/ReviewInfo";
 import { getOne } from "../../api/popupstoreApi";
 
-import Sanrio from "../../assets/img/Sanrio MediaArt_1.jpeg";
-
 import { PiHeartBold } from "react-icons/pi";
 import { FaRegBookmark, FaHeart } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
@@ -19,7 +17,7 @@ const AboutPage = () => {
   const [popupStore, setPopupStore] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const popupStoreId = 26;
+  const popupStoreId = 62;
 
   useEffect( () => {
     const fetchStoreData = async () => {
