@@ -1,22 +1,23 @@
+import ReviewList from "../../../pages/popup/review/ReviewList";
+import Rating from "../../function/Rating";
+import ReviewImage from "../../function/ReviewImage";
+
 const ReviewInfo = () => {
   return (
-    <div>
+    <div className="flex flex-col justify-center items-center w-full">
       {/* 평점 */}
-      <div className="w-3/5 p-2 justify-center bg-white border border-hashTagColor rounded-xl shadow-sm">
-        <div></div>
+      <div className="w-3/5 p-2 flex justify-center items-center bg-white border border-hashTagColor rounded-xl shadow-sm">
+        <Rating/>
       </div>
 
-      {/* 리뷰 */}
-      <div className="mt-4 space-y-3">
-        <div className="p-4 border rounded-lg shadow-sm"></div>
-          <p className="font-semibold">홍길동</p>
-          <p>정말 좋았어요!</p>
-        </div>
-        <div className="p-4 border rounded-lg shadow-sm">
-          <p className="font-semibold">김철수</p>
-          <p>가격 대비 만족도가 높습니다.</p>
-        </div>
+      {/* 이미지 리스트 */}
+      <ReviewImage/>
+
+      {/* 리뷰 목록*/}
+      <div className="mt-4 w-full space-y-3">
+        <ReviewList/>
       </div>
+    </div>
   );
 };
 

@@ -71,32 +71,6 @@ const BoardsRouter = () => [
       </Suspense>
     ),
   },
-
-  {
-    path: "review",
-    element: (
-      <Suspense fallback={<LoadingComponent />}>
-        <ReviewList />
-      </Suspense>
-    ),
-  },
-  {
-    path: "review/:id",
-    element: (
-      <Suspense fallback={<LoadingComponent />}>
-        <ReviewDetail />
-      </Suspense>
-    ),
-  },
-  {
-    path: "review/:id/modify",
-    element: (
-      <Suspense fallback={<LoadingComponent />}>
-        <ModifyPage />
-      </Suspense>
-    ),
-  },
-
   {
     path: "notice",
     element: (

@@ -31,58 +31,69 @@ import lombok.extern.log4j.Log4j2;
 @EnableMethodSecurity
 public class CustomSecurityConfig {
 
-	private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+   private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
 
-	private final UserOauth2Service userOauth2Service;
+   private final UserOauth2Service userOauth2Service;
 
-	private final UserServiceImpl userServiceImpl;
+   private final UserServiceImpl userServiceImpl;
 
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+   @Bean
+   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		http.cors(httpSecurityCorsConfigurer -> {
-			httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
-		});
+      http.cors(httpSecurityCorsConfigurer -> {
+         httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
+      });
 
-		http.sessionManagement(SessionConfig -> SessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		http.csrf(Config -> Config.disable());
+      http.sessionManagement(SessionConfig -> SessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+      http.csrf(Config -> Config.disable());
 
-		http.formLogin(config -> {
-			config.loginPage("/api/user/login");
+      http.formLogin(config -> {
+         config.loginPage("/api/user/login");
 
-			config.successHandler(new APILoginSussessHandler());
-			config.failureHandler(new APILoginFailHandler());
+         config.successHandler(new APILoginSussessHandler());
+         config.failureHandler(new APILoginFailHandler());
 
-		});
+      });
 
-// oauth2 -----------------------------	
+// oauth2 -----------------------------   
+   
+   http
+    .oauth2Login(oauth2 -> oauth2
+          .failureUrl("/login?error=true")
+        .defaultSuccessUrl("/user/success")
+        .successHandler(oauth2AuthenticationSuccessHandler)
+        .userInfoEndpoint(userInfo -> userInfo
+   
+            .userService(userOauth2Service)
+            
+            
+         
+            
+        )
+    );
+   
 
-		http.oauth2Login(
-				oauth2 -> oauth2.defaultSuccessUrl("/login/success").successHandler(oauth2AuthenticationSuccessHandler)
-						.userInfoEndpoint(userInfo -> userInfo.userService(userOauth2Service)
+   
+   
+   http.addFilterBefore(new JWTCheckFilter(),
+          UsernamePasswordAuthenticationFilter.class);
 
-						));
+      return http.build();
+   }
 
-//	http.addFilterBefore(new JWTCheckFilter(),
-//			 UsernamePasswordAuthenticationFilter.class);
+   @Bean
+   public CorsConfigurationSource corsConfigurationSource() {
+      CorsConfiguration configuration = new CorsConfiguration();
 
-		return http.build();
-	}
+      configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+      configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
+      configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+      configuration.setAllowCredentials(true);
 
-	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
+      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+      source.registerCorsConfiguration("/**", configuration);
 
-		// allowCredentials가 true일 때는 명시적인 도메인을 사용해야 함 *
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-		configuration.setAllowCredentials(true);
-
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-
-		return source;
-	}
+      return source;
+   }
 
 }

@@ -6,7 +6,6 @@ import com.popble.domain.Board;
 import com.popble.domain.GeneralBoard;
 import com.popble.domain.NoticeBoard;
 import com.popble.domain.QnaBoard;
-import com.popble.domain.ReviewBoard;
 import com.popble.domain.UserProfile;
 import com.popble.dto.BoardCreateRequest;
 import com.popble.dto.BoardResponse;
@@ -46,7 +45,6 @@ public class BoardServiceImpl implements BoardService {
         Board entity = switch (req.getType()) {
             case GENERAL -> new GeneralBoard();
             case QNA     -> new QnaBoard();
-            case REVIEW  -> new ReviewBoard();
             case NOTICE  -> new NoticeBoard();
             case AD      -> new AdBoard();
         };
