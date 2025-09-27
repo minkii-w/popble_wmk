@@ -1,8 +1,20 @@
 package com.popble.service;
 
+
+import com.popble.domain.AdBoard;
+import com.popble.domain.Board;
+import com.popble.domain.GeneralBoard;
+import com.popble.domain.NoticeBoard;
+import com.popble.domain.QnaBoard;
+import com.popble.domain.UserProfile;
+import com.popble.dto.BoardCreateRequest;
+import com.popble.dto.BoardResponse;
+import com.popble.dto.BoardUpdateRequest;
+
 import com.popble.domain.*;
 import com.popble.dto.*;
 import com.popble.repository.BoardImageRepository;
+
 import com.popble.repository.BoardRepository;
 import com.popble.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -61,9 +73,11 @@ public class BoardServiceImpl implements BoardService {
 
         Board entity = switch (req.getType()) {
             case GENERAL -> new GeneralBoard();
+
             case QNA -> new QnaBoard();
             case NOTICE -> new NoticeBoard();
             case AD -> new AdBoard();
+
         };
 
         UserProfile profile = null;

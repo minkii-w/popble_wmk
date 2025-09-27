@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { getCookie } from "./utill/cookieUtill";
 import { loginSuccess } from "./slice/authSlice";
 
+
 function App() {
   const dispatch = useDispatch();
 
@@ -28,5 +29,4 @@ function App() {
   }, [dispatch]);
   return <RouterProvider router={root}></RouterProvider>;
 }
-
 export default App;

@@ -9,10 +9,11 @@ import { MdOutlineEmail } from "react-icons/md";
 import { FiPhone } from "react-icons/fi";
 import { Fragment } from "react";
 
-import Car from "../../../assets/img/icon_car.png";
-import noCar from "../../../assets/img/icon_car_no.png";
-import Card from "../../../assets/img/icon_card_free.png";
-import Paid from "../../../assets/img/icon_card_paid.png";
+import Car from "../../../assets/img/icon_car.png"
+import NoCar from "../../../assets/img/icon_car_no.png"
+import Card from "../../../assets/img/icon_card_free.png"
+import Paid from "../../../assets/img/icon_card_paid.png"
+
 
 const BasicInfo = ({ popupStore }) => {
   const [text] = useState("애니 / 캐릭터");
@@ -69,6 +70,17 @@ const BasicInfo = ({ popupStore }) => {
           </div>
         </div>
 
+
+            {/* 관람 유의사함 */}
+            <h3 className="text-r font-semibold mt-5">관람 유의사항</h3>
+            <p className="leading-6 mb-5">
+                • 외부 음식물 및 음료는 반입이 불가합니다.<br/>
+                • 쾌적한 관람 환경을 위해 개인 촬영 장비(ex.액션캠, DSLR, 삼각대, 셀카봉), 대형 쇼핑백은 전시장 반입이 제한됩니다. 보관이 필요하신 경우 IFC몰 내 물품 보관소를 이용해 주세요.<br/>
+                • 전시장 내 유모차 보관이 불가하오니, 유모차는 차량에 보관해 주시거나 아기 띠를 이용해 주시기 바랍니다.<br/>
+                • 우천 시 장우산은 입구 데스크에 맡겨주세요. 단, 소지품 분실에 대한 책임은 지지 않습니다.<br/>
+                • 현장 대기가 발생할 수 있으며 주말엔 웨이팅시간이 길 수 있으므로 이 점 방문시 양해(고려) 부탁드립니다.<br/>
+            </p>
+
         {/* 콘텐츠 */}
         <h3 className="text-r font-semibold mt-5">콘텐츠</h3>
         <p className="leading-6 mb-5">
@@ -79,6 +91,7 @@ const BasicInfo = ({ popupStore }) => {
             </React.Fragment>
           ))}
         </p>
+
 
         {/* 관람 유의사항_이건 그대로 둬도 될 듯!*/}
         <h3 className="text-r font-semibold mt-5">관람 유의사항</h3>
@@ -106,6 +119,7 @@ const BasicInfo = ({ popupStore }) => {
           <FiPhone size={25} />
         </div>
 
+
         {/* 해시태그 */}
         <div className="flex items-center mb-4 gap-3">
           <span className="inline-block px-3 py-1 rounded-3xl bg-hashTagColor shadow-md text-center text-black text-xs">
@@ -120,6 +134,7 @@ const BasicInfo = ({ popupStore }) => {
           <span className="inline-block px-3 py-1 rounded-3xl bg-hashTagColor shadow-md text-center text-black text-xs">
             # FC몰
           </span>
+
         </div>
       </div>
     </div>

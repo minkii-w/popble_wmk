@@ -23,8 +23,12 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder encoder;
+	private final UserProfileRepository userProfileRepository;
+	private final UserRepository userRepository;
+	private final PasswordEncoder encoder;
+	private final ReservationRepository reservationRepository;
+	private final BookmarkRepository bookmarkRepository;
+
 
     @Override
     @Transactional
@@ -50,6 +54,24 @@ public class UserServiceImpl implements UserService {
 		return userDTO;
 
 	}
+
+	// 회원 삭제
+	// 각각 연결때문에 안지워짐
+	@Transactional
+	public void deleteUser(Long id) {
+
+		Users user = userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
+		UserProfile profile = user.getUserProfile();
+		if (user.getUserProfile() != null) {
+			bookmarkRepository.deleteByUserProfile(profile);
+			userProfileRepository.delete(profile);
+			user.setUserProfile(null);
+		}
+
+		userRepository.delete(user);
+
+	}
+
 
     // 모든 유저목록 불러오기
     public List<UserDTO> getAllUsers() {
@@ -83,12 +105,6 @@ public class UserServiceImpl implements UserService {
         return entityToDTO(updateUser);
     }
 
-    // 유저 삭제
-    public void deleteUser(Long id) {
-        Users user = userRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
-        userRepository.delete(user);
-    }
 
     // 엔티티 -> DTO 변환
     private UserDTO entityToDTO(Users user) {
@@ -119,4 +135,5 @@ public class UserServiceImpl implements UserService {
         }
         return number;
     }
+
 }

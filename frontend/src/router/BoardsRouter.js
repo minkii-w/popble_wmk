@@ -36,6 +36,7 @@ const BoardsRouter = () => [
   { path: "general/:id", element: <Suspense fallback={<LoadingComponent/>}><GeneralDetail /></Suspense> },
   { path: "general/:id/modify", element: <Suspense fallback={<LoadingComponent/>}><ModifyPage/></Suspense> },
 
+
   { path: "qna",         element: <Suspense fallback={<LoadingComponent/>}><QnaList /></Suspense> },
   { path: "qna/:id",     element: <Suspense fallback={<LoadingComponent/>}><QnaDetail /></Suspense> },
   { path: "qna/:id/modify", element: <Suspense fallback={<LoadingComponent/>}><ModifyPage/></Suspense> },
@@ -47,6 +48,7 @@ const BoardsRouter = () => [
   { path: "notice",      element: <Suspense fallback={<LoadingComponent/>}><NoticeList /></Suspense> },
   { path: "notice/:id",  element: <Suspense fallback={<LoadingComponent/>}><NoticeDetail /></Suspense> },
   { path: "notice/:id/modify", element: <Suspense fallback={<LoadingComponent/>}><ModifyPage /></Suspense> },
+
 
   { path: "ad",          element: <Suspense fallback={<LoadingComponent/>}><AdList /></Suspense> },
   { path: "ad/:id",      element: <Suspense fallback={<LoadingComponent/>}><AdDetail /></Suspense> },
