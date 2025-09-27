@@ -37,9 +37,11 @@ public class BookmarkServiceImpl implements BookmarkService{
 	//북마크 추가
 	public boolean addBookmark(Long userId, Long popupId) {
 		
-		UserProfile user = userProfileRepository.findById(userId).orElseThrow();
+		UserProfile user = userProfileRepository.findById(userId)
+												.orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + userId));
 		
-		PopupStore popup = popupStoreRepository.findById(popupId).orElseThrow();
+		PopupStore popup = popupStoreRepository.findById(popupId)
+												.orElseThrow(()-> new IllegalArgumentException("해당 popupId의 팝업이 존재하지 않습니다. popupId:" + popupId));
 		
 		if(bookmarkRepository.findByUserProfileAndPopupStore(user,popup).isEmpty()) {
 			Bookmark bookmark = new Bookmark();
@@ -61,10 +63,10 @@ public class BookmarkServiceImpl implements BookmarkService{
 	//북마크 삭제
 	public boolean deleteBookmark(Long userId, Long popupId) {
 		UserProfile user = userProfileRepository.findById(userId)
-							.orElseThrow(() -> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다: " + userId));
+							.orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + userId));
 		
 		PopupStore popup = popupStoreRepository.findById(popupId)
-							.orElseThrow();
+							.orElseThrow(()-> new IllegalArgumentException("해당 popupId의 팝업이 존재하지 않습니다. popupId:" + popupId));
 		
 		Optional<Bookmark> bm = bookmarkRepository.findByUserProfileAndPopupStore(user, popup);
 		
@@ -73,7 +75,7 @@ public class BookmarkServiceImpl implements BookmarkService{
 			bookmarkRepository.delete(bookmark);
 			//북마크 수 감소
 			popup.setBookmarkCount(popup.getBookmarkCount()-1);
-
+			
 			return true;
 		}
 		
