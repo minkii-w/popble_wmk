@@ -1,5 +1,5 @@
-
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ReservationSuccessModal from "./ReservationSuccessModal";
 import TossPayment from "./TossPayment";
 import LoadingComponent from "../../common/LoadingComponent";
@@ -8,11 +8,11 @@ import { getRemaining } from "../../../api/reservationApi";
 
 const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack }) => {
 
-    // 임의로 넣은 데이터 -> 실제 DB데이터로 변경해야 함
+    const navigate = useNavigate();
+
     const [userName, setUserName] = useState("우민경");
     const [phonenumber, setPhonenumber] = useState("010-1111-1111");
     const [reservationId, setReservationId] = useState(null);
-
     const [showLoadingPayment, setShowLoadingPayment] = useState(false);
     const [showPayment, setShowPayment] = useState(false);
     const [tossCompleted, setTossCompleted] = useState(false);
@@ -23,22 +23,20 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
     const [remainingSeats, setRemainingSeats] = useState(null);
     const [isBookingAvailable, setIsBookingAvailable] = useState(false);
 
-    // 날짜 및 시간 형식 변환 로직
     const reservationDate = selected.date;
     const reservationTime = selected.time?.startTime;
-
     const year = reservationDate.getFullYear().toString().slice(-2);
     const month = (reservationDate.getMonth() + 1).toString();
     const day = reservationDate.getDate().toString();
     const [hour, minute] = reservationTime?.split(':') || [];
     const ampm = (hour && hour >= 12) ? '오후' : '오전';
     const displayHour = (hour && hour % 12 === 0) ? 12 : hour % 12;
-
     const formattedDateTime = reservationDate && reservationTime 
         ? `${year}년 ${month}월 ${day}일 ${ampm} ${displayHour}시 ${minute}분`
         : "";
 
-    const fetchRemainingSeats = async () => {
+
+         const fetchRemainingSeats = async () => {
         if (!selected.date || !selected.time) {
             setRemainingSeats(null);
             return;
@@ -72,6 +70,15 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
             setRemainingSeats(0);
         }
     };
+    
+    //핸드폰 번호 자동으로 '-'넣기
+    const formatPhone = (value) => {
+        const digits = value.replace(/\D/g, "");
+        if (digits.length < 4) return digits;
+        if (digits.length < 8) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+        return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
+    };
+
 
     useEffect(() => {
         fetchRemainingSeats();
@@ -85,49 +92,7 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
         }
     }, [remainingSeats, selected.count]);
 
-
-    const formatPhone = (value) => {
-        const digits = value.replace(/\D/g, "");
-        if (digits.length < 4) return digits;
-        if (digits.length < 8) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-        return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
-    };
-
-    // 예약하기 상태
-    const handleReservation = async () => {
-        if (!selected.date || !selected.time || !selected.count) {
-            alert("날짜, 시간, 인원을 모두 선택해주세요.");
-            return;
-        }
-
-        if (remainingSeats === null) {
-            alert("잔여 인원 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
-            return;
-        }
-        if (selected.count > remainingSeats) {
-            alert(`예약 가능한 인원은 ${remainingSeats}명입니다. 인원수를 다시 확인해주세요.`);
-            return;
-        }
-        if (selected.count <= 0) {
-            alert("예약 인원은 최소 1명 이상이어야 합니다.");
-            return;
-        }
-
-        try {
-            setShowLoadingPayment(true);
-            setTimeout(() => {
-                setShowLoadingPayment(false);
-                setShowPayment(true);
-            }, 200);
-        } catch (err) {
-            console.error(err);
-            alert("예약 준비 중 오류가 발생했습니다: " + err.message);
-        }
-    };
-
-
-    // 토스결제 성공시 
-    const handleTossComplete = async () => {
+    const handleReservationRegister = async (isPaid = true) => {
         try {
             const { startTime, endTime } = selected.time;
 
@@ -136,7 +101,6 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
                 onBack();
                 return;
             }
-
 
             const cleanedStartTime = startTime.substring(0, 5);
             const cleanedEndTime = endTime.substring(0, 5);
@@ -164,7 +128,7 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
             setReservationId(res.data.id);
             setShowPayment(false);
             setShowLoadingPayment(false);
-            setTossCompleted(true);
+            setTossCompleted(true); 
 
             await fetchRemainingSeats();
 
@@ -178,8 +142,13 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
         }
     };
 
+    // 토스결제 성공시 (유료 예약)
+    const handleTossComplete = async () => {
+        
+        await handleReservationRegister(true);
+    };
 
-    // 토스결제실패
+    // 토스결제 실패시 (유료 예약)
     const handleTossFail = () => {
         alert("결제 실패! 예약 화면으로 돌아갑니다.");
         setShowPayment(false);
@@ -188,6 +157,58 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
         setTossCompleted(false);
         onBack();
     };
+
+    // 예약하기 상태 (메인 버튼 핸들러)
+ 
+    const handleReservation = async () => {
+
+        const totalAmount = popupStore.price * selected.count;
+
+        if (!selected.date || !selected.time || !selected.count) {
+            alert("날짜, 시간, 인원을 모두 선택해주세요.");
+            return;
+        }
+
+        if (remainingSeats === null) {
+            alert("잔여 인원 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+            return;
+        }
+        if (selected.count > remainingSeats) {
+            alert(`예약 가능한 인원은 ${remainingSeats}명입니다. 인원수를 다시 확인해주세요.`);
+            return;
+        }
+        if (selected.count <= 0) {
+            alert("예약 인원은 최소 1명 이상이어야 합니다.");
+            return;
+        }
+
+      
+        setShowLoadingPayment(true);
+
+ 
+        if (totalAmount > 0) {
+           
+            setTimeout(() => {
+                setShowLoadingPayment(false);
+                setShowPayment(true); 
+            }, 200);
+            
+        } else {
+            
+            try {
+                await handleReservationRegister(false); 
+              
+            } catch (err) {
+                 
+                 setShowLoadingPayment(false);
+            }
+        }
+    };
+
+    const handleModalClose = () => {
+    setTossCompleted(false);
+    navigate(`/popup/detail`)
+};
 
     return (
         <div>
@@ -205,6 +226,7 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
                     popupStore={popupStore}
                     reservationDate={selected.date}
                     reservationTime={selected.time}
+                    onClose={handleModalClose}
                 />
             )}
 
@@ -286,11 +308,17 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
                                 </div>
                                 <div className="flex gap-2">
                                     <button
-                                        className="border rounded px-3 bg-green-200"
+                                        className="border rounded px-3 bg-primaryColor text-black"
                                         onClick={async () => {
                                             try {
+                                                const updateURL = `http://localhost:8080/api/userProfile/reservation/${userProfileId}`
+
+                                                const params = new URLSearchParams();
+                                                params.append('name', editedName)
+                                                params.append('phonenumber', editedPhone)
+
                                                 const res = await axios.patch(
-                                                    `http://localhost:8080/api/userProfile/${userProfileId}`,
+                                                    `${updateURL}?${params.toString()}`,
                                                     {
                                                         name: editedName,
                                                         phonenumber: editedPhone,

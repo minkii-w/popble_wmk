@@ -43,6 +43,27 @@ public class UserProfileServiceImpl implements UserProfileService {
 			StoredFile storedFile = localFileStorageService.store(profileImg);
 			profileImgUrl = storedFile.url();
 
+			
+	    }
+       
+        UserProfile userProfile = UserProfile.builder()
+                .nickname(nickname)
+                .profileImg(profileImgUrl)
+                .users(user)
+                .build();
+
+        UserProfile saved = userProfileRepository.save(userProfile);
+
+        return UserProfileDTO.builder()
+                .id(saved.getId())
+                .nickname(saved.getNickname())
+                .profileImg(saved.getProfileImg())
+                .build();
+    }
+	
+	//예약시에 유저프로필 변경
+
+
 		}
 
 		UserProfile userProfile = UserProfile.builder().nickname(nickname).profileImg(profileImgUrl).users(user)
@@ -52,7 +73,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 		return UserProfileDTO.builder().id(saved.getId()).nickname(saved.getNickname())
 				.profileImg(saved.getProfileImg()).build();
-	}
 
 	@Override
 	public UserProfileDTO updateUserProfile(Long id, UserProfileDTO dto) {

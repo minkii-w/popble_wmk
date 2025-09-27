@@ -12,5 +12,6 @@ public interface ReservationTimeService {
 	
 	public List<ReservationTimeDTO> getAvailableTimesByDate(Long popupStoreId, LocalDate date);
 	
+	public List<ReservationTimeDTO>getAllTimes(Long popupStoreId);
 
 }

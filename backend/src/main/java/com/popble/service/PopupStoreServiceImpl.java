@@ -144,13 +144,20 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 
 	// 엔티티 → DTO
 	private PopupStoreDTO entityToDTO(PopupStore popupStore) {
-		PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder().id(popupStore.getId())
-				.storeName(popupStore.getStoreName()).address(popupStore.getAddress())
-				.startDate(popupStore.getStartDate()).endDate(popupStore.getEndDate())
-				.maxCount(popupStore.getMaxCount()).desc(popupStore.getDesc()).price(popupStore.getPrice())
-				.deleted(popupStore.isDeleted()).build();
+	
+		PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
+		    .id(popupStore.getId())
+		    .storeName(popupStore.getStoreName())
+		    .address(popupStore.getAddress())
+		    .startDate(popupStore.getStartDate())
+		    .endDate(popupStore.getEndDate())
+		    .desc(popupStore.getDesc())
+		    .price(popupStore.getPrice())
+		    .parking(popupStore.isParking())
+		    .build();
 
-		List<BoardImage> imageList = popupStore.getImageList();
+		List<Image> imageList = popupStore.getImageList();
+
 		if (imageList != null && !imageList.isEmpty()) {
 			List<String> urlList = imageList.stream().map(BoardImage::getUrl).toList();
 			popupStoreDTO.setUploadFileNames(urlList);
@@ -169,23 +176,33 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 
 	// DTO → 엔티티
 	private PopupStore dtoEntity(PopupStoreDTO popupStoreDTO) {
-		PopupStore popupStore = PopupStore.builder().id(popupStoreDTO.getId()).storeName(popupStoreDTO.getStoreName())
-				.address(popupStoreDTO.getAddress()).startDate(popupStoreDTO.getStartDate())
-				.endDate(popupStoreDTO.getEndDate()).maxCount(popupStoreDTO.getMaxCount()).desc(popupStoreDTO.getDesc())
-				.price(popupStoreDTO.getPrice()).deleted(popupStoreDTO.isDeleted()).build();
-
-		List<String> uploadFileUrls = popupStoreDTO.getUploadFileNames();
-		if (uploadFileUrls != null) {
-			uploadFileUrls.forEach(url -> {
-				popupStore.addImage(BoardImage.builder().originalName(url).storedName(url).folder("popup").url(url)
-						.sortOrder(popupStore.getImageList().size()).build());
-			});
-		}
-		return popupStore;
-	}
+	
+        PopupStore popupStore = PopupStore.builder()
+                .id(popupStoreDTO.getId())
+                .storeName(popupStoreDTO.getStoreName())
+                .address(popupStoreDTO.getAddress())
+                .startDate(popupStoreDTO.getStartDate())
+                .endDate(popupStoreDTO.getEndDate())
+                .desc(popupStoreDTO.getDesc())
+                .price(popupStoreDTO.getPrice())
+                .parking(popupStoreDTO.isParking())
+                .build();
+        
+        
+        List<String> uploadFileNames = popupStoreDTO.getUploadFileNames();
+        if(uploadFileNames != null) {
+            uploadFileNames.stream().forEach( uploadName -> {
+                popupStore.addImageString(uploadName);
+            });
+        }
+        
+        return popupStore; 
+    }
+	
 
 	// 🔹 삭제 (Soft Delete)
 	@Override
+
 	public void remove(Long id) {
 		popupStoreRepository.updateToDelete(id, true);
 	}
