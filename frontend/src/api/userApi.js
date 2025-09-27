@@ -16,10 +16,17 @@ export const loginPost = async (loginParam) => {
   return res.data;
 };
 
+export const posstCode = async (code) => {
+  const head = { headers: { "Content-Type": "application/json" } };
+  const res = await axios.post(`${host}/mail`, code, head);
+
+  return res.data;
+};
+
 export const postAdd = async (join) => {
   const head = { headers: { "Content-Type": "application/json" } };
 
-  const res = await axios.post(`${host}/join`, join, head);
+  const res = await axios.post(`${host}/signup`, join, head);
 
   return res.data;
 };

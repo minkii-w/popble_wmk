@@ -61,14 +61,14 @@ public class UserServiceImpl implements UserService {
     // id로 유저 조회
     public UserDTO getUserById(Long id) {
         Users user = userRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
         return entityToDTO(user);
     }
 
     // 유저 정보 수정
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         Users user = userRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
 
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
     // 유저 삭제
     public void deleteUser(Long id) {
         Users user = userRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
         userRepository.delete(user);
     }
 
