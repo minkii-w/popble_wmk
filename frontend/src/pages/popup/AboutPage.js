@@ -9,7 +9,6 @@ import ReviewInfo from "../../components/popup/detail/ReviewInfo";
 import { getOne } from "../../api/popupstoreApi";
 import { getAllTimes } from "../../api/reservationApi";
 
-
 import { PiHeartBold } from "react-icons/pi";
 import { FaRegBookmark, FaHeart } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
@@ -21,9 +20,7 @@ const AboutPage = () => {
   const [popupStore, setPopupStore] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   const popupStoreId = 29;
-
 
   useEffect(() => {
     const fetchStoreData = async () => {

@@ -92,8 +92,8 @@ public class BoardController {
     @PatchMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateImages(
             @PathVariable("id") Long id,
-            @RequestPart(value = "keepIds", required = false) List<Long> keepIds,
-            @RequestPart(value = "newImages", required = false) List<MultipartFile> newImages
+            @RequestParam(value = "keepIds", required = false) List<Long> keepIds,
+            @RequestPart(value = "images", required = false) List<MultipartFile> newImages
     ) {
         boardService.updateImages(id, keepIds, newImages);
         return ResponseEntity.noContent().build();

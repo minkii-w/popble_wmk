@@ -14,39 +14,45 @@ import lombok.*;
 @AllArgsConstructor
 public class AdCreateRequest {
 
-    // ── 기본 작성 정보 ──
     @NotBlank
     @Size(max = 120)
-    private String title;   // 광고 제목
+    private String title;
 
     @NotBlank
     @Size(max = 5000)
-    private String content; // 광고 내용
+    private String content;
 
-    private Long writerId;  // 작성자 ID (ServiceImpl에서 필요)
+    // 작성자 ID (UserProfile 연동 예정)
+    private Long writerId;
 
-    // ── 연계/선택 정보 ──
-    private Long popupStoreId;        // 선택: 특정 PopupStore와 연계(딥링크)
+    // ✅ 팝업스토어 연계 ID (PopupStore 엔티티 참조)
+    private Long popupStoreId;
 
+    // 태그 목록
     @Builder.Default
-    private List<String> tags = List.of(); // 선택: 해시태그/키워드
+    private List<String> tags = List.of();
 
     @Size(max = 500)
-    private String externalUrl;       // 선택: 외부 랜딩/구매 링크
+    private String externalUrl;
 
     @Size(max = 100)
-    private String contact;           // 선택: 연락처(전화/이메일 등)
+    private String contact;
 
-    // ── 노출 정책 ──
+    // 🔹 LocalDate로 변경 (행사 시작/종료일)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate publishStartDate;   // AD 노출 시작일(선택)
+    private LocalDate publishStartDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate publishEndDate;     // AD 노출 종료일(선택)
+    private LocalDate publishEndDate;
 
+    // 고정 여부
     @Builder.Default
-    private boolean pinned = false;   // 선택: 상단 고정 여부
+    private boolean pinned = false;
 
+    // 노출 여부
     @Builder.Default
-    private boolean visible = true;   // 선택: 공개 여부(초안/비공개 등)
+    private boolean visible = true;
+
+    // ✅ 대표 이미지 인덱스
+    private Integer thumbnailIndex;
 }

@@ -18,8 +18,8 @@ public class AdResponse {
     private String title;
     private String content;
 
-    private Long writerId;     // 작성자 ID
-    private String writerName; // 작성자 닉네임
+    private Long writerId;     
+    private String writerName; 
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
@@ -47,12 +47,12 @@ public class AdResponse {
     private String externalUrl;
     private String contact;
 
-    // ── 이미지 (프론트 기대값) ──
-    private List<ImageDTO> imageList;   // 간단 버전 (url, folder, storedName, originalName)
-    private List<ImageDetailDTO> detailImages; // 정석 상세 버전 (uuid, path 등)
-    private String thumbnail;           // 대표 이미지
+    // ── 이미지 ──
+    private List<ImageDTO> imageList;
+    private List<ImageDetailDTO> detailImages;
+    private String thumbnail;
 
-    // ── 연계된 PopupStore 요약 ──
+    // ── PopupStore 연계 ──
     private Long popupStoreId;
     private String popupStoreName;
 
@@ -64,7 +64,12 @@ public class AdResponse {
 
     private String popupAddress;
 
-    // 🔹 프론트에서 기대하는 간단 이미지 구조
+    // ── 프론트 BasicInfo 대응 ──
+    private String storeName;
+    private String address;
+    private String description;
+
+    // DTO 내부 클래스들
     @Data
     @Builder
     @NoArgsConstructor
@@ -76,22 +81,19 @@ public class AdResponse {
         private String originalName;
     }
 
-    // 🔹 정석 이미지 상세 구조 (ImageDto 붙여서 사용)
     @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ImageDetailDTO {
-        private Long id;               // 이미지 PK
-        private Long boardId;          // 소유 게시글 ID
-
-        private String uuid;           // 서버 저장용 파일명 키
-        private String originalName;   // 원본 파일명
-        private String path;           // 저장 경로 (/2025/09/11 등)
-
-        private Integer ord;           // 정렬 순서
-        private String contentType;    // image/png 등
-        private Long size;             // 파일 크기(byte)
+        private Long id;
+        private Long boardId;
+        private String uuid;
+        private String originalName;
+        private String path;
+        private Integer ord;
+        private String contentType;
+        private Long size;
 
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime createdAt;

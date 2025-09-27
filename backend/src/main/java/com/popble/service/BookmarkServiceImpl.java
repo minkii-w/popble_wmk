@@ -3,7 +3,6 @@ package com.popble.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,6 @@ import com.popble.domain.Bookmark;
 import com.popble.domain.PopupStore;
 import com.popble.domain.UserProfile;
 import com.popble.dto.BookmarkDTO;
-import com.popble.dto.PopupStoreDTO;
 import com.popble.repository.BookmarkRepository;
 import com.popble.repository.PopupStoreRepository;
 import com.popble.repository.UserProfileRepository;
@@ -26,8 +24,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
+public class BookmarkServiceImpl implements BookmarkService {
 
-public class BookmarkServiceImpl implements BookmarkService{
 
 	private final BookmarkRepository bookmarkRepository;
 	private final UserProfileRepository userProfileRepository;
@@ -101,26 +99,26 @@ public class BookmarkServiceImpl implements BookmarkService{
 								.status(popupStore.getStatus())
 								.build();
 			
-			List<String> fileNames = popupStore.getImageList().stream()
-									.map(image -> image.getUrl()) //안되면 get originalName, storedName시도
-									.collect(Collectors.toList());
-			dto.setImageFileNames(fileNames);
+// 			List<String> fileNames = popupStore.getImageList().stream()
+// 									.map(image -> image.getUrl()) //안되면 get originalName, storedName시도
+// 									.collect(Collectors.toList());
+// 			dto.setImageFileNames(fileNames);
 			
+      List<String> fileUrls = popupStore.getImageList().stream()
+                    .map(image -> {
+                        if (image.getUrl() != null && !image.getUrl().isBlank()) {
+                            return image.getUrl(); // DB에 직접 저장된 URL
+                        }
+                        String folder = (image.getFolder() == null) ? "" : image.getFolder().replace("\\", "/");
+                        if (!folder.isEmpty() && !folder.endsWith("/")) {
+                            folder += "/";
+                        }
+                        return "/files/" + folder + image.getStoredName();
+                    })
+                    .toList();
+      
 			return dto;
 		});
 	}
-
-
-	//북마크 여부
-	public boolean isBookmark(Long userId, Long popupId) {
-		
-		UserProfile user = userProfileRepository.findById(userId)
-							.orElseThrow();
-		
-		PopupStore popupStore = popupStoreRepository.findById(popupId)
-								.orElseThrow();
-		
-		return bookmarkRepository.existsByUserProfileAndPopupStore(user, popupStore);
-	}
-
+ 
 }

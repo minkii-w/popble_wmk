@@ -20,7 +20,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 @ToString
 @Table(name = "popup_store")
 public class PopupStore {
-
 	
 	//팝업스토어 상태(예정, 진행, 종료)
 	public enum Status{
@@ -136,10 +135,15 @@ public class PopupStore {
 	@Column(name="parking")
 	private boolean parking;
 
+
     // ===== 이미지 (BoardImage 기준으로 통일) =====
     @OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<BoardImage> imageList = new ArrayList<>();
+
+    // ✅ AdBoard와 1:1 연결 (역방향)
+    @OneToOne(mappedBy = "popupStore")
+    private AdBoard adBoard;
 
     // ===== 편의 메서드 =====
     public void addImage(BoardImage image) {

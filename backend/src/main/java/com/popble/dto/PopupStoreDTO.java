@@ -79,8 +79,6 @@ public class PopupStoreDTO {
 	//북마크수
 	private int bookmarkCount = 0;
 	
-	
-	//2025-09-09 wmk 수정
 	//이미지
 	@Builder.Default
 	private List<MultipartFile>files = new ArrayList<>();
@@ -92,4 +90,3 @@ public class PopupStoreDTO {
 
 	
 	}
-
