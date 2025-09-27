@@ -13,13 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "notice_board")
 public class NoticeBoard extends Board {
-	
-//	//JoinColumn??
-//	//보드 아이디가 PK가 됨
-//	private Board boardId;
 
-	//게시글 고정
-	@Column(name = "pin")
-	private boolean pin;
-	
+    // 게시글 고정 여부
+    @Column(name = "pin")
+    private boolean pin;
+
+    // NoticeBoard.pin Board.pinnedGlobal 동기화
+    public void setPin(boolean pin) {
+        this.pin = pin;
+        super.setPinnedGlobal(pin); // 부모 Board.pinnedGlobal 값도 함께 반영
+    }
 }

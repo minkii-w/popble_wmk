@@ -1,209 +1,231 @@
-import { ko } from "date-fns/locale";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
-import SelectBoxComponent from "../../common/SelectBoxComponent"
 import "react-datepicker/dist/react-datepicker.css";
+import { ko } from "date-fns/locale";
+import { SelectBoxComponent } from "../../common/SelectBoxComponent";
 import "./Calendar.css";
-import { useParams } from "react-router-dom";
-import { getReservation } from "../../../api/popupstoreApi";
-import ReservationCheckComponent from "./ReservationCheckComponent";
+import { getAvailableTimesByDate } from "../../../api/reservationApi";
 
+const CustomHeader = ({
+  date,
+  changeYear,
+  changeMonth,
+}) => {
+  const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 50 + i);
+  const months = [
+    "1월", "2월", "3월", "4월", "5월", "6월",
+    "7월", "8월", "9월", "10월", "11월", "12월",
+  ];
 
-// const ReservaionDoComponent = ({offDays=[], reservationTimes={am:[], pm:[]}, onSelect, maxCount=10, price=0, userId}) => {
-    const ReservaionDoComponent = ({ offDays=[], reservationTimes, onSelect, maxCount, price, userProfileId }) => {
+  return (
+    <div className="custom-header-dropdowns">
+      <select
+        value={date.getFullYear()}
+        onChange={({ target: { value } }) => changeYear(value)}
+      >
+        {years.map((option) => (
+          <option key={option} value={option}>
+            {option}년
+          </option>
+        ))}
+      </select>
 
-    const {id} = useParams();
-    
+      <select
+        value={months[date.getMonth()]}
+        onChange={({ target: { value } }) =>
+          changeMonth(months.indexOf(value))
+        }
+      >
+        {months.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
 
-    const initState = {
-    id:0,
-    storeName:'',
-    address:'',
-    startDate:'',
-    endDate:'',
-    reservationTimes:{am:[],pm:[]},
-    maxCount:null,
-    desc:'',
-    price:0,
-    uploadFileNames:[]
+const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) => {
+  const [amTimes, setAmTimes] = useState([]);
+  const [pmTimes, setPmTimes] = useState([]);
+  const [isTimesLoading, setIsTimesLoading] = useState(false);
+
+  const isPastDate = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
+
+  const isPastTime = (timeString, date) => {
+    const now = new Date();
+    const [hour, minute] = timeString.split(":").map(Number);
+    const timeToCheck = new Date(date); 
+    timeToCheck.setHours(hour, minute, 0, 0);
+    return timeToCheck < now;
+  };
+
+  const isOffDays = (date) => (popupStore.offDays || []).includes(date.getDay());
+
+  useEffect(() => {
+    if (!popupStore || !selected.date) {
+      setAmTimes([]);
+      setPmTimes([]);
+      return;
     }
-    
-    //다음버튼 누르면 화면이동
-    const [clickNext, setClickNext] = useState(false);
 
-    const [popupStore, setPopupStore] = useState(initState)
+    setIsTimesLoading(true);
 
-    // const [selected, setSelected] = useState({date:null, time:null})
-    const [selected, setSelected] = useState({ date: null, time: null, count: null });
+    const fetchAvailableTimes = async () => {
+      try {
+        const formattedDate = selected.date.toISOString().slice(0, 10);
+        const times = await getAvailableTimesByDate(popupStore.id, formattedDate);
 
-    //예약이 가능한 날짜 (현재날짜)
-    const [startDate] = useState(new Date());
-    
-    //이용자가 선택하는 날짜
-    const [selectDate, setSelectDate] = useState(null);
-    
-    //날짜 선택 후 시간선택옵션
-    const [selectTime, setSelectTime] = useState("");
-    
-    //입장인원옵션
-    const [count, setCount] = useState(null)
-    
-    //오전,오후 시간
-    const {am=[],pm=[]} = popupStore.reservationTimes;
-
-    const handleSelect = ({date, time, count}) => {
-        setSelected({date, time, count})
-    }
-    
-    
-    //offDays 공통 휴무일(ex>매주 토요일휴무) 
-    //[0] - 일요일
-    //[1~5] - 월~금요일
-    //[6] - 토요일
-    const isoffDays = (date) => offDays.includes(date.getDay());
-
-    const handleClickNext = () => {
-        setClickNext(true);
-    }
-
-
-
-    useEffect( () => {
-
-         if (!id) return;
-
-    getReservation(id).then(data => {
-        console.log("응답데이터", data);
-
-        // 전체 시간 배열을 그대로 저장
-        const reservationTimesRaw = data.reservationTimes || [];
-
-        // 초기 선택 날짜 없으면 전체 시간 처리
         const am = [];
         const pm = [];
 
-        // 날짜 선택이 있으면 필터링
-        reservationTimesRaw.forEach(rt => {
-                    const hour = parseInt(rt.startTime.split(":")[0], 10);
-                    if (hour < 12) am.push(rt.startTime);
-                    else pm.push(rt.startTime);
-                });
-        setPopupStore({
-            ...data,
-            reservationTimesRaw,
-            reservationTimes: { am, pm }
+        times.forEach((t) => {
+          const hour = parseInt(t.startTime.split(":")[0], 10);
+          if (hour < 12) {
+            am.push(t);
+          } else {
+            pm.push(t);
+          }
         });
-    });
-}, [id]);
 
-    const handleClickTime = (time) => {
-        setSelectTime(time);
-        if(onSelect) onSelect({date:selectDate,time,count})
+        setAmTimes(am);
+        setPmTimes(pm);
+      } catch (error) {
+        console.error("Failed to fetch available times:", error);
+        setAmTimes([]);
+        setPmTimes([]);
+      } finally {
+        setIsTimesLoading(false);
+      }
     };
 
-    const handleCountChange = (val) => {
-        setCount(val)
-        if(onSelect) onSelect({date:selectDate,time:selectTime,count:val})
-    }
+    fetchAvailableTimes();
+  }, [popupStore.id, selected.date]);
 
-    //-------------------------------------------------------------------------------
+  return (
+    <div className="flex justify-start w-full mx-0">
+      <div className="calendar-container w-full pr-10 flex">
+        <DatePicker
+          inline
+          locale={ko}
+          selected={selected.date}
+          renderCustomHeader={CustomHeader}
+          onChange={(date) => {
+            setSelected((prev) => ({ ...prev, date, time: null, count: 0 }));
+          }}
+          minDate={popupStore.startDate ? new Date(popupStore.startDate) : null}
+          maxDate={popupStore.endDate ? new Date(popupStore.endDate) : null}
+          dateFormat="yyyy-MM-dd"
+          filterDate={(date) => {
+            const isDateInRange =
+              popupStore.startDate && popupStore.endDate && new Date(popupStore.startDate) <= date && date <= new Date(popupStore.endDate);
+            const isNotOffDay = !isOffDays(date);
+            const isNotPastDate = !isPastDate(date);
+            return isNotPastDate && isNotOffDay && isDateInRange;
+          }}
+        />
+      </div>
 
-    return !clickNext?(
+      <div className="reservation-info w-full sm:w-1/2 md:w-1/2 lg:w-1/2 ml-4">
+        {selected.date && (
+          <>
+            <div className="text-3xl mb-4">예약 시간</div>
 
-        
-        //달력표시
-        <div className="flex">
-        <div className="calendar-container">
-            <DatePicker
-                inline
-                locale={ko}
-                minDate={startDate}
-                selected={selectDate}
-                onChange={(date) => setSelectDate(date)}
-                //공휴일
-                filterDate={(date) => !isoffDays(date)}
-            ></DatePicker>
-            </div>
-        
-        
-
-    {/*----------------선택 날짜,시간 띄우기 ---------------*/}
-        <div className="reservation-info ml-10">
-            {/*시간표시*/}
-            {selectDate &&(
-                <div className="text-3xl">예약 시간
-                <div style={{margin:"5px"}}>
-                    <div className="text-2xl">오전</div>
-                    <div>
-                        {am.length>0?(
-                        am.map((t,idx)=>(
-                            <button
-                            key={idx}
-                            className={`inline-flex items-center px-3 py-1 m-1 border rounded-full mb-5 ${selectTime===t?"bg-primaryColor text-black":"bg-subSecondColor text-black"}`}
-                            onClick={()=>handleClickTime(t)}>
-                                {t.slice(0,5)}
-                            </button> 
-                            ))
-                        ):<span>예약 불가</span>
-                        }
+            {isTimesLoading ? (
+              <p>시간 정보 불러오는 중...</p>
+            ) : (
+              <>
+                <div className="text-2xl mb-2">오전</div>
+                <div>
+                  {amTimes.length > 0 ? (
+                    amTimes.map((t) => {
+                      const isToday =
+                        selected.date.toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10);
+                      const isPastSlot = isToday && isPastTime(t.startTime, selected.date);
+                      const isDisabled = t.remainingSeats <= 0 || isPastSlot;
+                      return (
+                        <button
+                          key={t.id}
+                          className={`inline-flex items-center px-3 py-1 m-1 border rounded-full ${
+                            selected.time && selected.time.id === t.id
+                              ? "bg-primaryColor text-black"
+                              : "bg-subSecondColor"
+                          } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                          onClick={() => setSelected((prev) => ({ ...prev, time: t }))}
+                          disabled={isDisabled}
+                        >
+                          {`${t.startTime.slice(0, 5)} - ${t.endTime.slice(0, 5)} (${t.remainingSeats}석)`}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p>오전 예약 불가</p>
+                  )}
                 </div>
+                <div className="text-2xl mt-4 mb-2">오후</div>
+                <div>
+                  {pmTimes.length > 0 ? (
+                    pmTimes.map((t) => {
+                      const isToday =
+                        selected.date.toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10);
+                      const isPastSlot = isToday && isPastTime(t.startTime, selected.date);
+                      const isDisabled = t.remainingSeats <= 0 || isPastSlot;
+                      return (
+                        <button
+                          key={t.id}
+                          className={`inline-flex items-center px-3 py-1 m-1 border rounded-full ${
+                            selected.time && selected.time.id === t.id
+                              ? "bg-primaryColor text-black"
+                              : "bg-subSecondColor"
+                          } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                          onClick={() => setSelected((prev) => ({ ...prev, time: t }))}
+                          disabled={isDisabled}
+                        >
+                          {`${t.startTime.slice(0, 5)} - ${t.endTime.slice(0, 5)} (${t.remainingSeats}석)`}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p>오후 예약 불가</p>
+                  )}
                 </div>
-
-                <div style={{marginTop:"5px"}}>
-                    <div className="text-2xl mb-5">오후</div>
-                    <div>
-                    {pm.length>0?(
-                        pm.map((t, idx)=>(
-                            <button
-                            key={idx}
-                            className={`inline-flex items-center px-3 py-1 m-1 border rounded-full mb-5 ${selectTime===t?"bg-primaryColor text-black":"bg-subSecondColor text-black"}`}
-                            onClick={()=>handleClickTime(t)}>
-                                {t.slice(0,5)}
-                            </button>
-                        ))
-                    ):<span>예약 불가</span>
-                    }
-                </div>
-                </div>
-            </div>
+              </>
             )}
-            {/* ------------날짜, 시간을 선택해야 인원수 선택 가능------------------- */}
-            {selectDate&&selectTime !== null &&!clickNext&&(
-                
-                    <div className="text-left font-normal">
-                            <div className="relative mb-4 flex w-full flex-wrap items-stretch">
-                                <div className="text-xl">인원수
-                                    <SelectBoxComponent 
-                                    max={popupStore.maxCount || 10}
-                                    value={count}
-                                    onChange={handleCountChange}/>
-                                </div>
-                            </div>
-                        {count > 0 && (
-                            <div className="text-xl">
-                            <p>총 가격</p>
-                            <div className="inline-flex items-center px-3 py-1 border rounded-full bg-subSecondColor">
-                               {popupStore.price > 0 ? `${popupStore.price*count} 원`:'무  료'}
-                                </div>
-                            </div>
-                        )}
-                        <div className="flex justify-end"> 
-                <button
-                className="mr-5 py-2 w-2/5 bg-primaryColor text-xl rounded"
-                onClick={ () => setClickNext(true)}>다음</button>
-            </div>
-            </div>
-                    )}
-                    </div>
-                    </div>
-                ):(
-                    
-                    <ReservationCheckComponent
-                    popupStore={popupStore}
-                    selected={{date:selectDate, time:selectTime, count}}
-                    userProfileId={userProfileId}/>
-        
-        )
-}
 
-export default ReservaionDoComponent;
+            {selected.time && (
+              <>
+                <div className="text-xl mt-4">
+                  인원수
+                  <SelectBoxComponent
+                    max={selected.time.maxCount}
+                    value={selected.count}
+                    onChange={(val) => setSelected((prev) => ({ ...prev, count: val }))}
+                  />
+                </div>
+                <div className="text-xl mt-2">
+                  총 가격: {popupStore.price > 0 ? `${popupStore.price * selected.count} 원` : "무료"}
+                </div>
+                <div className="flex justify-end mt-4">
+                  <button
+                    className="py-2 px-4 bg-primaryColor text-xl rounded text-black"
+                    onClick={onNext}
+                    disabled={!selected.date || !selected.time || selected.count === 0}
+                  >
+                    다음
+                  </button>
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ReservationDoComponent;

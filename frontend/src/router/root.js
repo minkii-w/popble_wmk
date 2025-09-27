@@ -8,6 +8,7 @@ import searchRouter from "./searchRouter";
 import boardRouter from "./boardRouter";
 import NotFoundPage from "../pages/NotFoundPage";
 import BasicLayout from "../layout/BasicLayout";
+import TestChat from "../components/function/TestChat";
 
 const BoardsLayout = lazy(() => import("../layout/BoardsLayout"));
 
@@ -50,7 +51,7 @@ const root = createBrowserRouter(
       path: "boards",
       element: (
         <Suspense fallback={<LoadingComponent />}>
-          <Board></Board>
+          <BoardsLayout/>
         </Suspense>
       ),
       children: BoardsRouter(),
@@ -79,6 +80,10 @@ const root = createBrowserRouter(
         </BasicLayout>
       ),
     },
+    {
+      path:"/test-chat",
+      element: <TestChat/>,
+    }
   ],
   { basename: "/popble" }
 );

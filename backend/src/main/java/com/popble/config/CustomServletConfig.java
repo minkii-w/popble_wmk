@@ -22,4 +22,5 @@ public class CustomServletConfig implements WebMvcConfigurer{
 //		.allowCredentials(true)
 //		.maxAge(3600);
 //	}
+
 }

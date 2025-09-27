@@ -14,12 +14,12 @@ const BasicMenu = ({ children }) => {
 
       {/* 고정 메뉴(채팅, 위로이동) */}
 
-      <button
+      {/* <button
         className="fixed bottom-10 right-10 m-10 z-50 p-1 shadow-md rounded-full bg-secondaryAccentColor w-[50px] h-[50px] items-center flex justify-center"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
         <FiArrowUp size={30} className="items-center justify-center" />
-      </button>
+      </button> */}
 
       {/* 저작권 */}
       <Footer />

@@ -42,7 +42,7 @@ public class Users{
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @Column(name = "login_id", nullable = false)
+    @Column(name = "login_id", unique = true, nullable = false)
     private String loginId;
 
     @Column(name = "password", nullable = false)
@@ -83,13 +83,9 @@ public class Users{
     public void changeSocial(Boolean social) {
     	this.social = social;
     }
-    
-
     //UserProfile과 관계 mapping
     @OneToOne(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private UserProfile userProfile;
-    
-    
     
 }

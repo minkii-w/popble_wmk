@@ -1,30 +1,15 @@
 package com.popble.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
@@ -53,7 +38,7 @@ public class PopupStore {
 	private String storeName;
 	
 	//팝업스토어 상세정보
-	@Column(name = "description")
+	@Column(name = "description", length = 1000)
 	private String desc;
 	
 	//팝업스토어 주소
@@ -85,15 +70,15 @@ public class PopupStore {
 	@Column(name = "recommend")
 	private Integer recommend;
 	
-	//최대 인원수
-	private Integer maxCount;
-
 	//예약시간 오전/오후 기업이 나눌수 있게
+	
 	@OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
 	private List<ReservationTime> reservationTimes = new ArrayList<>();
 	
 	//예약
 	//미사용시 삭제할것(reservation에서 popupstore로 조회가능)
+	@JsonManagedReference("popupStoreRef")
 	@OneToMany(mappedBy = "popupStore")
 	private List<Reservation> reservations = new ArrayList<>();
 	
@@ -112,7 +97,7 @@ public class PopupStore {
 	
 	//카테고리연결
 	@OneToMany(mappedBy = "popupStore")
-	@JsonManagedReference
+	@JsonManagedReference("popupCategoryRef")
 	private List<PopupCategory> categories = new ArrayList<>();
 	
 	//북마크수
@@ -125,29 +110,49 @@ public class PopupStore {
 	@JoinColumn(name = "userProfile_id")
 	private UserProfile owner;
 	
-	
-	//이미지와 관계 맺기
-	//-----------2025-09-09 wmk 수정
-	
-	@ElementCollection
-	@Builder.Default
-	private List<Image> imageList = new ArrayList<>();
-	
-	public void addImage(Image image) {
-		image.setOrd(this.imageList.size());
-		imageList.add(image);
-	}
-	
-	public void addImageString(String fileName) {
-		Image image = Image.builder()
-				.fileName(fileName)
-				.build();
-		
-		addImage(image);	
-	}
+
+//	@ElementCollection
+//	@Builder.Default
+//	private List<Image> imageList = new ArrayList<>();
+//	
+//	public void addImage(Image image) {
+//		image.setOrd(this.imageList.size());
+//		imageList.add(image);
+//	}
+//	
+//	public void addImageString(String fileName) {
+//		Image image = Image.builder()
+//				.fileName(fileName)
+//				.build();
+//		
+//		addImage(image);	
+//	}
 	
 	public void clearList() {
 		this.imageList.clear();
 	}
+	
+	@Column(name="parking")
+	private boolean parking;
 
+
+    // ===== 이미지 (BoardImage 기준으로 통일) =====
+    @OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<BoardImage> imageList = new ArrayList<>();
+
+    // ✅ AdBoard와 1:1 연결 (역방향)
+    @OneToOne(mappedBy = "popupStore")
+    private AdBoard adBoard;
+
+    // ===== 편의 메서드 =====
+    public void addImage(BoardImage image) {
+        image.setPopupStore(this); // 연관관계 설정
+        image.setSortOrder(this.imageList.size()); // 0부터 순서 매김
+        imageList.add(image);
+    }
+
+    public void clearImages() {
+        this.imageList.clear();
+    }
 }

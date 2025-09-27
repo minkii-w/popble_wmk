@@ -2,6 +2,11 @@ package com.popble.domain;
 
 import java.time.LocalDateTime;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.popble.repository.ChatRoomRepository;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,11 +32,12 @@ public class ChatRoom {
 	@Column(name = "chat_room_id")
 	private Long id;
 	
-	//회원번호
+	//채팅 요청한 회원
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private UserProfile userProfile;
+	private UserProfile user;
 	
-	@Column(name = "chat_start_time")
-	private LocalDateTime chatStartTime;
+	//생성일시
+	@Column(name = "created_at")
+	private LocalDateTime createdAt = LocalDateTime.now();
 }

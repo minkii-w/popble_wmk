@@ -3,6 +3,9 @@ import BasicLayout from "../layout/BasicLayout";
 import Carousel from "../components/function/Carousel";
 import SearchBar from "../components/common/SearchBar";
 import { useNavigate } from "react-router-dom";
+import FullMap from "../components/common/kakaoMap/FullMap";
+
+import { FiMapPin } from "react-icons/fi";
 
 import { getList } from "../api/searchApi";
 import PopuplarPopupComponent from "../components/popup/popular/PopularPopupComponent";
@@ -10,6 +13,9 @@ import PopuplarPopupComponent from "../components/popup/popular/PopularPopupComp
 import { SwiperSlide } from "swiper/react";
 import CustomSwiper from "../components/common/CustomSwiper";
 import PopularPopupComponent from "../components/popup/popular/PopularPopupComponent";
+
+import { FaHeart } from "react-icons/fa";
+import { PiEyesFill } from "react-icons/pi";
 
 const MainPage = () => {
   const navigate = useNavigate();
@@ -72,68 +78,75 @@ const MainPage = () => {
         />
       </div>
 
-      {/* 인기순?? 추천순?? */}
-      <div className="justify-stretch w-11/12 mx-auto mb-16">
-        <div className="flex justify-between items-center mb-4 px-2">
-          <h2 className="text-2xl font-bold">9월 인기 팝업</h2>
+      {/* 메인 지도 */}
+      <div className="mt-5 flex flex-col items-center w-full">
+        {/* 아이콘+부제목+라인 */}
+        <div className="w-full max-w-4xl flex flex-col items-start px-4">
+          {/* 아이콘+부제목 */}
+          <div className="flex items-center font-semibold text-2xl gap-2">
+            <FiMapPin className="text-3xl mb-1" />
+            전체 팝업 지도
+          </div>
+          {/* 라인 */}
+          <div className="w-full border-t-2 border-black mt-2"></div>
         </div>
-        {/* 밑줄 */}
-        <hr className="border-2 border-subSecondColor m-2"></hr>
-        {/* 팝업리스트 */}
-        <CustomSwiper>
-          {popularPopups.map((item, index) => (
-            <SwiperSlide style={{ width: "200px" }} key={item.id}>
-              <PopuplarPopupComponent item={item} index={index} />
-            </SwiperSlide>
-          ))}
-        </CustomSwiper>
-      </div>
 
-      {/* 조회순 */}
-      <div className="justify-stretch w-11/12 mx-auto mb-16">
-        <div className="flex justify-between items-center mb-4 px-2">
-          <h2 className="text-2xl font-bold">조회수 많은 팝업</h2>
+        {/* 지도 컨테이너 */}
+        <div className="mt-5 w-full max-w-4xl px-4">
+          <div className="border border-hashTagColor rounded-xl overflow-hidden shadow-sm w-full aspect-[16/9]">
+            <FullMap />
+          </div>
         </div>
-        {/*  */}
-        <hr className="border-2 border-subSecondColor m-2"></hr>
-        {/* 팝업리스트 */}
-        <CustomSwiper>
-          {viewedPopups.map((item, index) => (
-            <SwiperSlide style={{ width: "200px" }} key={item.id}>
-              <PopularPopupComponent item={item} index={index} />
-            </SwiperSlide>
-          ))}
-        </CustomSwiper>
-      </div>
-      <div className="text-5xl bg-primaryColor">
-        <h1>primaryColor</h1>
-      </div>
-      <div className="text-5xl bg-secondaryColor">
-        <h1>secondaryColor</h1>
-      </div>
-      <div className="text-5xl bg-secondaryAccentColor">
-        <h1>secondaryAccentColor</h1>
-      </div>
-      <div className="text-5xl bg-backgroundColor">
-        <h1>backgroundColor</h1>
-      </div>
-      <div className="text-5xl bg-subFirstColor">
-        <h1>subFirstColor</h1>
-      </div>
-      <div className="text-5xl bg-subSecondColor">
-        <h1>subSecondColor</h1>
-      </div>
-      <div className="text-5xl bg-hashTagColor">
-        <h1>hashTagColor</h1>
-      </div>
-      <div className="text-5xl bg-subButtonColor">
-        <h1>subButtonColor</h1>
-      </div>
-      <div className="text-5xl bg-subButtonAccentColor">
-        <h1>subButtonAccentColor</h1>
+
+        {/* 인기순?? 추천순?? */}
+        <div className="justify-stretch w-11/12 mx-auto my-16">
+          <div className="flex justify-between items-center mb-4 px-2">
+            <h2 className="text-2xl font-bold flex flex-row items-center mx-4">
+              9월 인기 팝업
+              <FaHeart className="ml-4" size={30} color="FFB6B9" />
+            </h2>
+          </div>
+          {/* 밑줄 */}
+          <hr className="border-2 border-subSecondColor m-2"></hr>
+          {/* 팝업리스트 */}
+          <CustomSwiper>
+            {popularPopups.map((item, index) => (
+              <SwiperSlide style={{ width: "200px" }} key={item.id}>
+                <PopuplarPopupComponent
+                  item={item}
+                  index={index}
+                  type={"recommend"}
+                />
+              </SwiperSlide>
+            ))}
+          </CustomSwiper>
+        </div>
+
+        {/* 조회순 */}
+        <div className="justify-stretch w-11/12 mx-auto mb-16">
+          <div className="flex justify-between items-center mb-4 px-2">
+            <h2 className="text-2xl font-bold flex flex-row items-center mx-4">
+              조회수 많은 팝업
+              <PiEyesFill className="ml-4" size={30} />
+            </h2>
+          </div>
+          {/*  */}
+          <hr className="border-2 border-subSecondColor m-2"></hr>
+          {/* 팝업리스트 */}
+          <CustomSwiper>
+            {viewedPopups.map((item, index) => (
+              <SwiperSlide style={{ width: "200px" }} key={item.id}>
+                <PopularPopupComponent
+                  item={item}
+                  index={index}
+                  type={"view"}
+                />
+              </SwiperSlide>
+            ))}
+          </CustomSwiper>
+        </div>
       </div>
     </BasicLayout>
   );
 };
-
 export default MainPage;

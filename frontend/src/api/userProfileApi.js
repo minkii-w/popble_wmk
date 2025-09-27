@@ -51,3 +51,9 @@ export const getUserProfileByUserId = async (userId) => {
   const res = await jwtAxios.get(`${host}/edit/${userId}`);
   return res.data;
 };
+
+//유저프로필로 예약내역 가져오기
+export const getReservationsByUserProfileId = async (userProfileId) => {
+  const res = await axios.get(`${host}/${userProfileId}/reservations`);
+  return res.data;
+};

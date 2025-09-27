@@ -34,18 +34,16 @@ public class ChatMessage {
 	@JoinColumn(name = "chat_room_id")
 	private ChatRoom chatRoom;
 	
-	//회원 번호
+	//회원 or 관리자
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private UserProfile userProfile;
+	@JoinColumn(name = "sender_id")
+	private UserProfile sender;
+	
+	//메시지 내용
+	@Column(columnDefinition = "TEXT")
+	private String content;	
 	
 	//메시지 생성시간
-	@CreatedDate
 	@Column(name = "sent_time")
-	private LocalDateTime sentTime;
-	
-	//메시지 내용(나중에 수정)
-	//Column어노테이션에 TEXT가 뭔지 다시 확인
-	@Column(name = "content", columnDefinition = "TEXT")
-	private String content;
+	private LocalDateTime sentTime = LocalDateTime.now();
 }

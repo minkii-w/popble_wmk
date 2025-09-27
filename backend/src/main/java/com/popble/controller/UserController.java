@@ -29,7 +29,7 @@ public class UserController {
 private final UserService userService;
 		
 	
-	@PostMapping("/join")
+	@PostMapping("/signup")
 	public UserDTO userCreate(@RequestBody UserDTO userDTO) {
 		  log.info("회원가입 요청 DTO: {}", userDTO);
 		log.info("-----------Service creaete-------------------------");

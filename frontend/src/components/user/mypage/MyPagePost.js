@@ -1,19 +1,39 @@
 import { FcDocument } from "react-icons/fc";
 import { useState, useEffect } from "react";
-import { getList } from "../../../api/BoardApi";
+import { getAll, getList } from "../../../api/BoardApi";
 import dayjs from "dayjs";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const MyPagePost = () => {
   const [posts, setPosts] = useState([]);
   const [category, setCategory] = useState("ALL");
-
   const userId = useSelector((state) => state.auth?.user?.id);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const type = category === "ALL" ? null : category;
-    getList({ type }).then((data) => setPosts(data));
-  }, [category]);
+    const fetchData = async () => {
+      try {
+        //전체 게시글
+        const { dtoList = [] } = await getAll({ page: 1, size: 5 });
+        const myPosts = dtoList.filter((post) => post.writerId === userId);
+        const type = category === "ALL" ? null : category;
+        const filtered = type
+          ? myPosts.filter((post) => post.type?.toUpperCase() === type)
+          : myPosts;
+        setPosts(filtered);
+        console.log("전체 게시글 수:", dtoList.length);
+        console.log("내 게시글 수:", myPosts.length);
+        console.log("카테고리 필터 후:", filtered.length);
+      } catch (e) {
+        console.error("게시글 불러오기 실패", e);
+        setPosts([]);
+      }
+    };
+    if (userId) {
+      fetchData();
+    }
+  }, [category, userId]);
 
   return (
     <div className="w-[700px]">
@@ -32,17 +52,16 @@ const MyPagePost = () => {
           <option value={"ALL"}>전체</option>
           <option value={"GENERAL"}>자유</option>
           <option value={"QNA"}>QNA</option>
-          {/* <option value={"리뷰"}>리뷰</option> */}
         </select>
       </div>
       {/* 게시글 목록 */}
-      <table className="w-full font-normal text-sm">
+      <table className="w-full font-normal text-sm text-gray-700 table-auto border-separate border-spacing-0">
         <thead>
           <tr className="bg-secondaryColor">
-            <th className="p-2 border w-2/12">카테고리</th>
-            <th className="p-2 border w-7/12">제목</th>
-            <th className="p-2 border w-2/12">작성일</th>
-            <th className="p-2 border w-1/12">조회수</th>
+            <th className="p-2 border w-2/12 rounded-tl-2xl">카테고리</th>
+            <th className="p-2 border w-7/12 ">제목</th>
+            <th className="p-2 border w-2/12 ">작성일</th>
+            <th className="p-2 border w-1/12 rounded-tr-2xl">조회수</th>
           </tr>
         </thead>
         <tbody>
@@ -50,11 +69,15 @@ const MyPagePost = () => {
             posts.map((post) => (
               <tr key={post.id} className="text-center">
                 <th className="p-2 border">{post.type}</th>
-                <th className="p-2 border cursor-pointer" onClick={() => {}}>
+                <th
+                  className="p-2 border cursor-pointer"
+                  onClick={() => {
+                    navigate(`/boards/${post.type?.toLowerCase()}/${post.id}`);
+                  }}
+                >
                   {post.title}
                 </th>
                 <th className="p-2 border">
-                  {" "}
                   {dayjs(post.createTime).format("YYYY-MM-DD HH:mm")}
                 </th>
                 <th className="p-2 border">{post.view}</th>
