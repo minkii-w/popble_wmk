@@ -31,21 +31,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/userProfile")
 public class UserProfileController2 {
 
-//    private final AdBoardController adBoardController;
-   
-   private final ReservationService reservationServie;
-   
-   private final UserProfileService userProfileService;
-   
-   private final UserProfileRepository userProfileRepository;
-   
-   private final UserRepository userRepository;
-   
-   private final CustomFileUtil fileUtil;
+	//유저프로필조회
+	@GetMapping("/{id}")
 
-
-   //유저프로필조회
-   @GetMapping("/{id}")
     public ResponseEntity<UserProfileDTO> getUserProfile(@PathVariable("id") Long id) {
         return userProfileRepository.findById(id)
                 .map(user -> UserProfileDTO.builder()
@@ -111,6 +99,7 @@ public class UserProfileController2 {
            @RequestParam(name = "name", required = false) String name,
            @RequestParam(name = "phonenumber", required = false) String phonenumber) {
 
+
        UserProfileDTO requestDto = UserProfileDTO.builder()
                .name(name)
                .phonenumber(phonenumber)
@@ -122,4 +111,6 @@ public class UserProfileController2 {
        
        return ResponseEntity.ok(updatedProfile);
    }
+
 }
+

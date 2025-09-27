@@ -13,7 +13,7 @@ import img1 from "../../assets/img/ShinChan1.png";
 import img2 from "../../assets/img/Kirby1.jpg";
 import img3 from "../../assets/img/forment1.png";
 import img4 from "../../assets/img/lockscreen.png";
-import img5 from "../../assets/img/1.jpeg";
+import img5 from "../../assets/img/Sanrio MediaArt_1.jpeg";
 
 import "swiper/css";
 import "swiper/css/effect-coverflow";
@@ -27,9 +27,10 @@ const Carousel = () => {
     <div
       style={{
         width: "100%",
-        maxWidth: "1200px", //전체 캐러셀 최대 크기
+        maxWidth: "1300px", //전체 캐러셀 최대 크기
         margin: "0 auto",
-        paddingTop: "50px",
+        paddingTop: "40px",
+        position: "relative", // 버튼 absolute 기준
       }}
     >
       <Swiper
@@ -37,15 +38,12 @@ const Carousel = () => {
         grabCursor={true}
         centeredSlides={true}
         loop={true}     //루프
-        //슬라이드 개수(지정 안하니 가끔 자동으로 움직이지 않고 다음 이미지가 안보이는 오류가 생김)
-        loopedSlides={5}
-        slidesPerView="auto"
         autoplay={{     //자동재생
           delay: 2500,  //딜레이 시간
           disableOnInteraction: false,
-          pauseOnMouseEnter: false, //원하면 hover 멈춤 방지
-          stopOnLastSlide: false, //autoplay가 마지막에서 멈추는걸 막아줌
-          waitForTransition: true,  //전환 애니메이션이 끝날때까지 다음 autoplay를 기다리게 함
+          // pauseOnMouseEnter: false, //원하면 hover 멈춤 방지
+          // stopOnLastSlide: false, //autoplay가 마지막에서 멈추는걸 막아줌
+          // waitForTransition: true,  //전환 애니메이션이 끝날때까지 다음 autoplay를 기다리게 함
         }}
         coverflowEffect={{
           rotate: 0, //회전 각도
@@ -54,7 +52,7 @@ const Carousel = () => {
           modifier: 1.2, //효과 강도(위의 전체 효과 강도)
           slideShadows: true, //그림자 효과
         }}
-        pagination={{ clickable: true }}
+        pagination={{ clickable: true, }}
         navigation={{
           nextEl: ".swiper-button-next-custom",
           prevEl: ".swiper-button-prev-custom",
@@ -64,8 +62,25 @@ const Carousel = () => {
         className="mySwiper"
         style={{
           width: "100%",
+          // maxWidth: "1200px",
+          height: "550px",
+          // margin: "0 auto",
+          position: "relative", // 버튼 기준점
+        }}
+        slidesPerView={"auto"} // 카드 고정 크기를 기준으로 자동 배치
+        breakpoints={{
+          0: {
+            slidesPerView: 1,  // 모바일: 1개씩
+            centeredSlides: true,
+          },
+          768: {
+            slidesPerView: 3,  // 데스크탑: 3개
+            centeredSlides: true,
+          },
+          maxWidth: "1200px",
           height: "500px",
-          willChange: "transform", // GPU 최적화
+          margin: "0 auto",
+          position: "relative", // 버튼 기준점
         }}
       >
         {images.map((img, i) => (
@@ -73,15 +88,17 @@ const Carousel = () => {
               key={i}
               style={{
                 width: "280px", //박스 크기
-                height: "380px",
+                height: "480px",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                borderRadius: "20px",   //박스 rounder 정도
+                borderRadius: "15px",   //박스 rounder 정도
                 overflow: "hidden",
                 background: "#111",
                 boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)", //섀도우 크기 조절
-                willChange: "transform",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <img

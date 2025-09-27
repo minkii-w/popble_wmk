@@ -11,19 +11,24 @@ import { getAllTimes } from "../../api/reservationApi";
 
 
 import { PiHeartBold } from "react-icons/pi";
-import { FaRegBookmark } from "react-icons/fa6";
+import { FaRegBookmark, FaHeart } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
+import PopupRecommendComponent from "../../components/popup/recommend/PopupRecommendComponent";
+import PopupBookmarkComponent from "../../components/popup/bookmark/PopupBookmarkComponent";
 
 const AboutPage = () => {
   const [activeTab, setActiveTab] = useState("basic");
   const [popupStore, setPopupStore] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
   const popupStoreId = 29;
 
-  useEffect( () => {
+
+  useEffect(() => {
     const fetchStoreData = async () => {
       try {
+
 
         const data = await getOne(popupStoreId)
 
@@ -36,19 +41,20 @@ const AboutPage = () => {
         
       }catch(error) {
         console.error("데이터 불러오기 실패", error)
+
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    fetchStoreData()
+    };
+    fetchStoreData();
   }, [popupStoreId]);
-  
-  if(loading){
-    return <div>로딩중</div>
+
+  if (loading) {
+    return <div>로딩중</div>;
   }
 
-  if(!popupStore){
-    return <div>데이터가 없습니다</div>
+  if (!popupStore) {
+    return <div>데이터가 없습니다</div>;
   }
 
   return (
@@ -56,20 +62,22 @@ const AboutPage = () => {
       {/* 이미지 삽입 및 여백 지정 */}
       <div className="flex justify-center mt-10">
         {/* 수정된 코드 */}
-        {popupStore && popupStore.uploadFileNames && popupStore.uploadFileNames.length > 0 && (
-          <img 
-            src={`http://localhost:8080/uploads/${popupStore.uploadFileNames[0]}`} 
-            height="600px" 
-            width="600px"
-            alt="팝업 스토어 이미지"
-          />
-        )}
+        {popupStore &&
+          popupStore.uploadFileNames &&
+          popupStore.uploadFileNames.length > 0 && (
+            <img
+              src={`http://localhost:8080/uploads/${popupStore.uploadFileNames[0]}`}
+              height="600px"
+              width="600px"
+              alt="팝업 스토어 이미지"
+            />
+          )}
       </div>
 
       {/* 아이콘 버튼 */}
       <div className="flex justify-end items-center mt-5 mr-8 gap-3">
-        <PiHeartBold className="heart" size={24} />
-        <FaRegBookmark className="bookmark" size={20} />
+        <PopupRecommendComponent popupId={popupStoreId} />
+        <PopupBookmarkComponent popupId={popupStoreId} />
         <IoShareSocialOutline className="share" size={23} />
       </div>
 
@@ -130,7 +138,9 @@ const AboutPage = () => {
       {/* 내용 영역 */}
       <div className="p-6">
         {activeTab === "basic" && <BasicInfo popupStore={popupStore} />}
-        {activeTab === "image" && <DetailImages uploadFileNames={popupStore.uploadFileNames} />}
+        {activeTab === "image" && (
+          <DetailImages uploadFileNames={popupStore.uploadFileNames} />
+        )}
         {activeTab === "map" && <MapInfo popupStore={popupStore} />}
         {activeTab === "reserve" && <ReserveInfo popupStore={popupStore} />}
         {activeTab === "review" && <ReviewInfo popupStore={popupStore} />}

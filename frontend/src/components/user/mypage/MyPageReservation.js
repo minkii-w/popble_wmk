@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getReservationsByUserProfileId } from "../../../api/userProfileApi2";
-import { getUserProfileById } from "../../../api/userProfileApi2";
+import { getReservationsByUserProfileId } from "../../../api/userProfileApi";
+import { getUserProfileById } from "../../../api/userProfileApi";
 import { cancelReservation } from "../../../api/reservationApi";
 
 const MyPageReservation = () => {

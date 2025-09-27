@@ -95,6 +95,7 @@ const MyPageEdit = () => {
       dispatch(
         updateUserProfileRedux({
           ...updatedProfile,
+          nickname: updatedProfile.nickname,
           profileImg: updatedProfile.profileImg
             ? `${API_SERVER_HOST}/uploads/${updatedProfile.profileImg}`
             : null,

@@ -1,4 +1,3 @@
-
 package com.popble.dto;
 
 import java.time.LocalDate;
@@ -8,11 +7,8 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import com.popble.domain.PopupCategory;
-import com.popble.domain.Reservation;
 import com.popble.domain.PopupStore.Status;
-
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PopupStoreDTO {
+
 
 	//팝업 고유 번호
 	private Long id;
@@ -95,3 +92,4 @@ public class PopupStoreDTO {
 
 	
 	}
+
