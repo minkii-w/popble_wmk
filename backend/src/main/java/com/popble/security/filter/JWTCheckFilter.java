@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.google.gson.Gson;
 import com.popble.dto.UserDTO;
+import com.popble.repository.UserRepository;
 import com.popble.util.JWTUtill;
 
 import jakarta.servlet.FilterChain;
@@ -23,6 +24,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 public class JWTCheckFilter extends OncePerRequestFilter {
+	
+	private final UserRepository userRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {

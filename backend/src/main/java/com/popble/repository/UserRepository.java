@@ -23,6 +23,4 @@ public interface UserRepository extends JpaRepository<Users, Long> {
 	@EntityGraph(attributePaths = { "userRoleList" })
 	@Query("select m from Users m where m.loginId = :loginId")
 	Users getwithRoles(@Param("loginId") String loginId);
-
-	
 }

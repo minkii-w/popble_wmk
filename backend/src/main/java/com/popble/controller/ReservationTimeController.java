@@ -51,5 +51,14 @@ public class ReservationTimeController {
     	List<ReservationTimeDTO> dtoList = reservationTimeService.getAvailableTimesByDate(popupStoreId, date);
         return ResponseEntity.ok(dtoList);
     }
+    
+    
+    //팝업스토어의 첫타임,마지막타임 정보 조회(상세보기용)
+    @GetMapping("/popup/{popupStoreId}/allTimes")
+    public ResponseEntity<List<ReservationTimeDTO>>getAllTimes(
+    		@PathVariable("popupStoreId")Long popupStoreId){
+    	List<ReservationTimeDTO> dtoList = reservationTimeService.getAllTimes(popupStoreId);
+    	return ResponseEntity.ok(dtoList);
+    }
 
 }

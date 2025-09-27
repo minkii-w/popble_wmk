@@ -60,7 +60,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
   const isPastTime = (timeString, date) => {
     const now = new Date();
     const [hour, minute] = timeString.split(":").map(Number);
-    const timeToCheck = new Date(date); // 선택된 날짜를 사용합니다.
+    const timeToCheck = new Date(date); 
     timeToCheck.setHours(hour, minute, 0, 0);
     return timeToCheck < now;
   };
@@ -108,8 +108,8 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
   }, [popupStore.id, selected.date]);
 
   return (
-    <div className="flex">
-      <div className="calendar-container">
+    <div className="flex justify-start w-full mx-0">
+      <div className="calendar-container w-full pr-10 flex">
         <DatePicker
           inline
           locale={ko}
@@ -131,7 +131,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
         />
       </div>
 
-      <div className="reservation-info ml-10">
+      <div className="reservation-info w-full sm:w-1/2 md:w-1/2 lg:w-1/2 ml-4">
         {selected.date && (
           <>
             <div className="text-3xl mb-4">예약 시간</div>
@@ -153,7 +153,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                           key={t.id}
                           className={`inline-flex items-center px-3 py-1 m-1 border rounded-full ${
                             selected.time && selected.time.id === t.id
-                              ? "bg-primaryColor text-white"
+                              ? "bg-primaryColor text-black"
                               : "bg-subSecondColor"
                           } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                           onClick={() => setSelected((prev) => ({ ...prev, time: t }))}
@@ -180,7 +180,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                           key={t.id}
                           className={`inline-flex items-center px-3 py-1 m-1 border rounded-full ${
                             selected.time && selected.time.id === t.id
-                              ? "bg-primaryColor text-white"
+                              ? "bg-primaryColor text-black"
                               : "bg-subSecondColor"
                           } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                           onClick={() => setSelected((prev) => ({ ...prev, time: t }))}
@@ -212,7 +212,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                 </div>
                 <div className="flex justify-end mt-4">
                   <button
-                    className="py-2 px-4 bg-primaryColor text-xl rounded text-white"
+                    className="py-2 px-4 bg-primaryColor text-xl rounded text-black"
                     onClick={onNext}
                     disabled={!selected.date || !selected.time || selected.count === 0}
                   >

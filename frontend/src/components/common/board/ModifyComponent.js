@@ -1,5 +1,6 @@
 // src/components/common/board/ModifyComponent.js
 import { useEffect, useRef, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { getOne, patchOne, patchImages } from "../../../api/BoardApi";
 
@@ -12,6 +13,7 @@ const FormRow = ({ label, children }) => (
     </div>
   </div>
 );
+
 
 const ModifyComponent = ({ id }) => {
   const navigate = useNavigate();

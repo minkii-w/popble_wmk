@@ -3,6 +3,9 @@ import BasicLayout from "../layout/BasicLayout";
 import Carousel from "../components/function/Carousel";
 import SearchBar from "../components/common/SearchBar";
 import { useNavigate } from "react-router-dom";
+import FullMap from "../components/common/kakaoMap/FullMap";
+
+import { FiMapPin } from "react-icons/fi";
 
 import { getList } from "../api/searchApi";
 import PopuplarPopupComponent from "../components/popup/popular/PopularPopupComponent";
@@ -75,6 +78,26 @@ const MainPage = () => {
         />
       </div>
 
+      {/* 메인 지도 */}
+      <div className="mt-5 flex flex-col items-center w-full">
+        {/* 아이콘+부제목+라인 */}
+        <div className="w-full max-w-4xl flex flex-col items-start px-4">
+          {/* 아이콘+부제목 */}
+          <div className="flex items-center font-semibold text-2xl gap-2">
+            <FiMapPin className="text-3xl mb-1" />
+            전체 팝업 지도
+          </div>
+          {/* 라인 */}
+          <div className="w-full border-t-2 border-black mt-2"></div>
+        </div>
+
+        {/* 지도 컨테이너 */}
+        <div className="mt-5 w-full max-w-4xl px-4">
+          <div className="border border-hashTagColor rounded-xl overflow-hidden shadow-sm w-full aspect-[16/9]">
+            <FullMap />
+          </div>
+        </div>
+
       {/* 인기순?? 추천순?? */}
       <div className="justify-stretch w-11/12 mx-auto mb-16">
         <div className="flex justify-between items-center mb-4 px-2">
@@ -118,35 +141,10 @@ const MainPage = () => {
           ))}
         </CustomSwiper>
       </div>
-      {/* <div className="text-5xl bg-primaryColor">
-        <h1>primaryColor</h1>
+
       </div>
-      <div className="text-5xl bg-secondaryColor">
-        <h1>secondaryColor</h1>
-      </div>
-      <div className="text-5xl bg-secondaryAccentColor">
-        <h1>secondaryAccentColor</h1>
-      </div>
-      <div className="text-5xl bg-backgroundColor">
-        <h1>backgroundColor</h1>
-      </div>
-      <div className="text-5xl bg-subFirstColor">
-        <h1>subFirstColor</h1>
-      </div>
-      <div className="text-5xl bg-subSecondColor">
-        <h1>subSecondColor</h1>
-      </div>
-      <div className="text-5xl bg-hashTagColor">
-        <h1>hashTagColor</h1>
-      </div>
-      <div className="text-5xl bg-subButtonColor">
-        <h1>subButtonColor</h1>
-      </div>
-      <div className="text-5xl bg-subButtonAccentColor">
-        <h1>subButtonAccentColor</h1>
-      </div> */}
+
     </BasicLayout>
   );
 };
-
 export default MainPage;

@@ -31,7 +31,7 @@ public class APILoginSussessHandler implements AuthenticationSuccessHandler {
         claims.put("loginId", userDTO.getLoginId());
         claims.put("name", userDTO.getName());
         claims.put("email", userDTO.getEmail());
-        claims.put("phoneNumber", userDTO.getPhonenumber());
+        claims.put("phonenumber", userDTO.getPhonenumber());
         claims.put("social", userDTO.isSocial());
         claims.put("roleNames", userDTO.getRoleNames());
 

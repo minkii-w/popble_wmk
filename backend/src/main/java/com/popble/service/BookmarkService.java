@@ -1,5 +1,8 @@
 package com.popble.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.popble.dto.BookmarkDTO;
 
 public interface BookmarkService {
@@ -14,5 +17,5 @@ public interface BookmarkService {
     boolean isBookmark(Long userId, Long popupId);
 
     // User의 북마크
-    // Page<BookmarkDTO> bookmarkList(Long userId, Pageable pageable);
+     Page<BookmarkDTO> bookmarkList(Long userId, Pageable pageable);
 }

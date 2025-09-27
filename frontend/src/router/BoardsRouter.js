@@ -33,6 +33,7 @@ const BoardsRouter = () => [
   { index: true, element: <Navigate replace to="all" /> },
 
   // 전체 글
+
   { path: "all", element: <Suspense fallback={<LoadingComponent />}><AllBoardList /></Suspense> },
 
   // 일반 게시판
@@ -68,6 +69,7 @@ const BoardsRouter = () => [
   // 공용 CRUD 페이지
   { path: "write",       element: <Suspense fallback={<LoadingComponent />}><WritePage /></Suspense> },
   { path: "read/:id",    element: <Suspense fallback={<LoadingComponent />}><ReadPage /></Suspense> },
+
 ];
 
 export default BoardsRouter;
