@@ -2,7 +2,7 @@ package com.popble.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Optional;import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -114,11 +114,22 @@ public class BookmarkServiceImpl implements BookmarkService {
                             folder += "/";
                         }
                         return "/files/" + folder + image.getStoredName();
-                    })
-                    .toList();
+                    }).toList();
       
 			return dto;
 		});
+	}
+
+	//북마크 여부
+	public boolean isBookmark(Long userId, Long popupId) {
+
+		UserProfile user = userProfileRepository.findById(userId)
+							.orElseThrow();
+
+		PopupStore popupStore = popupStoreRepository.findById(popupId)
+								.orElseThrow();
+
+		return bookmarkRepository.existsByUserProfileAndPopupStore(user, popupStore);
 	}
  
 }

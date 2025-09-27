@@ -84,12 +84,20 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 
         Page<PopupStore> result = popupStoreRepository.findAll(specification, pageable);
 
-        List<PopupStoreDTO> dtoList = result.getContent().stream()
-                .map(popupStore -> {
-                    PopupStoreDTO dto = entityToDTO(popupStore);
-                    return dto;
-                })
-                .collect(Collectors.toList());
+//        List<PopupStoreDTO> dtoList = result.getContent().stream()
+//                .map(popupStore -> {
+//                    PopupStoreDTO dto = entityToDTO(popupStore);
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
+        
+    	List<PopupStoreDTO> dtoList = result.getContent().stream().map(popupStore -> {
+			PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
+			List<String> fileNames = popupStore.getImageList().stream().map(BoardImage::getUrl)
+					.collect(Collectors.toList());
+			dto.setUploadFileNames(fileNames);
+			return dto;
+		}).collect(Collectors.toList());
 
         long totalCount = result.getTotalElements();
 
@@ -110,7 +118,7 @@ public class PopupStoreServiceImpl implements PopupStoreService {
         popupStore.setAddress(popupStoreDTO.getAddress());
         popupStore.setStartDate(popupStoreDTO.getStartDate());
         popupStore.setEndDate(popupStoreDTO.getEndDate());
-        popupStore.setMaxCount(popupStoreDTO.getMaxCount());
+ 
         popupStore.setDesc(popupStoreDTO.getDesc());
         popupStore.setPrice(popupStoreDTO.getPrice());
         popupStore.setParking(popupStoreDTO.isParking()); // ✅ parking 반영
@@ -156,7 +164,6 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .address(popupStore.getAddress())
                 .startDate(popupStore.getStartDate())
                 .endDate(popupStore.getEndDate())
-                .maxCount(popupStore.getMaxCount())
                 .desc(popupStore.getDesc())
                 .price(popupStore.getPrice())
                 .parking(popupStore.isParking())   // ✅ boolean getter 사용
@@ -182,7 +189,6 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .address(popupStoreDTO.getAddress())
                 .startDate(popupStoreDTO.getStartDate())
                 .endDate(popupStoreDTO.getEndDate())
-                .maxCount(popupStoreDTO.getMaxCount())
                 .desc(popupStoreDTO.getDesc())
                 .price(popupStoreDTO.getPrice())
                 .parking(popupStoreDTO.isParking())   // ✅ boolean getter 사용

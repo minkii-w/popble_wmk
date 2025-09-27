@@ -25,20 +25,16 @@ const AboutPage = () => {
   useEffect(() => {
     const fetchStoreData = async () => {
       try {
+        const data = await getOne(popupStoreId);
 
-
-        const data = await getOne(popupStoreId)
-
-        const timeSlotsData = await getAllTimes(popupStoreId)
+        const timeSlotsData = await getAllTimes(popupStoreId);
 
         setPopupStore({
           ...data,
-          timeSlots: timeSlotsData||[]
-        })
-        
-      }catch(error) {
-        console.error("데이터 불러오기 실패", error)
-
+          timeSlots: timeSlotsData || [],
+        });
+      } catch (error) {
+        console.error("데이터 불러오기 실패", error);
       } finally {
         setLoading(false);
       }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -41,7 +42,9 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private final SocialLoginRepository socialLoginRepository;
 
 	private final UserRepository userRepository;
-
+//	private final JWTUtill jwtUtill;
+	
+	//사용 가능하지만 위에처럼 @RequiredArgsConstructor일때 생성자 주입으로 사용하는것이 더 바람직한..?
 	@Autowired
 	JWTUtill jwtUtill;
 

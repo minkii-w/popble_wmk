@@ -30,6 +30,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/userProfile")
 public class UserProfileController2 {
+	
+	private final AdBoardController adBoardController;
+		
+	private final ReservationService reservationServie;
+		
+	private final UserProfileService userProfileService;
+		
+	private final UserProfileRepository userProfileRepository;
+	
+	private final UserRepository userRepository;
+		
+	private final CustomFileUtil fileUtil;
 
 	//유저프로필조회
 	@GetMapping("/{id}")

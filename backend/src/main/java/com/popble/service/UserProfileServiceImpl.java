@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
-	private final BackendApplication backendApplication;
-
 	private final UserProfileRepository userProfileRepository;
 
 	private final LocalFileStorageService localFileStorageService;
@@ -27,7 +25,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public UserProfileDTO getUserProfile(Long id) {
 		UserProfile userProfile = userProfileRepository.findById(id)
-				.orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
+				.orElseThrow(() -> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
 
 		return UserProfileDTO.builder().id(userProfile.getId()).name(userProfile.getUsers().getName())
 				.nickname(userProfile.getNickname()).profileImg(userProfile.getProfileImg())
@@ -43,27 +41,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 			StoredFile storedFile = localFileStorageService.store(profileImg);
 			profileImgUrl = storedFile.url();
 
-			
-	    }
-       
-        UserProfile userProfile = UserProfile.builder()
-                .nickname(nickname)
-                .profileImg(profileImgUrl)
-                .users(user)
-                .build();
-
-        UserProfile saved = userProfileRepository.save(userProfile);
-
-        return UserProfileDTO.builder()
-                .id(saved.getId())
-                .nickname(saved.getNickname())
-                .profileImg(saved.getProfileImg())
-                .build();
-    }
-	
-	//예약시에 유저프로필 변경
-
-
 		}
 
 		UserProfile userProfile = UserProfile.builder().nickname(nickname).profileImg(profileImgUrl).users(user)
@@ -73,6 +50,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 		return UserProfileDTO.builder().id(saved.getId()).nickname(saved.getNickname())
 				.profileImg(saved.getProfileImg()).build();
+	}
 
 	@Override
 	public UserProfileDTO updateUserProfile(Long id, UserProfileDTO dto) {
