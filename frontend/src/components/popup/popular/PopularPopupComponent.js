@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
+import { FaHeart } from "react-icons/fa";
+import { PiEyesFill } from "react-icons/pi";
+import { FaRegEye } from "react-icons/fa";
 
 //임시용 이미지
 import img3 from "../../../assets/img/1.jpeg";
 
-const PopularPopupComponent = ({ item, index }) => {
+const PopularPopupComponent = ({ item, index, type }) => {
   return (
     <Link
       to={`/popup/detail/${item.id}`}
@@ -19,6 +22,18 @@ const PopularPopupComponent = ({ item, index }) => {
         style={{ transform: "rotate(2deg)" }}
       >
         {index + 1}
+      </div>
+      {/* 인기 또는 조회 수 */}
+      <div className="absolute top-3 right-2 text-white text-sm w-6 h-6 z-20 items-center justify-center">
+        {type === "recommend" ? (
+          <>
+            <FaHeart size={20} className="mb-1" /> {item.recommend}
+          </>
+        ) : (
+          <>
+            <FaRegEye size={20} className="mb-1" /> {item.view}
+          </>
+        )}
       </div>
       {/* 팝업 이미지 */}
       <img

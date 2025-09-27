@@ -1,4 +1,3 @@
-
 package com.popble.domain;
 
 import jakarta.persistence.Column;
@@ -8,8 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,33 +24,25 @@ public class SocialLogin {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ouath_id")
 	private Long id;
-	
+
 	@OneToOne
-	
+
 	@JoinColumn(name = "user_id")
 	private Users users;
-	
-	//소셜로그인(회사)
-	//Enum으로 작성해야하는지(카카오,네이버,구글인지)
+
+	// 소셜로그인(회사)
+	// Enum으로 작성해야하는지(카카오,네이버,구글인지)
 	@Column(name = "provider")
 	private String provider;
-	
-	//소셜로그인아이디(회사의 id인듯?)
-	@Column(name = "provider_id")
+
+	@Column(name = "provider_id", unique = true)
 	private String providerId;
-	
-	//토큰번호
-	//토큰 번호를 TEXT로 할지 아니면 그냥 String으로 둘지
-	@Column(name = "access_token")
+
+	// 토큰번호
+	// 토큰 번호를 TEXT로 할지 아니면 그냥 String으로 둘지
+	@Column(name = "access_token", columnDefinition = "TEXT")
 	private String accessToken;
 	
-	//카카오 프로필 닉네임
 	@Column(name = "nickname")
 	private String nickname;
-	
-	
-	
-	
-	
 }
-

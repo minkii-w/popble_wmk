@@ -2,9 +2,10 @@ package com.popble.dto;
 
 
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.popble.domain.ReservationTime;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +13,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReservationTimeDTO {
-	
-	private LocalTime startTime;
-	
-	private LocalTime endTime;
-	
-	private ReservationTime.AmPm amPm;
+	private Long id;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private int maxCount; 
+    private int remainingSeats;
+    private Long popupStoreId;
 }

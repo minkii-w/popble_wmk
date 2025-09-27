@@ -2,7 +2,7 @@ import { Suspense, lazy } from "react";
 
 import LoadingComponent from "../components/common/LoadingComponent";
 
-const Reservation = lazy(() => import("../pages/reservation/ReservationPage"));
+// const Reservation = lazy(() => import("../pages/reservation/ReservationPage"));
 const AdBoard = lazy(() => import("../pages/board/AdBoardPage"));
 const About = lazy(() => import("../pages/popup/AboutPage"));
 const ReviewPage = lazy(() => import("../pages/popup/review/ReviewPage"))
@@ -27,14 +27,14 @@ const popupRouter = () => {
         </Suspense>
       ),
     },
-    {
-      path: "reservation/:id",
-      element: (
-        <Suspense fallback={<LoadingComponent />}>
-          <Reservation></Reservation>
-        </Suspense>
-      ),
-    },
+    // {
+    //   path: "reservation/:id",
+    //   element: (
+    //     <Suspense fallback={<LoadingComponent />}>
+    //       <Reservation></Reservation>
+    //     </Suspense>
+    //   ),
+    // },
     {
       path: "board/ad",
       element: (

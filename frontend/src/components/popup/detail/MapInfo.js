@@ -4,6 +4,7 @@ import BasicMap from "../../common/kakaoMap/BasicMap";
 import { FiMapPin } from "react-icons/fi";
 import { RxCopy } from "react-icons/rx";
 
+
 const MapInfo = ({}) => {
   const address = "서울 영등포구 여의도동 국제금융로 10, 여의도 IFC 몰 L3층 MPX 갤러리";
 
@@ -19,6 +20,7 @@ const MapInfo = ({}) => {
           <p className="flex items-center gap-2"><FiMapPin/>{address}<RxCopy/></p>
         </div>
       </>
+
   );
 };
 export default MapInfo;
