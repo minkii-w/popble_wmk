@@ -18,7 +18,7 @@ public interface BoardService {
     Long create(BoardCreateRequest req, List<MultipartFile> images);
 
     // ===== 단건 조회 =====
-//    BoardResponse get(Long id);
+    BoardResponse get(Long id);
 
     // ===== 목록 조회 (타입별) =====
     List<BoardResponse> listLatest(Board.Type type);
@@ -26,9 +26,9 @@ public interface BoardService {
     List<BoardResponse> listByType(Board.Type type, String order);
 
     // ===== 전체 목록 조회 =====
-//    List<BoardResponse> listAllLatest();                // 하위 호환
-//    List<BoardResponse> listAll(String order);          // 하위 호환
-//    PageResponseDTO<BoardResponse> listAll(PageRequestDTO pageRequestDTO, String order); // ✅ 신규 (페이지네이션)
+    List<BoardResponse> listAllLatest();                // 하위 호환
+    List<BoardResponse> listAll(String order);          // 하위 호환
+    PageResponseDTO<BoardResponse> listAll(PageRequestDTO pageRequestDTO, String order); // ✅ 신규 (페이지네이션)
 
     // ===== 수정 =====
     void update(Long id, BoardUpdateRequest req);

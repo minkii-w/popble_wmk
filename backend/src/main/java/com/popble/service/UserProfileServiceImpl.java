@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
-//	private final BackendApplication backendApplication;
+	private final BackendApplication backendApplication;
 
 	private final UserProfileRepository userProfileRepository;
 

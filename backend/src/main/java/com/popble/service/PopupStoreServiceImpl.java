@@ -156,12 +156,12 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 		    .parking(popupStore.isParking())
 		    .build();
 
-//		List<Image> imageList = popupStore.getImageList();
+		List<Image> imageList = popupStore.getImageList();
 
-//		if (imageList != null && !imageList.isEmpty()) {
-//			List<String> urlList = imageList.stream().map(BoardImage::getUrl).toList();
-//			popupStoreDTO.setUploadFileNames(urlList);
-//		}
+		if (imageList != null && !imageList.isEmpty()) {
+			List<String> urlList = imageList.stream().map(BoardImage::getUrl).toList();
+			popupStoreDTO.setUploadFileNames(urlList);
+		}
 
 		return popupStoreDTO;
 	}
@@ -191,9 +191,9 @@ public class PopupStoreServiceImpl implements PopupStoreService {
         
         List<String> uploadFileNames = popupStoreDTO.getUploadFileNames();
         if(uploadFileNames != null) {
-//            uploadFileNames.stream().forEach( uploadName -> {
-//                popupStore.addImageString(uploadName);
-//            });
+            uploadFileNames.stream().forEach( uploadName -> {
+                popupStore.addImageString(uploadName);
+            });
         }
         
         return popupStore; 

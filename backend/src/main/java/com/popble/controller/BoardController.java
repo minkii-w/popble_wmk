@@ -49,10 +49,10 @@ public class BoardController {
     }
 
     /** 게시글 단건 조회 */
-//    @GetMapping("/{id}")
-//    public ResponseEntity<BoardResponse> get(@PathVariable("id") Long id) {
-//        return ResponseEntity.ok(boardService.get(id));
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<BoardResponse> get(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(boardService.get(id));
+    }
 
     /** ✅ 게시판 타입별 목록 */
     @GetMapping
@@ -64,19 +64,19 @@ public class BoardController {
     }
 
     /** ✅ 전체 게시글 (페이지네이션 + pinned 공지 상단) */
-//    @GetMapping("/all")
-//    public ResponseEntity<PageResponseDTO<BoardResponse>> listAll(
-//            @RequestParam(name = "page", defaultValue = "1") int page,
-//            @RequestParam(name = "size", defaultValue = "10") int size,
-//            @RequestParam(name = "order", defaultValue = "date") String order
-//    ) {
-//        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-//                .page(page)
-//                .size(size)
-//                .build();
-//
-//        return ResponseEntity.ok(boardService.listAll(pageRequestDTO, order));
-//    }
+    @GetMapping("/all")
+    public ResponseEntity<PageResponseDTO<BoardResponse>> listAll(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "order", defaultValue = "date") String order
+    ) {
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        return ResponseEntity.ok(boardService.listAll(pageRequestDTO, order));
+    }
 
     /** 게시글 수정 (본문만) */
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
