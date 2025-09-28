@@ -197,36 +197,6 @@ const BasicInfo = ({ popupStore }) => {
         <br />
       </p>
 
-      {/* 콘텐츠 */}
-      <h3 className="text-r font-semibold mt-5">콘텐츠</h3>
-      <p className="leading-6 mb-5">
-        {popupStore.desc.split("\\n").map((line, index) => (
-          <React.Fragment key={index}>
-            {line}
-            {index < popupStore.desc.split("\\n").length - 1 && <br />}
-          </React.Fragment>
-        ))}
-      </p>
-
-      {/* 관람 유의사항_이건 그대로 둬도 될 듯!*/}
-      <h3 className="text-r font-semibold mt-5">관람 유의사항</h3>
-      <p className="leading-6 mb-5">
-        • 외부 음식물 및 음료는 반입이 불가합니다.
-        <br />
-        • 쾌적한 관람 환경을 위해 개인 촬영 장비(ex.액션캠, DSLR, 삼각대,
-        셀카봉), 대형 쇼핑백은 전시장 반입이 제한됩니다.
-        <br />
-        • 전시장 내 유모차 보관이 불가하오니, 유모차는 차량에 보관해 주시거나
-        아기 띠를 이용해 주시기 바랍니다.
-        <br />
-        • 우천 시 장우산은 입구 데스크에 맡겨주세요. 단, 소지품 분실에 대한
-        책임은 지지 않습니다.
-        <br />
-        • 현장 대기가 발생할 수 있으며 주말엔 웨이팅시간이 길 수 있으므로 이 점
-        방문시 양해(고려) 부탁드립니다.
-        <br />
-      </p>
-
       {/* sns 아이콘 */}
       <div className="mt-5 mb-5 text-sm flex items-center gap-3">
         <FiInstagram size={25} />
@@ -249,7 +219,7 @@ const BasicInfo = ({ popupStore }) => {
           # FC몰
         </span>
       </div>
-    </div>
+ 
   );
 };
 export default BasicInfo;

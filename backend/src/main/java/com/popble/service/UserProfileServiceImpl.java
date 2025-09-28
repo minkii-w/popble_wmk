@@ -1,11 +1,12 @@
 package com.popble.service;
 
-import java.io.File;
+//import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.popble.BackendApplication;
+
 import com.popble.domain.UserProfile;
 import com.popble.domain.Users;
 import com.popble.dto.UserProfileDTO;
@@ -64,12 +65,16 @@ public class UserProfileServiceImpl implements UserProfileService {
 			userProfile.getUsers().setPhonenumber(dto.getPhonenumber());
 		}
 
-		userProfileRepository.save(userProfile);
+		    userProfileRepository.save(userProfile);
 
-		return UserProfileDTO.builder().id(userProfile.getId()).nickname(userProfile.getNickname())
-				.profileImg(userProfile.getProfileImg()).name(userProfile.getUsers().getName())
-				.phonenumber(userProfile.getUsers().getPhonenumber()).build();
-	}
+		    return UserProfileDTO.builder()
+		            .id(userProfile.getId())
+		            .nickname(userProfile.getNickname())
+		            .profileImg(userProfile.getProfileImg())
+		            .name(userProfile.getUsers().getName())
+		            .phonenumber(userProfile.getUsers().getPhonenumber())
+		            .build();
+		}
 
 	@Override
 	public UserProfileDTO updateUserProfile(Long userId, String nickname, MultipartFile profileImg) {

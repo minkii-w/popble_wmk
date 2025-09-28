@@ -1,71 +1,105 @@
 
-import { useEffect, useState } from "react";
+
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { getReservationsByUserProfileId } from "../../../api/userProfileApi";
 import { getUserProfileById } from "../../../api/userProfileApi";
 import { cancelReservation } from "../../../api/reservationApi";
 
 const MyPageReservation = () => {
+
+    const navigate = useNavigate();
+
     const userProfileId = 1; // 테스트
 
     const [reservations, setReservations] = useState([]);
     const [userProfile, setUserProfile] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const fetchReservations = async () => {
+    const [screen, setScreen] = useState({name: 'MyPageReservation',params: null})
+    
+            const [modal, setModal] = useState({
+            isOpen: false,
+            title: '',
+            message: '',
+            onConfirm: () => setModal({ ...modal, isOpen: false }),
+            onCancel: null,
+            confirmText: '확인'
+        });
+
+    const fetchReservations = useCallback(async () => {
+        setIsLoading(true);
         try {
             const reservationItems = await getReservationsByUserProfileId(userProfileId);
-            console.log("예약 리스트", reservationItems);
             setReservations(reservationItems);
         } catch (error) {
             console.error(
-                "예약 리스트 불러오기 실패",
-                error.response?.status,
-                error.response?.data || error.message
-            );
-        }
-    };
+                "예약 리스트 불러오기 실패",error)
+             setModal({isOpen: true, title:'오류',message:'예약 목록을 불러올 수 없습니다.',onConfirm:()=> setModal({...modal, isOpen:false}), onCancel:null})
+            }finally{
+                setIsLoading(false)
+            }
+        },[userProfileId])
 
-    const fetchUserProfile = async () => {
+    const fetchUserProfile = useCallback(async()=>{
         try {
             const profileData = await getUserProfileById(userProfileId);
             console.log("유저 프로필 정보", profileData);
             setUserProfile(profileData);
         } catch (error) {
             console.error(
-                "유저 프로필 불러오기 실패",
-                error.response?.status,
-                error.response?.data || error.message
+                "유저 프로필 불러오기 실패",error
             );
         }
-    };
+    },[userProfileId]);
+
+    useEffect(()=>{
+        if(userProfileId){
+            fetchReservations()
+            fetchUserProfile()
+        }
+    },[userProfileId, fetchReservations, fetchUserProfile])
 
     // 예약 취소 핸들러 함수
-    const cancelHandler = async (id) => {
-        if (window.confirm("정말로 예약을 취소하시겠습니까?")) {
-            try {
-                // API 호출
-                await cancelReservation(id);
-                alert("예약이 성공적으로 취소되었습니다.");
-                // 예약 목록을 새로고침
-                fetchReservations();
-            } catch (error) {
-                console.error(
-                    "예약 취소 실패",
-                    error.response?.status,
-                    error.response?.data || error.message
-                );
-                alert("예약 취소에 실패했습니다.");
-            }
-        }
+    const cancelHandler = (id) => {
+        setModal({
+            isOpen: true,
+            title: '예약 취소 확인',
+            message: `예약 번호 ${id}번을 정말로 취소하시겠습니까?`,
+            onConfirm: async () => {
+                setModal({ ...modal, isOpen: false }); 
+                try {
+                    await cancelReservation(id);
+                    setModal({
+                        isOpen: true,
+                        title: '취소 완료',
+                        message: '예약이 성공적으로 취소되었습니다.',
+                        onConfirm: () => { setModal({ ...modal, isOpen: false }); fetchReservations(); },
+                        onCancel: null
+                    });
+                } catch (error) {
+                    console.error("예약 취소 실패:", error);
+                    setModal({
+                        isOpen: true,
+                        title: '취소 실패',
+                        message: '예약 취소에 실패했습니다.',
+                        onConfirm: () => setModal({ ...modal, isOpen: false }),
+                        onCancel: null
+                    });
+                }
+            },
+            onCancel: () => setModal({ ...modal, isOpen: false }),
+            confirmText: '예약 취소'
+        });
     };
 
-    useEffect(() => {
-        console.log("userProfileId:", userProfileId);
-        if (userProfileId) {
-            fetchReservations();
-            fetchUserProfile();
-        }
-    }, [userProfileId]);
+    //후기 작성 핸들러
+    const reviewHandler = async(reservationId, popupStoreId) => {
+        navigate(`/popup/review/${reservationId}`,{
+            state:{popupStoreId, reservationId}
+        })
+    }
 
     return (
         <div className="flex flex-col w-[700px]">
@@ -124,7 +158,7 @@ const MyPageReservation = () => {
                                 </button>
                                 <button
                                     className="py-1 px-2 m-1 rounded-2xl shadow-md border-gray-400 border-2 text-sm bg-primaryColor"
-                                    onClick={() => {}}
+                                    onClick={() => reviewHandler(item.reservationId, item.popupStoreId)}
                                 >
                                     후기작성
                                 </button>
@@ -138,8 +172,15 @@ const MyPageReservation = () => {
                     </div>
                 )}
             </div>
-        </div>
-    );
+          ))
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-2xl font-semibold">예약 리스트가 없습니다.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default MyPageReservation;

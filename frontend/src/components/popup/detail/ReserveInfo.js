@@ -1,16 +1,14 @@
-
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { getOne } from "../../../api/popupstoreApi";
 import { getUserById } from "../../../api/userApi";
 import ReservationDoComponent from "../reservation/ReservationDoComponent";
-import ReservationCheckComponent from "../../popup/reservation/ReservationCheckComponent"
+import ReservationCheckComponent from "../../popup/reservation/ReservationCheckComponent";
 
 const ReserveInfo = () => {
 
 
-
-  const id = "29"; //임의로 넣은 데이터 -> 실제 데이터로 변경해야함
-
+const {id} = useParams;
 
   const currentUserId = 1;
 
