@@ -219,7 +219,7 @@ const BasicInfo = ({ popupStore }) => {
           # FC몰
         </span>
       </div>
-    </div>
+ 
   );
 };
 export default BasicInfo;
