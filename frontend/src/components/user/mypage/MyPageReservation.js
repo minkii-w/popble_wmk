@@ -1,4 +1,5 @@
 
+
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -171,8 +172,15 @@ const MyPageReservation = () => {
                     </div>
                 )}
             </div>
-        </div>
-    );
+          ))
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-2xl font-semibold">예약 리스트가 없습니다.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default MyPageReservation;

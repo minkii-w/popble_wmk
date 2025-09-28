@@ -87,7 +87,7 @@ const CategoryComponent = ({ onSelect }) => {
 
       {/* 하단카테고리 */}
       {subList.length > 0 && (
-        <div className="mt-4 flex space-x-4 justify-center">
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-w-[500px] mx-auto">
           {subList.map((sub) => (
             <button
               key={sub.id || sub.key}

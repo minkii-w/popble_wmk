@@ -48,11 +48,11 @@ const PopularPopupComponent = ({ item, index, type }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/90 bg-opacity-50 z-10"></div>
 
       {/* 카드 내용 */}
-      <div className="relative z-20 mt-auto p-3 flex flex-col justify-between h-[90px]">
-        <h3 className="font-bold text-lg text-gray-100">{item.storeName}</h3>
+      <div className="absolute bottom-0 left-0 right-0 z-20 p-3 flex flex-col justify-end h-[90px] items-end text-right">
+        <h3 className="font-bold text-base text-gray-100">{item.storeName}</h3>
         <p className="text-sm text-gray-100">{item.address}</p>
         <p className="text-sm text-gray-100">
-          <span>{item.startDate}</span>
+          <span className="text-end">{item.startDate}</span>
           <br />
           <span>{item.endDate}</span>
         </p>

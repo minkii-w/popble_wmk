@@ -1,12 +1,12 @@
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOne } from "../../../api/popupstoreApi";
 import { getUserById } from "../../../api/userApi";
 import ReservationDoComponent from "../reservation/ReservationDoComponent";
-import ReservationCheckComponent from "../../popup/reservation/ReservationCheckComponent"
+import ReservationCheckComponent from "../../popup/reservation/ReservationCheckComponent";
 
 const ReserveInfo = () => {
+
 
 const {id} = useParams;
 
