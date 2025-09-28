@@ -1,6 +1,7 @@
 import BasicMenu from "../../components/BasicMenu";
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import BasicInfo from "../../components/popup/detail/BasicInfo";
 import DetailImages from "../../components/popup/detail/DetailImages";
 import MapInfo from "../../components/popup/detail/MapInfo";
@@ -16,13 +17,16 @@ import { IoShareSocialOutline } from "react-icons/io5";
 import PopupRecommendComponent from "../../components/popup/recommend/PopupRecommendComponent";
 import PopupBookmarkComponent from "../../components/popup/bookmark/PopupBookmarkComponent";
 
+
+
 const AboutPage = () => {
   const [activeTab, setActiveTab] = useState("basic");
   const [popupStore, setPopupStore] = useState(null);
   const [loading, setLoading] = useState(true);
+  const {id} = useParams();
 
+  const popupStoreId = id;
 
-  const popupStoreId = 29;
 
 
   useEffect(() => {

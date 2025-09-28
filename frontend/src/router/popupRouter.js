@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 
 import LoadingComponent from "../components/common/LoadingComponent";
+import ReviewPage from "../pages/popup/review/reviewPage2";
 
 // const Reservation = lazy(() => import("../pages/reservation/ReservationPage"));
 const AdBoard = lazy(() => import("../pages/board/AdBoardPage"));
@@ -11,6 +12,14 @@ const ReviewModifyPage = lazy(() => import("../pages/popup/review/ReviewModifyPa
 
 const popupRouter = () => {
   return [
+      {
+      path:"/popup/review/:reservationId",
+      element:(
+        <Suspense fallback={<LoadingComponent/>}>
+          <ReviewPage/>
+        </Suspense>
+      )
+    },
     {
       path: "detail/:id",
       element: (

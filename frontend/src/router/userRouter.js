@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import LoadingComponent from "../components/common/LoadingComponent";
 
+
 const Login = lazy(() => import("../pages/users/LoginPage"));
 const Join = lazy(() => import("../pages/users/JoinPage"));
 const MyPage = lazy(() => import("../pages/users/MyPage"));
@@ -81,7 +82,8 @@ const userRouter = () => {
           ),
         },
       ],
-    },
+    }
+  
   ];
 };
 
