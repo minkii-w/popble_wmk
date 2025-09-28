@@ -5,9 +5,9 @@ import ReservationDoComponent from "../reservation/ReservationDoComponent";
 import ReservationCheckComponent from "../../popup/reservation/ReservationCheckComponent";
 
 const ReserveInfo = () => {
-  const id = "94"; //임의로 넣은 데이터 -> 실제 데이터로 변경해야함
+  const id = "39"; //임의로 넣은 데이터 -> 실제 데이터로 변경해야함
 
-  const currentUserId = 1;
+  const currentUserId = 13;
 
   const [popupStore, setPopupStore] = useState(null);
   const [userProfile, setUserProfile] = useState(null);

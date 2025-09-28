@@ -5,7 +5,7 @@ import { getUserProfileById } from "../../../api/userProfileApi";
 import { cancelReservation } from "../../../api/reservationApi";
 
 const MyPageReservation = () => {
-  const userProfileId = 1; // 테스트
+  const userProfileId = 13; // 테스트
 
   const [reservations, setReservations] = useState([]);
   const [userProfile, setUserProfile] = useState(null);

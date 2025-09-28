@@ -96,7 +96,7 @@ public class PopupStore {
 	private boolean deleted = false;
 	
 	//카테고리연결
-	@OneToMany(mappedBy = "popupStore")
+	@OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("popupCategoryRef")
 	private List<PopupCategory> categories = new ArrayList<>();
 	
