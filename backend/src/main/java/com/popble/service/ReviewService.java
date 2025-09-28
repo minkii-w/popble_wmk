@@ -1,19 +1,20 @@
 package com.popble.service;
 
-import com.popble.domain.PopupStore;
-import com.popble.domain.Review;
-import com.popble.domain.ReviewImage;
-import com.popble.dto.ReviewRequest;
-import com.popble.repository.PopupStoreRepository;
-import com.popble.repository.ReviewRepository;
+import java.util.ArrayList;
+import java.util.List;
+
 // ReviewImageRepository도 필요
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.popble.domain.PopupStore;
+import com.popble.domain.Review;
+import com.popble.domain.ReviewImage;
+import com.popble.dto.ReviewRequest2;
+import com.popble.repository.PopupStoreRepository;
+import com.popble.repository.ReviewRepository;
 
 @Service
 @Transactional
@@ -25,8 +26,11 @@ public class ReviewService {
     @Autowired
     private PopupStoreRepository popupStoreRepository; 
 
-    public void saveReview(ReviewRequest reviewRequest, List<MultipartFile> imageFiles) throws Exception {
+    public void saveReview(ReviewRequest2 reviewRequest, List<MultipartFile> imageFiles) throws Exception {
         
+    	 System.out.println("DEBUG: DTO Popup ID: " + reviewRequest.getPopupId()); 
+    	 System.out.println("DEBUG: DTO Popup ID Class: " + reviewRequest.getPopupId().getClass().getName()); 
+    	
         // Popup ID로 PopupStore 엔티티 조회
         PopupStore popupStore = popupStoreRepository.findById(reviewRequest.getPopupId())
             .orElseThrow(() -> new IllegalArgumentException("팝업스토어를 찾을 수 없습니다."));

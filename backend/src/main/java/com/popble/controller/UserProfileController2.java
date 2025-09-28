@@ -22,7 +22,7 @@ import com.popble.repository.UserProfileRepository;
 import com.popble.repository.UserRepository;
 import com.popble.service.ReservationService;
 import com.popble.service.UserProfileService;
-import com.popble.util.CustomFileUtil;
+//import com.popble.util.CustomFileUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +30,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/userProfile")
 public class UserProfileController2 {
+	
+	private final UserProfileRepository userProfileRepository;
+    private final UserRepository userRepository; 
+    private final ReservationService reservationService; 
+    private final UserProfileService userProfileService; 
 
 	//유저프로필조회
 	@GetMapping("/{id}")
@@ -49,7 +54,7 @@ public class UserProfileController2 {
    //프로필로 예약내역조회
    @GetMapping("/{id}/reservations")
    public List<ReservationReactDTO> getReservationsByUserProfile(@PathVariable("id") Long id){
-      return reservationServie.getByUserProfile(id);
+      return reservationService.getByUserProfile(id);
    }
    
    

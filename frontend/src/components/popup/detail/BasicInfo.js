@@ -225,7 +225,7 @@ const BasicInfo = ({popupStore}) => {
 
         </div>
       </div>
-    </div>
+ 
   );
 
 };

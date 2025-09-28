@@ -106,13 +106,13 @@ public class BoardServiceImpl implements BoardService {
     // ==========================
     // 조회 / 목록
     // ==========================
-    @Override
-    @Transactional(readOnly = true)
-    public BoardResponse get(Long id) {
-        Board e = boardRepository.findWithImagesById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found: " + id));
-        return toResponse(e);
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public BoardResponse get(Long id) {
+//        Board e = boardRepository.findWithImagesById(id)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found: " + id));
+//        return toResponse(e);
+//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -136,60 +136,60 @@ public class BoardServiceImpl implements BoardService {
                 .stream().map(this::toResponse).collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<BoardResponse> listAllLatest() {
-        return listAll("latest");
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<BoardResponse> listAllLatest() {
+//        return listAll("latest");
+//    }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<BoardResponse> listAll(String order) {
-        var now = java.time.LocalDateTime.now();
-        Sort pinnedSort = Sort.by(Sort.Order.desc("pinnedAt"), Sort.Order.desc("createTime"), Sort.Order.desc("id"));
-        var pinned = boardRepository.findPinnedNotices(now, pinnedSort);
-
-        Sort restSort = resolveSort(order);
-        var rest = boardRepository.findRestForAll(now, restSort);
-
-        var result = new ArrayList<BoardResponse>(pinned.size() + rest.size());
-        pinned.stream().map(this::toResponse).forEach(result::add);
-        rest.stream().map(this::toResponse).forEach(result::add);
-        return result;
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<BoardResponse> listAll(String order) {
+//        var now = java.time.LocalDateTime.now();
+//        Sort pinnedSort = Sort.by(Sort.Order.desc("pinnedAt"), Sort.Order.desc("createTime"), Sort.Order.desc("id"));
+//        var pinned = boardRepository.findPinnedNotices(now, pinnedSort);
+//
+//        Sort restSort = resolveSort(order);
+//        var rest = boardRepository.findRestForAll(now, restSort);
+//
+//        var result = new ArrayList<BoardResponse>(pinned.size() + rest.size());
+//        pinned.stream().map(this::toResponse).forEach(result::add);
+//        rest.stream().map(this::toResponse).forEach(result::add);
+//        return result;
+//    }
 
     // ✅ 새 listAll (Page 기반) → AD 제외 + 항상 size 만큼 채움
-    @Override
-    @Transactional(readOnly = true)
-    public PageResponseDTO<BoardResponse> listAll(PageRequestDTO pageRequestDTO, String order) {
-        Sort sort = resolveSort(order);
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort);
-
-        var now = java.time.LocalDateTime.now();
-
-        // 📌 고정 공지글
-        Sort pinnedSort = Sort.by(Sort.Order.desc("pinnedAt"), Sort.Order.desc("createTime"), Sort.Order.desc("id"));
-        var pinned = boardRepository.findPinnedNotices(now, pinnedSort)
-                .stream().map(this::toResponse).toList();
-
-        // 📌 AD 제외 일반글 (페이징)
-        Page<Board> restPage = boardRepository.findByTypeNot(Board.Type.AD, pageable);
-        Page<BoardResponse> mappedPage = restPage.map(this::toResponse);
-
-        var dtoList = new ArrayList<BoardResponse>();
-        if (pageRequestDTO.getPage() == 1) {
-            dtoList.addAll(pinned);
-        }
-        dtoList.addAll(mappedPage.getContent());
-
-        long totalCount = mappedPage.getTotalElements();
-
-        return PageResponseDTO.<BoardResponse>withAll()
-                .dtoList(dtoList)
-                .pageRequestDTO(pageRequestDTO)
-                .totalCount(totalCount)
-                .build();
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public PageResponseDTO<BoardResponse> listAll(PageRequestDTO pageRequestDTO, String order) {
+//        Sort sort = resolveSort(order);
+//        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort);
+//
+//        var now = java.time.LocalDateTime.now();
+//
+//        // 📌 고정 공지글
+//        Sort pinnedSort = Sort.by(Sort.Order.desc("pinnedAt"), Sort.Order.desc("createTime"), Sort.Order.desc("id"));
+//        var pinned = boardRepository.findPinnedNotices(now, pinnedSort)
+//                .stream().map(this::toResponse).toList();
+//
+//        // 📌 AD 제외 일반글 (페이징)
+//        Page<Board> restPage = boardRepository.findByTypeNot(Board.Type.AD, pageable);
+//        Page<BoardResponse> mappedPage = restPage.map(this::toResponse);
+//
+//        var dtoList = new ArrayList<BoardResponse>();
+//        if (pageRequestDTO.getPage() == 1) {
+//            dtoList.addAll(pinned);
+//        }
+//        dtoList.addAll(mappedPage.getContent());
+//
+//        long totalCount = mappedPage.getTotalElements();
+//
+//        return PageResponseDTO.<BoardResponse>withAll()
+//                .dtoList(dtoList)
+//                .pageRequestDTO(pageRequestDTO)
+//                .totalCount(totalCount)
+//                .build();
+//    }
 
     // ==========================
     // 수정
@@ -201,6 +201,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (req.getTitle() != null) e.setTitle(req.getTitle());
         if (req.getContent() != null) e.setContent(req.getContent());
+//        if (req.getType() != null) e.setType(req.getType()); // ✅ 게시판 종류 수정 반영
     }
 
     @Override
@@ -240,15 +241,15 @@ public class BoardServiceImpl implements BoardService {
         if (e instanceof NoticeBoard nb) {
             nb.setPin(pinned);
         }
-
-        e.setPinnedGlobal(pinned);
-        if (pinned) {
-            e.setPinnedAt(java.time.LocalDateTime.now());
-            e.setPinUntil(pinUntil);
-        } else {
-            e.setPinUntil(null);
-            e.setPinnedAt(null);
-        }
+//
+//        e.setPinnedGlobal(pinned);
+//        if (pinned) {
+//            e.setPinnedAt(java.time.LocalDateTime.now());
+//            e.setPinUntil(pinUntil);
+//        } else {
+//            e.setPinUntil(null);
+//            e.setPinnedAt(null);
+//        }
     }
 
     // ==========================
@@ -302,9 +303,9 @@ public class BoardServiceImpl implements BoardService {
                 .writerId(writerId)
                 .createTime(e.getCreateTime())
                 .modifyTime(e.getModifyTime())
-                .pinnedGlobal(e.isPinnedGlobal())
-                .pinUntil(e.getPinUntil())
-                .pinnedAt(e.getPinnedAt())
+//                .pinnedGlobal(e.isPinnedGlobal())
+//                .pinUntil(e.getPinUntil())
+//                .pinnedAt(e.getPinnedAt())
                 .images(imageDtos)
                 .build();
     }

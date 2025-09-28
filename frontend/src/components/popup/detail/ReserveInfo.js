@@ -7,9 +7,8 @@ import ReservationDoComponent from "../reservation/ReservationDoComponent";
 import ReservationCheckComponent from "../../popup/reservation/ReservationCheckComponent"
 
 const ReserveInfo = () => {
-    
-const {id} = useParams;
 
+const {id} = useParams;
 
   const currentUserId = 1;
 

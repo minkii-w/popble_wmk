@@ -112,26 +112,26 @@ public class PopupStore {
 	private UserProfile owner;
 	
 
-	@ElementCollection
-	@Builder.Default
-	private List<Image> imageList = new ArrayList<>();
-	
-	public void addImage(Image image) {
-		image.setOrd(this.imageList.size());
-		imageList.add(image);
-	}
-	
-	public void addImageString(String fileName) {
-		Image image = Image.builder()
-				.fileName(fileName)
-				.build();
-		
-		addImage(image);	
-	}
-	
-	public void clearList() {
-		this.imageList.clear();
-	}
+//	@ElementCollection
+//	@Builder.Default
+//	private List<Image> imageList = new ArrayList<>();
+//	
+//	public void addImage(Image image) {
+//		image.setOrd(this.imageList.size());
+//		imageList.add(image);
+//	}
+//	
+//	public void addImageString(String fileName) {
+//		Image image = Image.builder()
+//				.fileName(fileName)
+//				.build();
+//		
+//		addImage(image);	
+//	}
+//	
+//	public void clearList() {
+//		this.imageList.clear();
+//	}
 	
 	@Column(name="parking")
 	private boolean parking;

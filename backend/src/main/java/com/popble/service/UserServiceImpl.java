@@ -12,6 +12,8 @@ import com.popble.domain.Role;
 import com.popble.domain.UserProfile;
 import com.popble.domain.Users;
 import com.popble.dto.UserDTO;
+import com.popble.repository.BookmarkRepository;
+import com.popble.repository.ReservationRepository;
 import com.popble.repository.UserProfileRepository;
 import com.popble.repository.UserRepository;
 

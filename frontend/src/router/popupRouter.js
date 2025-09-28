@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 
 import LoadingComponent from "../components/common/LoadingComponent";
-import ReviewPage from "../pages/popup/review/reviewPage2";
+
 
 // const Reservation = lazy(() => import("../pages/reservation/ReservationPage"));
 const AdBoard = lazy(() => import("../pages/board/AdBoardPage"));

@@ -1,11 +1,12 @@
 package com.popble.service;
 
-import java.io.File;
+//import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.popble.BackendApplication;
+
 import com.popble.domain.UserProfile;
 import com.popble.domain.Users;
 import com.popble.dto.UserProfileDTO;
@@ -18,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
 
-	private final BackendApplication backendApplication;
+//	private final BackendApplication backendApplication;
 
 	private final UserProfileRepository userProfileRepository;
 
@@ -61,37 +62,31 @@ public class UserProfileServiceImpl implements UserProfileService {
                 .build();
     }
 	
+
 	//예약시에 유저프로필 변경
+		@Override
+		public UserProfileDTO updateUserProfile(Long id, UserProfileDTO dto) {
+		    UserProfile userProfile = userProfileRepository.findById(id)
+		            .orElseThrow(() -> new IllegalArgumentException("userProfileId Invalid"));
 
+		   
+		    if (dto.getName() != null) {
+		        userProfile.getUsers().setName(dto.getName());
+		    }
+		    if (dto.getPhonenumber() != null) {
+		        userProfile.getUsers().setPhonenumber(dto.getPhonenumber());
+		    }
 
+		    userProfileRepository.save(userProfile);
+
+		    return UserProfileDTO.builder()
+		            .id(userProfile.getId())
+		            .nickname(userProfile.getNickname())
+		            .profileImg(userProfile.getProfileImg())
+		            .name(userProfile.getUsers().getName())
+		            .phonenumber(userProfile.getUsers().getPhonenumber())
+		            .build();
 		}
-
-		UserProfile userProfile = UserProfile.builder().nickname(nickname).profileImg(profileImgUrl).users(user)
-				.build();
-
-		UserProfile saved = userProfileRepository.save(userProfile);
-
-		return UserProfileDTO.builder().id(saved.getId()).nickname(saved.getNickname())
-				.profileImg(saved.getProfileImg()).build();
-
-	@Override
-	public UserProfileDTO updateUserProfile(Long id, UserProfileDTO dto) {
-		UserProfile userProfile = userProfileRepository.findById(id)
-				.orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
-
-		if (dto.getName() != null) {
-			userProfile.getUsers().setName(dto.getName());
-		}
-		if (dto.getPhonenumber() != null) {
-			userProfile.getUsers().setPhonenumber(dto.getPhonenumber());
-		}
-
-		userProfileRepository.save(userProfile);
-
-		return UserProfileDTO.builder().id(userProfile.getId()).nickname(userProfile.getNickname())
-				.profileImg(userProfile.getProfileImg()).name(userProfile.getUsers().getName())
-				.phonenumber(userProfile.getUsers().getPhonenumber()).build();
-	}
 
 	@Override
 	public UserProfileDTO updateUserProfile(Long userId, String nickname, MultipartFile profileImg) {
