@@ -63,12 +63,12 @@ public class PopupStore {
 	private Status status;
 	
 	//조회수
-	@Column(name = "view")
-	private Integer view;
+	@Column(name = "view", nullable = false)
+	private Integer view = 0 ;
 	
 	//추천수
-	@Column(name = "recommend")
-	private Integer recommend;
+	@Column(name = "recommend", nullable = false)
+	private Integer recommend = 0;
 	
 	//예약시간 오전/오후 기업이 나눌수 있게
 	
@@ -96,47 +96,25 @@ public class PopupStore {
 	private boolean deleted = false;
 	
 	//카테고리연결
-	@OneToMany(mappedBy = "popupStore")
+	@OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("popupCategoryRef")
 	private List<PopupCategory> categories = new ArrayList<>();
 	
-	//북마크수
-	@Column(name = "bookmark_count")
-	private int bookmarkCount = 0;
+	//북마크수(0으로 기본값 세팅)
+	@Column(name = "bookmark_count", nullable = false)
+	private Integer bookmarkCount = 0 ;
 	
 	//UserProfile과 연결해야할지 말지 고민...
 	//나중에 기업이 본인이 작성한거 확인 또는 삭제할수 있도록
 	@ManyToOne
 	@JoinColumn(name = "userProfile_id")
 	private UserProfile owner;
-	
-
-//	@ElementCollection
-//	@Builder.Default
-//	private List<Image> imageList = new ArrayList<>();
-//	
-//	public void addImage(Image image) {
-//		image.setOrd(this.imageList.size());
-//		imageList.add(image);
-//	}
-//	
-//	public void addImageString(String fileName) {
-//		Image image = Image.builder()
-//				.fileName(fileName)
-//				.build();
-//		
-//		addImage(image);	
-//	}
-	
-	public void clearList() {
-		this.imageList.clear();
-	}
-	
+		
 	@Column(name="parking")
-	private boolean parking;
+	private boolean parking; 
 
 
-    // ===== 이미지 (BoardImage 기준으로 통일) =====
+	   // ===== 이미지 (BoardImage 기준으로 통일) =====
     @OneToMany(mappedBy = "popupStore", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<BoardImage> imageList = new ArrayList<>();
