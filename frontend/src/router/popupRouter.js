@@ -5,9 +5,10 @@ import LoadingComponent from "../components/common/LoadingComponent";
 // const Reservation = lazy(() => import("../pages/reservation/ReservationPage"));
 const AdBoard = lazy(() => import("../pages/board/AdBoardPage"));
 const About = lazy(() => import("../pages/popup/AboutPage"));
-const ReviewPage = lazy(() => import("../pages/popup/review/ReviewPage"))
-const ReviewModifyPage = lazy(() => import("../pages/popup/review/ReviewModifyPage"))
-
+const ReviewPage = lazy(() => import("../pages/popup/review/ReviewPage"));
+const ReviewModifyPage = lazy(() =>
+  import("../pages/popup/review/ReviewModifyPage")
+);
 
 const popupRouter = () => {
   return [
@@ -44,20 +45,21 @@ const popupRouter = () => {
       ),
     },
     {
-        path: "review/:id",
-        element: (
-          <Suspense fallback = {<LoadingComponent/>}>
-            <ReviewPage/>
-          </Suspense>
-        )
-      },{
-        path: "review/modify/:id",
-        element: (
-          <Suspense fallback = {<LoadingComponent/>}>
-            <ReviewModifyPage/>
-          </Suspense>
-        )
-      }
+      path: "review/:id",
+      element: (
+        <Suspense fallback={<LoadingComponent />}>
+          <ReviewPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: "review/modify/:id",
+      element: (
+        <Suspense fallback={<LoadingComponent />}>
+          <ReviewModifyPage />
+        </Suspense>
+      ),
+    },
   ];
 };
 
