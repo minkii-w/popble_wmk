@@ -26,6 +26,7 @@ import com.popble.repository.SocialLoginRepository;
 import com.popble.repository.UserRepository;
 import com.popble.service.PopupStoreServiceImpl;
 import com.popble.util.JWTUtill;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,9 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private final SocialLoginRepository socialLoginRepository;
 
 	private final UserRepository userRepository;
-
+//	private final JWTUtill jwtUtill;
+	
+	//사용 가능하지만 위에처럼 @RequiredArgsConstructor일때 생성자 주입으로 사용하는것이 더 바람직한..?
 	@Autowired
 	JWTUtill jwtUtill;
 
@@ -138,6 +141,7 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		String url = jwtUtill.makeRedirectUrl(jwt, users);
 		System.out.println("url:" + url);
 
+
 		if (response.isCommitted()) {
 			logger.debug("응답이 이미 커밋된 상태입니다." + url + "로 리다이렉트 하도록 바꿀 수 없습니다.");
 			return;
@@ -169,3 +173,4 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		}
 	}
 }
+

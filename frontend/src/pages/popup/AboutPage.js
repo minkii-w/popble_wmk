@@ -10,42 +10,33 @@ import ReviewInfo from "../../components/popup/detail/ReviewInfo";
 import { getOne } from "../../api/popupstoreApi";
 import { getAllTimes } from "../../api/reservationApi";
 
-
 import { PiHeartBold } from "react-icons/pi";
 import { FaRegBookmark, FaHeart } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
 import PopupRecommendComponent from "../../components/popup/recommend/PopupRecommendComponent";
 import PopupBookmarkComponent from "../../components/popup/bookmark/PopupBookmarkComponent";
 
-
-
 const AboutPage = () => {
   const [activeTab, setActiveTab] = useState("basic");
   const [popupStore, setPopupStore] = useState(null);
   const [loading, setLoading] = useState(true);
-  const {id} = useParams();
+  const { id } = useParams();
 
   const popupStoreId = id;
-
-
 
   useEffect(() => {
     const fetchStoreData = async () => {
       try {
+        const data = await getOne(popupStoreId);
 
-
-        const data = await getOne(popupStoreId)
-
-        const timeSlotsData = await getAllTimes(popupStoreId)
+        const timeSlotsData = await getAllTimes(popupStoreId);
 
         setPopupStore({
           ...data,
-          timeSlots: timeSlotsData||[]
-        })
-        
-      }catch(error) {
-        console.error("데이터 불러오기 실패", error)
-
+          timeSlots: timeSlotsData || [],
+        });
+      } catch (error) {
+        console.error("데이터 불러오기 실패", error);
       } finally {
         setLoading(false);
       }

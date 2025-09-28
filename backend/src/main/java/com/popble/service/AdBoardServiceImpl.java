@@ -2,8 +2,10 @@ package com.popble.service;
 
 import com.popble.domain.AdBoard;
 import com.popble.domain.BoardImage;
+import com.popble.domain.PopupStore;
 import com.popble.dto.*;
 import com.popble.repository.AdBoardRepository;
+import com.popble.repository.PopupStoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
@@ -20,6 +22,7 @@ import java.util.List;
 public class AdBoardServiceImpl implements AdBoardService {
 
     private final AdBoardRepository adBoardRepository;
+    private final PopupStoreRepository popupStoreRepository;
     private final FileStorageService fileStorageService;
 
     // ===== 등록 (JSON) =====
@@ -28,7 +31,7 @@ public class AdBoardServiceImpl implements AdBoardService {
         AdBoard adBoard = AdBoard.builder()
                 .title(req.getTitle())
                 .content(req.getContent())
-                .writer("testUser")   // ✅ 나중에 UserProfile 연동
+                .writer("testUser") // TODO: UserProfile 연동
                 .externalUrl(req.getExternalUrl())
                 .contact(req.getContact())
                 .publishStartDate(req.getPublishStartDate())
@@ -36,10 +39,19 @@ public class AdBoardServiceImpl implements AdBoardService {
                 .pinned(req.isPinned())
                 .visible(req.isVisible())
                 .tags(req.getTags())
+                .storeName(req.getTitle()) // 필요시 수정
+                .address(req.getExternalUrl()) // 필요시 수정
+                .description(req.getContent()) // 필요시 수정
                 .build();
 
-        AdBoard saved = adBoardRepository.save(adBoard);
-        return saved.getId();
+        // ✅ popupStore 연계
+        if (req.getPopupStoreId() != null) {
+            PopupStore popup = popupStoreRepository.findById(req.getPopupStoreId())
+                    .orElseThrow(() -> new IllegalArgumentException("팝업스토어 없음"));
+            adBoard.setPopupStore(popup);
+        }
+
+        return adBoardRepository.save(adBoard).getId();
     }
 
     // ===== 등록 (이미지 포함) =====
@@ -56,11 +68,27 @@ public class AdBoardServiceImpl implements AdBoardService {
                 .pinned(req.isPinned())
                 .visible(req.isVisible())
                 .tags(req.getTags())
+                .storeName(req.getTitle()) // 필요시 수정
+                .address(req.getExternalUrl()) // 필요시 수정
+                .description(req.getContent()) // 필요시 수정
                 .build();
 
+        // ✅ popupStore 연계
+        if (req.getPopupStoreId() != null) {
+            PopupStore popup = popupStoreRepository.findById(req.getPopupStoreId())
+                    .orElseThrow(() -> new IllegalArgumentException("팝업스토어 없음"));
+            adBoard.setPopupStore(popup);
+        }
+
         if (images != null && !images.isEmpty()) {
-            images.forEach(file -> {
+            int thumbnailIndex = req.getThumbnailIndex() != null ? req.getThumbnailIndex() : 0;
+
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
                 FileStorageService.StoredFile stored = fileStorageService.store(file);
+
+                int sortOrder = (i == thumbnailIndex) ? 0 : i + 1;
+
                 adBoard.addImage(BoardImage.builder()
                         .originalName(stored.originalName())
                         .storedName(stored.storedName())
@@ -68,13 +96,14 @@ public class AdBoardServiceImpl implements AdBoardService {
                         .url(stored.url())
                         .contentType(stored.contentType())
                         .size(stored.size())
-                        .sortOrder(adBoard.getImageList().size())
+                        .sortOrder(sortOrder)
                         .build());
-            });
+            }
+            // ✅ 정렬 보정
+            adBoard.getImageList().sort((a, b) -> Integer.compare(a.getSortOrder(), b.getSortOrder()));
         }
 
-        AdBoard saved = adBoardRepository.save(adBoard);
-        return saved.getId();
+        return adBoardRepository.save(adBoard).getId();
     }
 
     // ===== 단건 조회 =====
@@ -85,10 +114,9 @@ public class AdBoardServiceImpl implements AdBoardService {
         return toResponse(adBoard);
     }
 
-    // ===== 목록 조회 (페이지네이션) =====
+    // ===== 목록 조회 =====
     @Override
     public PageResponseDTO<AdResponse> getList(PageRequestDTO pageRequestDTO, String order, String keyword) {
-        // ✅ 정렬 설정
         Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
         if ("oldest".equalsIgnoreCase(order)) {
             sort = Sort.by(Sort.Direction.ASC, "createTime");
@@ -98,12 +126,9 @@ public class AdBoardServiceImpl implements AdBoardService {
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort);
 
-        Page<AdBoard> result;
-        if (keyword != null && !keyword.isBlank()) {
-            result = adBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
-        } else {
-            result = adBoardRepository.findAll(pageable);
-        }
+        Page<AdBoard> result = (keyword != null && !keyword.isBlank())
+                ? adBoardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable)
+                : adBoardRepository.findAll(pageable);
 
         List<AdResponse> dtoList = result.getContent().stream()
                 .map(this::toResponse)
@@ -131,6 +156,16 @@ public class AdBoardServiceImpl implements AdBoardService {
         if (req.getPinned() != null) adBoard.setPinned(req.getPinned());
         if (req.getVisible() != null) adBoard.setVisible(req.getVisible());
         if (req.getTags() != null) adBoard.setTags(req.getTags());
+        if (req.getStoreName() != null) adBoard.setStoreName(req.getStoreName());
+        if (req.getAddress() != null) adBoard.setAddress(req.getAddress());
+        if (req.getDescription() != null) adBoard.setDescription(req.getDescription());
+
+        // ✅ popupStore 갱신
+        if (req.getPopupStoreId() != null) {
+            PopupStore popup = popupStoreRepository.findById(req.getPopupStoreId())
+                    .orElseThrow(() -> new IllegalArgumentException("팝업스토어 없음"));
+            adBoard.setPopupStore(popup);
+        }
 
         adBoardRepository.save(adBoard);
     }
@@ -142,26 +177,28 @@ public class AdBoardServiceImpl implements AdBoardService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음"));
 
         update(id, req);
-
         adBoard.clearImages();
 
+        // 기존 이미지 유지
         if (keepImages != null) {
-            keepImages.forEach(url -> {
-                if (url.startsWith("/uploads/")) {
-                    adBoard.addImage(BoardImage.builder()
-                            .url(url)
-                            .storedName(url.substring(url.lastIndexOf("/") + 1))
-                            .folder("uploads")
-                            .originalName(url)
-                            .sortOrder(adBoard.getImageList().size())
-                            .build());
-                }
-            });
+            for (int i = 0; i < keepImages.size(); i++) {
+                String url = keepImages.get(i);
+                adBoard.addImage(BoardImage.builder()
+                        .url(url)
+                        .storedName(url.substring(url.lastIndexOf("/") + 1))
+                        .folder("uploads")
+                        .originalName(url)
+                        .sortOrder(i + 1)
+                        .build());
+            }
         }
 
+        // 새 이미지 추가
         if (images != null && !images.isEmpty()) {
-            images.forEach(file -> {
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
                 FileStorageService.StoredFile stored = fileStorageService.store(file);
+
                 adBoard.addImage(BoardImage.builder()
                         .originalName(stored.originalName())
                         .storedName(stored.storedName())
@@ -169,9 +206,22 @@ public class AdBoardServiceImpl implements AdBoardService {
                         .url(stored.url())
                         .contentType(stored.contentType())
                         .size(stored.size())
-                        .sortOrder(adBoard.getImageList().size())
+                        .sortOrder(adBoard.getImageList().size() + 1)
                         .build());
-            });
+            }
+        }
+
+        // ✅ 썸네일 인덱스 반영
+        int thumbnailIndex = req.getThumbnailIndex() != null ? req.getThumbnailIndex() : 0;
+        if (!adBoard.getImageList().isEmpty() && thumbnailIndex < adBoard.getImageList().size()) {
+            adBoard.getImageList().get(thumbnailIndex).setSortOrder(0);
+            int order = 1;
+            for (int i = 0; i < adBoard.getImageList().size(); i++) {
+                if (i != thumbnailIndex) {
+                    adBoard.getImageList().get(i).setSortOrder(order++);
+                }
+            }
+            adBoard.getImageList().sort((a, b) -> Integer.compare(a.getSortOrder(), b.getSortOrder()));
         }
 
         adBoardRepository.save(adBoard);
@@ -183,12 +233,13 @@ public class AdBoardServiceImpl implements AdBoardService {
         adBoardRepository.deleteById(id);
     }
 
-    // ===== 공통 변환 메서드 =====
+    // ===== 변환 =====
     private AdResponse toResponse(AdBoard adBoard) {
         return AdResponse.builder()
                 .id(adBoard.getId())
                 .title(adBoard.getTitle())
                 .content(adBoard.getContent())
+                .writerId(adBoard.getUserProfile() != null ? adBoard.getUserProfile().getId() : null)
                 .writerName(adBoard.getWriter())
                 .createTime(adBoard.getCreateTime())
                 .updateTime(adBoard.getModifyTime())
@@ -201,7 +252,6 @@ public class AdBoardServiceImpl implements AdBoardService {
                 .contact(adBoard.getContact())
                 .thumbnail(adBoard.getImageList().isEmpty() ? null : adBoard.getImageList().get(0).getUrl())
                 .imageList(adBoard.getImageList().stream()
-                        .filter(img -> img.getUrl() != null && img.getUrl().startsWith("/uploads/"))
                         .map(img -> AdResponse.ImageDTO.builder()
                                 .url(img.getUrl())
                                 .folder(img.getFolder())
@@ -210,7 +260,6 @@ public class AdBoardServiceImpl implements AdBoardService {
                                 .build())
                         .toList())
                 .detailImages(adBoard.getImageList().stream()
-                        .filter(img -> img.getUrl() != null && img.getUrl().startsWith("/uploads/"))
                         .map(img -> AdResponse.ImageDetailDTO.builder()
                                 .id(img.getId())
                                 .boardId(adBoard.getId())
@@ -223,6 +272,17 @@ public class AdBoardServiceImpl implements AdBoardService {
                                 .createdAt(adBoard.getCreateTime())
                                 .build())
                         .toList())
+                .storeName(adBoard.getStoreName())
+                .address(adBoard.getAddress())
+                .description(adBoard.getDescription())
+
+                // ✅ popupStore 연계 매핑
+                .popupStoreId(adBoard.getPopupStore() != null ? adBoard.getPopupStore().getId() : null)
+                .popupStoreName(adBoard.getPopupStore() != null ? adBoard.getPopupStore().getStoreName() : null)
+                .popupAddress(adBoard.getPopupStore() != null ? adBoard.getPopupStore().getAddress() : null)
+                .popupStartDate(adBoard.getPopupStore() != null ? adBoard.getPopupStore().getStartDate() : null)
+                .popupEndDate(adBoard.getPopupStore() != null ? adBoard.getPopupStore().getEndDate() : null)
+
                 .build();
     }
 }

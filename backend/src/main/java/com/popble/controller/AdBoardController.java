@@ -17,17 +17,17 @@ public class AdBoardController {
 
     private final AdBoardService adBoardService;
 
-    // ===== 목록 조회 (페이지네이션) =====
+    // ===== 목록 조회 =====
     @GetMapping("/list")
     public ResponseEntity<PageResponseDTO<AdResponse>> getList(
             @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,   // ✅ 한 페이지 10개
+            @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "order", required = false) String order,
             @RequestParam(name = "keyword", required = false) String keyword
     ) {
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(page)
-                .size(size)          // ✅ 글은 10개
+                .size(size)
                 .build();
 
         return ResponseEntity.ok(adBoardService.getList(pageRequestDTO, order, keyword));

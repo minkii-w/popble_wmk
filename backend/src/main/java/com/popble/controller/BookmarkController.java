@@ -60,4 +60,5 @@ public class BookmarkController {
 		log.info("북마크 리스트 요청 userId ={},popupId={}", userId);
 		return bookmarkService.bookmarkList(userId, pageable);
 	}
+
 }

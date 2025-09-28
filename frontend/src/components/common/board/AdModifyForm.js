@@ -3,9 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   getAdOne,
-  updateAd,
   updateAdWithImages,
-} from "../../../api/AdBoardApi"; // 🔹 AdBoard API 사용
+} from "../../../api/AdBoardApi"; // 🔹 이미지 포함 API만 사용
 
 export default function AdModifyForm() {
   const { id } = useParams();
@@ -21,8 +20,12 @@ export default function AdModifyForm() {
     tags: "",
   });
 
-  const [preview, setPreview] = useState(null);
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]); // 새 파일
+  const [previews, setPreviews] = useState([]); // 새 파일 미리보기
+  const [existingImages, setExistingImages] = useState([]); // 기존 이미지
+  const [keepImages, setKeepImages] = useState([]); // 유지할 기존 이미지
+  const [thumbnailIdx, setThumbnailIdx] = useState(0); // 대표 이미지 인덱스
+
   const fileRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
@@ -39,12 +42,18 @@ export default function AdModifyForm() {
           content: data.content || "",
           externalUrl: data.externalUrl || "",
           contact: data.contact || "",
-          publishStartDate: data.publishStartDate || "",
-          publishEndDate: data.publishEndDate || "",
-          tags: data.tags || "",
+          publishStartDate: data.publishStartDate
+            ? data.publishStartDate.split("T")[0]
+            : "",
+          publishEndDate: data.publishEndDate
+            ? data.publishEndDate.split("T")[0]
+            : "",
+          tags: data.tags ? data.tags.join(",") : "",
         });
+
         if (data.imageList && data.imageList.length > 0) {
-          setPreview(`${process.env.REACT_APP_API_SERVER}${data.imageList[0].url}`);
+          setExistingImages(data.imageList);
+          setKeepImages(data.imageList.map((img) => img.url));
         }
       } catch (e) {
         setError(e.message || "데이터 불러오기 실패");
@@ -59,24 +68,65 @@ export default function AdModifyForm() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const onPickImage = () => fileRef.current?.click();
-
   const onFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setFile(file);
-    const url = URL.createObjectURL(file);
-    setPreview(url);
+    const selected = Array.from(e.target.files);
+    setFiles((prev) => [...prev, ...selected]);
+
+    const previewList = selected.map((file) => URL.createObjectURL(file));
+    setPreviews((prev) => [...prev, ...previewList]);
+
+    if (files.length === 0 && existingImages.length === 0) {
+      setThumbnailIdx(0);
+    }
+  };
+
+  const handleRemoveExisting = (idx) => {
+    const imgToRemove = existingImages[idx];
+    setExistingImages(existingImages.filter((_, i) => i !== idx));
+    setKeepImages(keepImages.filter((url) => url !== imgToRemove.url));
+
+    if (thumbnailIdx === idx) {
+      setThumbnailIdx(0);
+    } else if (thumbnailIdx > idx) {
+      setThumbnailIdx((prev) => prev - 1);
+    }
+  };
+
+  const handleRemoveNew = (idx) => {
+    setFiles(files.filter((_, i) => i !== idx));
+    setPreviews(previews.filter((_, i) => i !== idx));
+
+    if (thumbnailIdx === existingImages.length + idx) {
+      setThumbnailIdx(0);
+    } else if (thumbnailIdx > existingImages.length + idx) {
+      setThumbnailIdx((prev) => prev - 1);
+    }
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (file) {
-        await updateAdWithImages(id, form, [file]);
-      } else {
-        await updateAd(id, form);
-      }
+      const formData = new FormData();
+
+      // ✅ 반드시 "board" 로 맞춰야 컨트롤러와 일치
+      formData.append(
+        "board",
+        new Blob(
+          [
+            JSON.stringify({
+              ...form,
+              tags: form.tags ? form.tags.split(",").map((t) => t.trim()) : [],
+              thumbnailIndex: thumbnailIdx,
+            }),
+          ],
+          { type: "application/json" }
+        )
+      );
+
+      files.forEach((file) => formData.append("images", file));
+      keepImages.forEach((url) => formData.append("keepImages", url));
+
+      await updateAdWithImages(id, formData);
       alert("수정 완료!");
       navigate(`/boards/ad/${id}`);
     } catch (err) {
@@ -96,72 +146,49 @@ export default function AdModifyForm() {
         <h1 className="text-3xl font-bold mb-8">홍보게시글 수정</h1>
 
         <form onSubmit={onSubmit} className="space-y-8">
-          {/* ===== 제목 ===== */}
-          <div className="grid grid-cols-[140px_1fr] gap-6 items-start">
-            <div className="pt-3 text-sm font-medium text-gray-800">
-              제목
-            </div>
+          <FormRow label="제목">
             <input
               type="text"
               name="title"
               value={form.title}
               onChange={onChange}
               placeholder="제목을 입력하세요"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-300"
+              className="w-full rounded-lg border px-4 py-3"
               required
             />
-          </div>
+          </FormRow>
 
-          {/* ===== 내용 ===== */}
-          <div className="grid grid-cols-[140px_1fr] gap-6 items-start">
-            <div className="pt-3 text-sm font-medium text-gray-800">
-              내용
-            </div>
+          <FormRow label="내용">
             <textarea
               name="content"
               value={form.content}
               onChange={onChange}
-              placeholder="내용을 입력하세요"
               className="min-h-[180px] w-full rounded-lg border px-4 py-3"
             />
-          </div>
+          </FormRow>
 
-          {/* ===== 외부 링크 ===== */}
-          <div className="grid grid-cols-[140px_1fr] gap-6 items-start">
-            <div className="pt-3 text-sm font-medium text-gray-800">
-              외부 링크
-            </div>
+          <FormRow label="외부 링크">
             <input
               type="url"
               name="externalUrl"
               value={form.externalUrl}
               onChange={onChange}
-              placeholder="https://example.com"
               className="w-full rounded-lg border px-4 py-3"
             />
-          </div>
+          </FormRow>
 
-          {/* ===== 연락처 ===== */}
-          <div className="grid grid-cols-[140px_1fr] gap-6 items-start">
-            <div className="pt-3 text-sm font-medium text-gray-800">
-              연락처
-            </div>
+          <FormRow label="연락처">
             <input
               type="text"
               name="contact"
               value={form.contact}
               onChange={onChange}
-              placeholder="010-1234-5678"
               className="w-full rounded-lg border px-4 py-3"
             />
-          </div>
+          </FormRow>
 
-          {/* ===== 게시 기간 ===== */}
-          <div className="grid grid-cols-[140px_1fr] gap-6 items-start">
-            <div className="pt-3 text-sm font-medium text-gray-800">
-              게시 기간
-            </div>
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormRow label="게시 기간">
+            <div className="grid grid-cols-2 gap-4">
               <input
                 type="date"
                 name="publishStartDate"
@@ -177,54 +204,63 @@ export default function AdModifyForm() {
                 className="w-full rounded-lg border px-4 py-3"
               />
             </div>
-          </div>
+          </FormRow>
 
-          {/* ===== 태그 ===== */}
-          <div className="grid grid-cols-[140px_1fr] gap-6 items-start">
-            <div className="pt-3 text-sm font-medium text-gray-800">
-              태그
-            </div>
+          <FormRow label="태그">
             <input
               type="text"
               name="tags"
               value={form.tags}
               onChange={onChange}
-              placeholder="예: 이벤트, 할인"
               className="w-full rounded-lg border px-4 py-3"
             />
-          </div>
+          </FormRow>
 
-          {/* ===== 이미지 ===== */}
-          <div className="grid grid-cols-[140px_1fr] gap-6 items-start">
-            <div className="pt-3 text-sm font-medium text-gray-800">
-              이미지
-            </div>
-            <div>
-              <div
-                className="w-[140px] h-[180px] border-2 border-dashed rounded-xl flex items-center justify-center cursor-pointer hover:bg-gray-50"
-                onClick={onPickImage}
-              >
-                {preview ? (
-                  <img
-                    src={preview}
-                    alt="preview"
-                    className="w-full h-full object-cover rounded-xl"
-                  />
-                ) : (
-                  <span className="text-sm text-gray-500">이미지 변경</span>
-                )}
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={onFileChange}
-                  className="hidden"
-                />
-              </div>
-            </div>
-          </div>
+          <FormRow label="이미지">
+            <div className="flex flex-col gap-4 w-full">
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                ref={fileRef}
+                onChange={onFileChange}
+              />
 
-          {/* 버튼들 */}
+              {existingImages.length > 0 && (
+                <div className="flex gap-4 flex-wrap">
+                  {existingImages.map((img, idx) => (
+                    <ImagePreview
+                      key={idx}
+                      src={`${process.env.REACT_APP_API_SERVER}${img.url}`}
+                      idx={idx}
+                      isThumbnail={thumbnailIdx === idx}
+                      onClick={() => setThumbnailIdx(idx)}
+                      onRemove={() => handleRemoveExisting(idx)}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {previews.length > 0 && (
+                <div className="flex gap-4 flex-wrap">
+                  {previews.map((src, idx) => {
+                    const absoluteIdx = existingImages.length + idx;
+                    return (
+                      <ImagePreview
+                        key={absoluteIdx}
+                        src={src}
+                        idx={absoluteIdx}
+                        isThumbnail={thumbnailIdx === absoluteIdx}
+                        onClick={() => setThumbnailIdx(absoluteIdx)}
+                        onRemove={() => handleRemoveNew(idx)}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </FormRow>
+
           <div className="pt-6 flex items-center justify-between border-t">
             <button
               type="button"
@@ -245,3 +281,39 @@ export default function AdModifyForm() {
     </div>
   );
 }
+
+// ===== 재사용 가능한 FormRow 컴포넌트 =====
+const FormRow = ({ label, children }) => (
+  <div className="grid grid-cols-[140px_1fr] gap-6 items-start">
+    <div className="pt-3 text-sm font-medium text-gray-800">{label}</div>
+    <div>{children}</div>
+  </div>
+);
+
+// ===== 이미지 미리보기 컴포넌트 =====
+const ImagePreview = ({ src, idx, isThumbnail, onClick, onRemove }) => (
+  <div className="relative cursor-pointer" onClick={onClick}>
+    <img
+      src={src}
+      alt={`preview-${idx}`}
+      className={`w-32 h-32 object-cover border rounded ${
+        isThumbnail ? "ring-4 ring-blue-500" : ""
+      }`}
+    />
+    {isThumbnail && (
+      <span className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded">
+        대표
+      </span>
+    )}
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onRemove();
+      }}
+      className="absolute top-1 right-1 bg-gray-700 text-white text-xs px-1 rounded hover:bg-black"
+    >
+      ✕
+    </button>
+  </div>
+);

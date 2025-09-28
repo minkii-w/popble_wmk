@@ -21,10 +21,10 @@ public class AdBoard extends Board {
     @Column(length = 100)
     private String contact;
 
+    // 🔹 LocalDate로 변경
     private LocalDate publishStartDate;
     private LocalDate publishEndDate;
 
-    // 🔹 AdBoard 전용 필드
     private Boolean pinned = false;   // 고정 여부
     private Boolean visible = true;   // 노출 여부
 
@@ -35,6 +35,20 @@ public class AdBoard extends Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardImage> imageList = new ArrayList<>();
+
+    // ✅ 프론트 BasicInfo 연동용
+    @Column(name = "store_name", length = 200)
+    private String storeName;
+
+    @Column(name = "address", length = 500)
+    private String address;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "popup_id")
+    private PopupStore popupStore;
 
     // ==== 편의 메서드 ====
     public void addImage(BoardImage image) {
@@ -47,19 +61,20 @@ public class AdBoard extends Board {
         this.imageList.clear();
     }
 
-    // ==== Builder 지원 (부모 필드 포함) ====
+    // ==== Builder ====
     @Builder
     public AdBoard(String title, String content, UserProfile userProfile, String writer,
                    String externalUrl, String contact,
                    LocalDate publishStartDate, LocalDate publishEndDate,
-                   Boolean pinned, Boolean visible, List<String> tags) {
+                   Boolean pinned, Boolean visible, List<String> tags,
+                   String storeName, String address, String description,
+                   PopupStore popupStore) {
 
         setTitle(title);
         setContent(content);
         setUserProfile(userProfile);
         setWriter(writer);
 
-        // ✅ type 강제 지정 (null 방지)
         setType(Board.Type.AD);
 
         this.externalUrl = externalUrl;
@@ -69,5 +84,11 @@ public class AdBoard extends Board {
         this.pinned = pinned != null ? pinned : false;
         this.visible = visible != null ? visible : true;
         this.tags = tags != null ? tags : new ArrayList<>();
+
+        this.storeName = storeName;
+        this.address = address;
+        this.description = description;
+
+        this.popupStore = popupStore;
     }
 }

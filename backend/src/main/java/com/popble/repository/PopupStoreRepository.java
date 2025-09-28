@@ -18,7 +18,7 @@ import com.popble.domain.PopupStore;
 public interface PopupStoreRepository extends JpaRepository<PopupStore, Long>, JpaSpecificationExecutor<PopupStore> {
 
     // ===== 당장 필요 없는 기능들 주석처리 =====
-    /*
+    
     // 기업 유저가 등록한 팝업 리스트
     List<PopupStore> findByOwner_Id(Long ownerId);
 
@@ -45,7 +45,7 @@ public interface PopupStoreRepository extends JpaRepository<PopupStore, Long>, J
 
     // 종료 임박순
     List<PopupStore> findAllByEndDateAfterOrderByEndDateAsc(LocalDate endDate);
-    */
+    
 
     // ===== 이미지 연관 포함 단건 조회 =====
     @EntityGraph(attributePaths = "imageList")
