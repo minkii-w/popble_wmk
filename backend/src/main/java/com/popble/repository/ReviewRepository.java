@@ -1,4 +1,4 @@
-package com.popble.repository; // 적절한 repository 패키지에 저장
+package com.popble.repository;
 
 import com.popble.domain.Review;
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa6";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 
 const fetchLoggedInUserNickname = async () => {
     //더미 닉넴
-    return {id: 25, nickname: "25"}
+    return {id: 1, nickname: "minkii"}
 }
 
 const ReviewPage = () => {
@@ -16,7 +16,14 @@ const ReviewPage = () => {
     const [image, setImage] = useState([]); //이미지파일 배열
 
     const navigate = useNavigate()
-    const {popupId} = useParams()   //팝업 id url에서 추출
+
+    const location = useLocation();
+    const {reservationId: reservationIdParam} = useParams();
+
+    const popupStoreId = location.state?.popupStoreId;
+    const reservationId = location.state?.reservationId || reservationIdParam;
+
+    
 
     //회원 닉네임 가져옴
     useEffect(() => {
@@ -32,7 +39,7 @@ const ReviewPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if(!popupId){
+        if(!popupStoreId){
             alert("팝업 정보가 없어 리뷰를 등록할 수 없습니다")
             return;
         }
@@ -40,7 +47,8 @@ const ReviewPage = () => {
         const formData = new FormData();
 
         const reviewRequest = {
-            popupId: Number(popupId), 
+            popupId: Number(popupStoreId),
+            reservationId: reservationId, 
             userId: userId,             
             nickname: nickname,      
             content: content,
@@ -60,11 +68,10 @@ const ReviewPage = () => {
 
             if (res.ok) {
                 alert("리뷰 등록 완료");
-                //성공 시 상태 초기화 및 페이지 이동
                 setContent("");
                 setRating(0);
                 setImage([]);
-                navigate(`/detail/${popupId}`)
+                navigate(`/popup/detail/${popupStoreId}`)
             } else {
                 alert("리뷰 등록 실패");
             }

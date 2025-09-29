@@ -32,10 +32,11 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 public class CustomSecurityConfig {
 
+   private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+   private final UserOauth2Service userOauth2Service;
+//   private final UserServiceImpl userServiceImpl;
 
-     private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
-     private final UserOauth2Service userOauth2Service;
-     private final UserRepository userRepository;
+   private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -88,5 +89,4 @@ public class CustomSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
