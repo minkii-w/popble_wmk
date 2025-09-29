@@ -37,9 +37,7 @@ const PopularPopupComponent = ({ item, index, type }) => {
       </div>
       {/* 팝업 이미지 */}
       <img
-        // Todo: 하드코딩용 임시 블락 데이터 입력후 주석 해제
-        // src={item.image}
-        src={img3}
+        src={item.uploadFileNames?.[0]}
         alt={item.title}
         className="absolute inset-0 w-full h-full object-cover"
       ></img>

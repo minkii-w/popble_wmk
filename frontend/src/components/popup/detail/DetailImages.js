@@ -1,14 +1,22 @@
 import { useState } from "react";
 
-
-
-const DetailImages = ({uploadFileNames, popupStore}) => {
-
+const DetailImages = ({ uploadFileNames, popupStore }) => {
   const [selectImage, setSelectImage] = useState(null); //null -> 아무것도 선택안된 상태
   //selectImage:클릭한 이미지 저장 setSelectImage:확대하기 위해 사용
-  
+
   //이미지 배열로 묶어서 map으로 순회하면서 렌더링
   const images = uploadFileNames;
+
+  // Nas => DB에 있는 URL로 가져오고 내가 등록했을 경우 기본 경로로
+  const getImageSrc = (fileName) => {
+    if (!fileName) return "";
+    // URL
+    if (fileName.startsWith("http://") || fileName.startsWith("https://")) {
+      return fileName;
+    }
+    // 기본경로
+    return `http://localhost:8080/uploads/${fileName}`;
+  };
 
   return (
     <div className="flex flex-col items-center justify-center text-neutral-500">
@@ -24,7 +32,7 @@ const DetailImages = ({uploadFileNames, popupStore}) => {
             //img:현재 순회중인 이미지 값 idx:순서대로 중가하는 숫자로 배열에서 몇번째 요소인지 알려줌
             <img
               key={idx}
-              src={`http://localhost:8080/uploads/${fileName}`}
+              src={getImageSrc(fileName)}
               height={500}
               width={500} //cursor-pointer:커서 올르면 손 모양  hover:scale:커서 올리면 살짝 확대
               className="cursor-pointer hover:scale-105 transition-transform duration-200"
@@ -44,7 +52,7 @@ const DetailImages = ({uploadFileNames, popupStore}) => {
           {" "}
           {/*클릭 시 닫힘*/}
           <img
-            src={`http://localhost:8080/uploads/${selectImage}`}
+            src={getImageSrc(selectImage)}
             className="max-h-[90%] max-w-[90%] rounded-lg shadow-lg"
           />{" "}
           {/*화면 최대 크기 제한*/}
