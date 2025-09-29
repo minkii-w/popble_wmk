@@ -124,10 +124,10 @@ public class BookmarkServiceImpl implements BookmarkService {
 	public boolean isBookmark(Long userId, Long popupId) {
 
 		UserProfile user = userProfileRepository.findById(userId)
-							.orElseThrow();
+							.orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + userId));
 
 		PopupStore popupStore = popupStoreRepository.findById(popupId)
-								.orElseThrow();
+								.orElseThrow(()-> new IllegalArgumentException("해당 popupId의 팝업이 존재하지 않습니다. popupId:" + popupId));
 
 		return bookmarkRepository.existsByUserProfileAndPopupStore(user, popupStore);
 	}

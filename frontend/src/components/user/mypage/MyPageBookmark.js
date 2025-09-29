@@ -50,10 +50,10 @@ const MyPageBookmark = () => {
       <hr className="border-subSecondColor border-2 m-4"></hr>
       {/* 예정 카드 시작 */}
       <div className="mb-8">
-        <p className="text-xl flex flex-row">
-          <FaBookmark size={30} color="#FFD6A5"></FaBookmark>
+        <button className="p-2 m-2 mb-5 rounded-3xl shadow-md border-gray-400 border-2 text-sm flex flex-row">
+          <FaBookmark size={20} color="#FFD6A5"></FaBookmark>
           예정
-        </p>
+        </button>
         <hr className="border-2 border-gray-400 m-2"></hr>
         <CustomSwiper>
           {scheduled.length > 0 ? (
@@ -73,7 +73,7 @@ const MyPageBookmark = () => {
       </div>
       {/* 진행중 */}
       <div className="mb-8">
-        <button className="px-2 py-1 m-2 rounded-2xl shadow-md border-gray-400 border-2 text-sm flex flex-row">
+        <button className="p-2 m-2 mb-5 rounded-3xl shadow-md border-gray-400 border-2 text-sm flex flex-row">
           <FaBookmark size={20} color="#FFB6B9"></FaBookmark>
           진행중
         </button>
