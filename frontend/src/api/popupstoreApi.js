@@ -17,8 +17,11 @@ export const getReservation = async (id) => {
 
 //팝업스토어 홍보 게시판 등록하기(사진첨부)
 export const postAdd = async (formData) => {
-  const res = await axios.post(`${prefix}/`, formData);
-
+  const res = await axios.post(`${prefix}/`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 

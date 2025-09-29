@@ -14,7 +14,7 @@ public class ReviewController {
     
     @Autowired
     private ReviewService reviewService;
-
+    
     @PostMapping
     public ResponseEntity<String> createReview(
         
@@ -23,6 +23,8 @@ public class ReviewController {
         // 'images' 키로 전송된 파일 리스트를 받음
         @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         
+    	System.out.println("DEBUG: Request received for popupId: " + reviewRequest.getPopupId());
+    	
         if (reviewRequest == null) {
             return ResponseEntity.badRequest().body("리뷰 데이터가 누락되었습니다.");
         }

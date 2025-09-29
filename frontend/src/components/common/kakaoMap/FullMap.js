@@ -1,76 +1,103 @@
 import React, { useEffect, useState } from "react";
-import { Map, MarkerClusterer, CustomOverlayMap, MapMarker } from "react-kakao-maps-sdk";
+import { Map, MarkerClusterer, CustomOverlayMap } from "react-kakao-maps-sdk";
 import useKakaoLoader from "../../../hooks/useKakaoLoader";
+import axios from "axios";
 
 export default function FullMap() {
+  const loaded = useKakaoLoader(process.env.REACT_APP_KAKAOMAP_KEY);
   const [positions, setPositions] = useState([]);
+  const initialCenter = { lat: 37.5665, lng: 126.9780 }; // 서울 중심
 
-  const loaded = useKakaoLoader(process.env.REACT_APP_KAKAOMAP_KEY); //로딩 상태 받기
+  useEffect(() => {
+    if (!loaded) return;
 
-    useEffect(() => {
-      if (!loaded) return; //SDK 로드 전이면 fetch도 하지 않음
+    const fetchPopups = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/api/popup/list");
+        const data = res.data.dtoList || [];
 
-    //   fetch("http://localhost:8080/api/popup/list")
-    //     .then(res => res.json())
-    //     .then(data => setPositions(data))
-    //     .catch(err => console.error(err));
-    // }, [loaded]); //loaded가 true일 때만 실행
+        const updatedData = await Promise.all(
+          data.map(async (popup) => {
+            // 좌표가 없으면 Kakao Geocoding API 사용
+            if (!popup.latitude || !popup.longitude) {
+              try {
+                const geoRes = await axios.get(
+                  "https://dapi.kakao.com/v2/local/search/address.json",
+                  {
+                    params: { query: popup.address },
+                    headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_API_KEY}` },
+                  }
+                );
+                const doc = geoRes.data.documents[0];
+                if (doc) {
+                  return {
+                    ...popup,
+                    latitude: parseFloat(doc.y),
+                    longitude: parseFloat(doc.x),
+                  };
+                }
+              } catch (err) {
+                console.error("Geocoding 실패:", popup.address, err);
+              }
+            }
+            return popup;
+          })
+        );
 
-    //더미 데이터
-      const dummyData = [
-        { id: 1, storeName: "팝업스토어 A", lat: 37.5665, lng: 126.9780 },
-        { id: 2, storeName: "팝업스토어 B", lat: 37.5651, lng: 126.9895 },
-        { id: 3, storeName: "팝업스토어 C", lat: 37.5700, lng: 126.9820 },
-        { id: 4, storeName: "팝업스토어 D", lat: 37.5675, lng: 126.9775 },
-        { id: 5, storeName: "팝업스토어 E", lat: 37.5685, lng: 126.9810 },
-      ];
+        // 좌표가 유효한 데이터만 필터링
+        const safeData = updatedData.filter(p => p.latitude && p.longitude);
 
-      setPositions(dummyData);
-    }, [loaded]);
+        // 지역별로 묶기
+        const regionMap = {};
+        safeData.forEach(p => {
+          const region = p.region || "기타";
+          if (!regionMap[region]) regionMap[region] = [];
+          regionMap[region].push(p);
+        });
 
-    if (!loaded) return <div>지도 로딩중...</div>;
+        setPositions(regionMap);
 
+      } catch (err) {
+        console.error("팝업 데이터 로딩 실패:", err);
+      }
+    };
+
+    fetchPopups();
+  }, [loaded]);
+
+  if (!loaded) return <div>지도 로딩중...</div>;
 
   return (
-      <Map // 지도를 표시할 Container
-        center={{
-          // 지도의 중심좌표(서울시청)
-          lat: 37.5665,
-          lng: 126.9780,
-        }}
-        style={{
-          // 지도의 크기
-          width: "100%",
-          height: "100%",
-        }}
-        level={10} // 지도의 확대 레벨
-      >
+    <Map
+      center={initialCenter}
+      style={{ width: "100%", height: "100%" }}
+      level={10}
+    >
+      {Object.keys(positions).map(region => (
         <MarkerClusterer
-          averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-          minLevel={10} // 클러스터 할 최소 지도 레벨
+          key={region}
+          averageCenter={true}
+          minLevel={10}
         >
-          {positions.map((pos, idx) => (
+          {positions[region].map((pos) => (
             <CustomOverlayMap
               key={pos.id}
-              position={{
-                lat: pos.lat,
-                lng: pos.lng,
-              }}
+              position={{ lat: pos.latitude, lng: pos.longitude }}
             >
               <div style={{
-                  color: "black",
-                  textAlign: "center",
-                  background: "white",
-                  width: "2rem",
-                  height: "2rem",
-                  borderRadius: "50%"
-                }}
-              >
-              {idx}
+                background: "#fff",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                textAlign: "center",
+                border: "1px solid #ccc",
+                fontSize: "12px"
+              }}>
+                {pos.storeName} ({region})
               </div>
             </CustomOverlayMap>
           ))}
         </MarkerClusterer>
-      </Map>
+      ))}
+    </Map>
   );
 }

@@ -27,6 +27,9 @@ public class ReviewService {
 
     public void saveReview(ReviewRequest reviewRequest, List<MultipartFile> imageFiles) throws Exception {
         
+    	 System.out.println("DEBUG: DTO Popup ID: " + reviewRequest.getPopupId()); 
+    	 System.out.println("DEBUG: DTO Popup ID Class: " + reviewRequest.getPopupId().getClass().getName()); 
+    	
         // Popup ID로 PopupStore 엔티티 조회
         PopupStore popupStore = popupStoreRepository.findById(reviewRequest.getPopupId())
             .orElseThrow(() -> new IllegalArgumentException("팝업스토어를 찾을 수 없습니다."));

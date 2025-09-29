@@ -117,7 +117,7 @@ public class PopupStore {
 	
 	//북마크수
 	@Column(name = "bookmark_count")
-	private int bookmarkCount = 0;
+	private Integer bookmarkCount = 0;
 	
 	//UserProfile과 연결해야할지 말지 고민...
 	//나중에 기업이 본인이 작성한거 확인 또는 삭제할수 있도록
