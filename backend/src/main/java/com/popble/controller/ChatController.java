@@ -22,6 +22,7 @@ import com.popble.repository.UserRepository;
 @Controller
 @CrossOrigin
 public class ChatController {
+
 	
 	private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
@@ -55,7 +56,7 @@ public class ChatController {
         message.setSentTime(LocalDateTime.now());
 
         chatMessageRepository.save(message);
-
+      
         // 응답 DTO 변환
         ChatMessageDTO response = new ChatMessageDTO();
         response.setRoomId(roomId);

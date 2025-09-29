@@ -1,7 +1,7 @@
-
 package com.popble.service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +31,9 @@ public class UserServiceImpl implements UserService {
 	private final ReservationRepository reservationRepository;
 	private final BookmarkRepository bookmarkRepository;
 
-	@Transactional
+
+    @Override
+    @Transactional
 	public UserDTO create(UserDTO userDTO) {
 
 		log.info("------백앤드 객채 생성----------------------------");
@@ -41,50 +43,18 @@ public class UserServiceImpl implements UserService {
 
 				.build();
 
-		// User저장
 		Users savedUser = userRepository.save(users);
-		// UserProfile 생성
+		
+		//UserProfile 닉네임은 랜덤으로
 		UserProfile userProfile = new UserProfile();
-		// 연관관계설정
-		userProfile.setNickname(userDTO.getName());
+		userProfile.setNickname("user_"+ UUID.randomUUID().toString().substring(0,6));
 		userProfile.setUsers(savedUser);
-
-		UserProfile savedProfile = userProfileRepository.save(userProfile);
-		// 저장
-		savedUser.setUserProfile(savedProfile);
+		savedUser.setUserProfile(userProfile);
 		userRepository.save(savedUser);
+		
 
 		return userDTO;
 
-	}
-
-	// 모든 유저목록 불러오기
-	public List<UserDTO> getAllUsers() {
-		return userRepository.findAll().stream().map(user -> entityToDTO(user)).collect(Collectors.toList());
-	}
-
-	// id로 유저 조회
-	public UserDTO getUserById(Long id) {
-		Users user = userRepository.findById(id).orElseThrow();
-		return entityToDTO(user);
-	}
-
-	// 회원 정보 수정
-	public UserDTO updateUser(Long id, UserDTO userDTO) {
-		Users user = userRepository.findById(id).orElseThrow();
-
-		user.setName(userDTO.getName());
-		user.setEmail(userDTO.getEmail());
-		user.setPhonenumber(userDTO.getPhonenumber());
-		user.setSocial(userDTO.isSocial());
-
-		if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
-			user.setPassword(encoder.encode(userDTO.getPassword()));
-		}
-
-		Users updateUser = userRepository.save(user);
-
-		return entityToDTO(updateUser);
 	}
 
 	// 회원 삭제
@@ -92,7 +62,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void deleteUser(Long id) {
 
-		Users user = userRepository.findById(id).orElseThrow();
+		Users user = userRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
 		UserProfile profile = user.getUserProfile();
 		if (user.getUserProfile() != null) {
 			bookmarkRepository.deleteByUserProfile(profile);
@@ -104,16 +74,68 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	public UserDTO entityToDTO(Users user) {
-		UserDTO dto = new UserDTO();
-		dto.setId(user.getId());
-		dto.setLoginId(user.getLoginId());
-		dto.setPassword(user.getPassword());
-		dto.setName(user.getName());
-		dto.setEmail(user.getEmail());
-		dto.setPhonenumber(user.getPhonenumber());
-		dto.setSocial(user.isSocial());
-		dto.setRoleNames(List.of(user.getRole().name()));
-		return dto;
-	}
+
+    // 모든 유저목록 불러오기
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::entityToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // id로 유저 조회
+    public UserDTO getUserById(Long id) {
+        Users user = userRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
+        return entityToDTO(user);
+    }
+
+    // 유저 정보 수정
+    public UserDTO updateUser(Long id, UserDTO userDTO) {
+        Users user = userRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("해당 userId의 유저가 존재하지 않습니다. userId:" + id));
+
+        user.setName(userDTO.getName());
+        user.setEmail(userDTO.getEmail());
+        user.setPhonenumber(userDTO.getPhonenumber());
+        user.setSocial(userDTO.isSocial());
+
+        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+            user.setPassword(encoder.encode(userDTO.getPassword()));
+        }
+
+        Users updateUser = userRepository.save(user);
+        return entityToDTO(updateUser);
+    }
+
+
+    // 엔티티 -> DTO 변환
+    private UserDTO entityToDTO(Users user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setLoginId(user.getLoginId());
+        dto.setPassword(user.getPassword());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setPhonenumber(formatPhoneNumber(user.getPhonenumber()));
+        dto.setSocial(user.isSocial());
+        dto.setRoleNames(List.of(user.getRole().name()));
+        return dto;
+    }
+
+    // 핸드폰번호 자동 포맷팅
+    private String formatPhoneNumber(String number) {
+        if (number == null) return null;
+        number = number.replaceAll("\\D", "");
+        if (number.length() == 11) {
+            return number.substring(0, 3) + "-"
+                    + number.substring(3, 7) + "-"
+                    + number.substring(7);
+        } else if (number.length() == 10) {
+            return number.substring(0, 3) + "-"
+                    + number.substring(3, 6) + "-"
+                    + number.substring(6);
+        }
+        return number;
+    }
+
 }

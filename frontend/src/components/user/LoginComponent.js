@@ -57,10 +57,14 @@ const LoginComponent = () => {
         dispatch(
           loginSuccess({
             accessToken: data.accessToken,
+            receivedToken: data.receivedToken,
             refreshToken: data.refreshToken,
-            user: data.user,
+            user: data,
           })
         );
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
+        localStorage.setItem("user", JSON.stringify(data));
         // localStorage.setItem("token", data.token);
         alert("로그인 성공");
         moveToPath("/");
@@ -70,11 +74,10 @@ const LoginComponent = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center ">
-      <div className="w-[430px] h-[170px] absolute top-[240px] bg-primaryColor flex justify-center items-center ">
-        <PopbleImage src={PopbleImg} />
-      </div>
-
       <form className="w-full max-w-[480px] bg-white p-6 rounded shadow space-y-4">
+        <div className="w-[430px] h-[170px] absolute top-[240px] bg-primaryColor flex justify-center items-center ">
+          <PopbleImage src={PopbleImg} />
+        </div>
         {/* 닉네임 */}
 
         {/* 아이디 */}

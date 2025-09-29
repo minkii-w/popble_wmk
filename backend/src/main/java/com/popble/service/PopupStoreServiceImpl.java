@@ -1,7 +1,5 @@
-
 package com.popble.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,16 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.popble.domain.Image;
+import com.popble.domain.BoardImage;
 import com.popble.domain.PopupStore;
 import com.popble.domain.PopupStore.Status;
-import com.popble.domain.ReservationTime;
 import com.popble.domain.SortType;
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
 import com.popble.dto.PopupFilterDTO;
 import com.popble.dto.PopupStoreDTO;
-import com.popble.dto.ReservationTimeDTO;
 import com.popble.repository.PopupStoreRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,305 +31,228 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
-
 public class PopupStoreServiceImpl implements PopupStoreService {
-	
-	private final PopupStoreRepository popupStoreRepository;
-	private final ModelMapper modelMapper;
 
-	//팝업스토어 리스트
-	public PageResponseDTO<PopupStoreDTO> getFilteredList(@ModelAttribute PopupFilterDTO popupFilterDTO) {
-		
-		// specification 추가(조건에 따라 동적 쿼리 생성)
-		Specification<PopupStore> specification = Specification.where(null);
-		
-		// 진행상테 필터링 조건 추가
-		if(popupFilterDTO.getStatus() != null && popupFilterDTO.getStatus() != Status.ALL) {
-			specification = specification.and((root, query, cb) ->cb.equal(root.get("status"), popupFilterDTO.getStatus()));
-		}
-		//카테고리
-		if(popupFilterDTO.getCategoryType() != null) {
-			specification = specification.and((root,query,cb) -> cb.equal(root.join("categories").get("category").get("type"), popupFilterDTO.getCategoryType()));
-		}
-		if(popupFilterDTO.getCategoryId() != null) {
-			specification = specification.and((root,query,cb) -> cb.equal(root.join("categories").get("category").get("id"), popupFilterDTO.getCategoryId()));
-		}
-		
-		//정렬
-		Sort sort = Sort.by(Sort.Direction.DESC, "id");
-		if(popupFilterDTO.getSort() != null) {
-			if(popupFilterDTO.getSort().equals(SortType.BOOKMARK)) {
-				sort = Sort.by(Sort.Direction.DESC, "bookmarkCount");
-			}else if(popupFilterDTO.getSort().equals(SortType.RECOMMEND)) {
-				sort = Sort.by(Sort.Direction.DESC, "recommend");
-			}else if(popupFilterDTO.getSort().equals(SortType.VIEW)) {
-				sort = Sort.by(Sort.Direction.DESC, "view");
-			}else if(popupFilterDTO.getSort().equals(SortType.END_SOON)) {
-				sort = Sort.by(Sort.Direction.ASC, "endDate");
-			}
-		}
-		
-		//검색 추가
-		if(popupFilterDTO.getKeyword() != null && !popupFilterDTO.getKeyword().isEmpty()) {
-			String keyword = "%" + popupFilterDTO.getKeyword().toLowerCase() + "%";
-			specification = specification.and((root,query,cb) -> cb.or(cb.like(cb.lower(root.get("storeName")),keyword),
-																(cb.like(cb.lower(root.get("address")), keyword)),
-																(cb.like(cb.lower(root.get("desc")), keyword))
-						));
-		}
-		
-		//Pageable 객체 생성(페이징 + 정렬)
-		Pageable pageable = PageRequest.of(popupFilterDTO.getPageRequestDTO().getPage() -1,popupFilterDTO.getPageRequestDTO().getSize(), sort);
-		
-		// Repository 호출
-		Page<PopupStore> result = popupStoreRepository.findAll(specification, pageable);
-		
-		
-		// 결과를 DTO로 변환
-		List<PopupStoreDTO> dtoList = result.getContent().stream()
-				.map(popupStore ->{
-					PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
-					List<String> fileNames = popupStore.getImageList().stream()
-											.map(image->image.getFileName())
-											.collect(Collectors.toList());
-					dto.setUploadFileNames(fileNames);
-					return dto;
-				})
-				.collect(Collectors.toList());
-		
-		long totalCount = result.getTotalElements();
-		
-		
-		// PageResponseDTO 생성 및 변환
-		PageResponseDTO<PopupStoreDTO> responseDTO = PageResponseDTO.<PopupStoreDTO>withAll()
-				.dtoList(dtoList)
-				.pageRequestDTO(popupFilterDTO.getPageRequestDTO())
-				.totalCount(totalCount)
-				.build();
-		return responseDTO;
-	}
+    private final PopupStoreRepository popupStoreRepository;
+    private final ModelMapper modelMapper;
 
-	
-	public void remove(Long id) {
-		popupStoreRepository.updateToDelete(id, true);
-	}
-	
-	public void modify(PopupStoreDTO popupStoreDTO) {
-		Optional<PopupStore> result = popupStoreRepository.findById(popupStoreDTO.getId());
-		
-		PopupStore popupStore = result.orElseThrow();
-		
-		popupStore.getReservationTimes().clear();
-		
-		popupStoreDTO.getReservationTimes().forEach(dto -> {
-			ReservationTime entity = ReservationTime.builder()
-					.popupStore(popupStore)
-					.startTime(dto.getStartTime())
-					.endTime(dto.getEndTime())
-					.build();
-			popupStore.getReservationTimes().add(entity);
-		});
-		popupStore.setStoreName(popupStoreDTO.getStoreName());
-		popupStore.setAddress(popupStoreDTO.getAddress());
-		popupStore.setStartDate(popupStoreDTO.getStartDate());
-		popupStore.setEndDate(popupStoreDTO.getEndDate());
-		popupStore.setMaxCount(popupStoreDTO.getMaxCount());
-		popupStore.setDesc(popupStoreDTO.getDesc());
-		popupStore.setPrice(popupStoreDTO.getPrice());
-		
-		//이미지처리
-		popupStore.clearList();
-		
-		List<String> uploadFileNames = popupStoreDTO.getUploadFileNames();
-		
-		if(uploadFileNames != null && uploadFileNames.size() > 0) {
-			uploadFileNames.stream().forEach(uploadName -> {
-				popupStore.addImageString(uploadName);
-			});
-		}
-		
-		popupStoreRepository.save(popupStore);
-	}
-	
+    // 🔹 필터 조회
+    @Override
+    public PageResponseDTO<PopupStoreDTO> getFilteredList(@ModelAttribute PopupFilterDTO popupFilterDTO) {
+        Specification<PopupStore> specification = Specification.where(null);
 
-	
-	public PopupStoreDTO get(Long id) {
-		Optional<PopupStore> result = popupStoreRepository.findById(id);
-		
-		PopupStore popupStore = result.orElseThrow();
-		
-		PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
-		
-		return dto;
-	}
-	
-	private PopupStoreDTO entityToDTO(PopupStore popupStore) {
-		
-//		List<ReservationTimeDTO> reservationTimeDTO = popupStore.getReservationTimes()
-//				.stream()
-//				.map(rt -> ReservationTimeDTO.builder()
-//						.startTime(rt.getStartTime())
-//						.endTime(rt.getEndTime())
-//						.build())
-//				.collect(Collectors.toList());
-//		
-//		PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
-//				.id(popupStore.getId())
-//				.storeName(popupStore.getStoreName())
-//				.address(popupStore.getAddress())
-//				.startDate(popupStore.getStartDate())
-//				.endDate(popupStore.getEndDate())
-//				.reservationTimes(reservationTimeDTO)
-//				.maxCount(popupStore.getMaxCount())
-//				.desc(popupStore.getDesc())
-//				.price(popupStore.getPrice())
-//				.build();
-//		
-//		List<Image> imageList = popupStore.getImageList();
-//		
-//		if(imageList == null || imageList.size() == 0) {
-//			return popupStoreDTO;
-//		}
-//		
-//		List<String> fileNameList = imageList.stream().map(image -> image.getFileName()).toList();
-//		
-//		popupStoreDTO.setUploadFileNames(fileNameList);
-//		
-//		return popupStoreDTO;
-		List<ReservationTimeDTO> reservationTimeDTO = popupStore.getReservationTimes()
-		        .stream()
-		        .map(rt -> ReservationTimeDTO.builder()
-		        .amPm(rt.getAmPm())
-		        .startTime(rt.getStartTime())
-		        .endTime(rt.getEndTime())
-		        .build())
-		        .collect(Collectors.toList());
+        if (popupFilterDTO.getStatus() != null && popupFilterDTO.getStatus() != Status.ALL) {
+            specification = specification.and((root, query, cb) ->
+                    cb.equal(root.get("status"), popupFilterDTO.getStatus()));
+        }
+        if (popupFilterDTO.getCategoryType() != null) {
+            specification = specification.and((root, query, cb) ->
+                    cb.equal(root.join("categories").get("category").get("type"), popupFilterDTO.getCategoryType()));
+        }
+        if (popupFilterDTO.getCategoryId() != null) {
+            specification = specification.and((root, query, cb) ->
+                    cb.equal(root.join("categories").get("category").get("id"), popupFilterDTO.getCategoryId()));
+        }
 
-PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
-    .id(popupStore.getId())
-    .storeName(popupStore.getStoreName())
-    .address(popupStore.getAddress())
-    .startDate(popupStore.getStartDate())
-    .endDate(popupStore.getEndDate())
-    .reservationTimes(reservationTimeDTO)
-    .maxCount(popupStore.getMaxCount())
-    .desc(popupStore.getDesc())
-    .price(popupStore.getPrice())
-    .build();
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        if (popupFilterDTO.getSort() != null) {
+            if (popupFilterDTO.getSort().equals(SortType.BOOKMARK)) {
+                sort = Sort.by(Sort.Direction.DESC, "bookmarkCount");
+            } else if (popupFilterDTO.getSort().equals(SortType.RECOMMEND)) {
+                sort = Sort.by(Sort.Direction.DESC, "recommend");
+            } else if (popupFilterDTO.getSort().equals(SortType.VIEW)) {
+                sort = Sort.by(Sort.Direction.DESC, "view");
+            } else if (popupFilterDTO.getSort().equals(SortType.END_SOON)) {
+                sort = Sort.by(Sort.Direction.ASC, "endDate");
+            }
+        }
 
-List<Image> imageList = popupStore.getImageList();
-if (imageList != null && !imageList.isEmpty()) {
-List<String> fileNameList = imageList.stream()
-        .map(Image::getFileName)
-        .toList();
-popupStoreDTO.setUploadFileNames(fileNameList);
-}
+        if (popupFilterDTO.getKeyword() != null && !popupFilterDTO.getKeyword().isEmpty()) {
+            String keyword = "%" + popupFilterDTO.getKeyword().toLowerCase() + "%";
+            specification = specification.and((root, query, cb) ->
+                    cb.or(
+                            cb.like(cb.lower(root.get("storeName")), keyword),
+                            cb.like(cb.lower(root.get("address")), keyword),
+                            cb.like(cb.lower(root.get("desc")), keyword)
+                    ));
+        }
 
-return popupStoreDTO;
-	}
-	
-	public Long register(PopupStoreDTO popupStoreDTO) {
-		
-		PopupStore popupStore = dtoEntity(popupStoreDTO);
-		
-		PopupStore result = popupStoreRepository.save(popupStore);
-		
-		return result.getId();
-	}
-	
-	private PopupStore dtoEntity(PopupStoreDTO popupStoreDTO) {
-		
-		PopupStore popupStore = PopupStore.builder()
-				.id(popupStoreDTO.getId())
-				.storeName(popupStoreDTO.getStoreName())
-				.address(popupStoreDTO.getAddress())
-				.startDate(popupStoreDTO.getStartDate())
-				.endDate(popupStoreDTO.getEndDate())
-				.maxCount(popupStoreDTO.getMaxCount())
-				.desc(popupStoreDTO.getDesc())
-				.price(popupStoreDTO.getPrice())
-				.build();
-		
-		if(popupStore.getReservationTimes() == null) {
-			popupStore.setReservationTimes(new ArrayList<>());
-		}
-		
-		if(popupStoreDTO.getReservationTimes() != null) {
-			popupStoreDTO.getReservationTimes().forEach(dto -> {
-				ReservationTime entity = ReservationTime.builder()
-						.popupStore(popupStore)
-						.startTime(dto.getStartTime())
-						.endTime(dto.getEndTime())
-						.build();
-				popupStore.getReservationTimes().add(entity);
-			});
-		}
-		
-		//이미지파일추가
-		List<String> uploadFileNames = popupStoreDTO.getUploadFileNames();
-		
-		if(uploadFileNames == null) {
-			return popupStore;
-		}
-		
-		uploadFileNames.stream().forEach( uploadName -> {
-			popupStore.addImageString(uploadName);
-		});
-		
-		return popupStore;
-				
-	}
-	
-	public PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO){
-		log.info("getList---------------");
-		
-		Pageable pageable = PageRequest.of(
-				pageRequestDTO.getPage() -1,
-				pageRequestDTO.getSize(),
-				Sort.by("id").descending());
-		
-		Page<Object[]> result = popupStoreRepository.selectList(pageable);
-		
-		List<PopupStoreDTO> dtoList = result.get().map( arr -> {
-			
-			PopupStore popupStore = (PopupStore) arr [0];
-			Image image = (Image) arr [1];
-			
-			List<ReservationTimeDTO> reservationTimeDTO = popupStore.getReservationTimes()
-					.stream()
-					.map(rt -> ReservationTimeDTO.builder()
-							.startTime(rt.getStartTime())
-							.endTime(rt.getEndTime())
-							.build())
+        Pageable pageable = PageRequest.of(
+                popupFilterDTO.getPageRequestDTO().getPage() - 1,
+                popupFilterDTO.getPageRequestDTO().getSize(),
+                sort);
+
+        Page<PopupStore> result = popupStoreRepository.findAll(specification, pageable);
+
+//        List<PopupStoreDTO> dtoList = result.getContent().stream()
+//                .map(popupStore -> {
+//                    PopupStoreDTO dto = entityToDTO(popupStore);
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
+        
+    	List<PopupStoreDTO> dtoList = result.getContent().stream().map(popupStore -> {
+			PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
+			List<String> fileNames = popupStore.getImageList().stream().map(BoardImage::getUrl)
 					.collect(Collectors.toList());
-			
-			PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
-					.id(popupStore.getId())
-					.storeName(popupStore.getStoreName())
-					.address(popupStore.getAddress())
-					.startDate(popupStore.getStartDate())
-					.endDate(popupStore.getEndDate())
-					.reservationTimes(reservationTimeDTO)
-					.maxCount(popupStore.getMaxCount())
-					.desc(popupStore.getDesc())
-					.price(popupStore.getPrice())
-					.build();
-			
-			String imageStr = image.getFileName();
-			popupStoreDTO.setUploadFileNames(List.of(imageStr));
-			
-			return popupStoreDTO;
+			dto.setUploadFileNames(fileNames);
+			return dto;
 		}).collect(Collectors.toList());
-		
-		long totalCount = result.getTotalElements();
-		
-		return PageResponseDTO.<PopupStoreDTO>withAll()
-				.dtoList(dtoList)
 
-				.totalCount(totalCount)
-				.pageRequestDTO(pageRequestDTO)
-				.build();
-	}
-	
+        long totalCount = result.getTotalElements();
 
+        return PageResponseDTO.<PopupStoreDTO>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(popupFilterDTO.getPageRequestDTO())
+                .totalCount(totalCount)
+                .build();
+    }
+
+    // 🔹 수정
+    @Override
+    public void modify(PopupStoreDTO popupStoreDTO) {
+        Optional<PopupStore> result = popupStoreRepository.findById(popupStoreDTO.getId());
+        PopupStore popupStore = result.orElseThrow();
+
+        popupStore.setStoreName(popupStoreDTO.getStoreName());
+        popupStore.setAddress(popupStoreDTO.getAddress());
+        popupStore.setStartDate(popupStoreDTO.getStartDate());
+        popupStore.setEndDate(popupStoreDTO.getEndDate());
+ 
+        popupStore.setDesc(popupStoreDTO.getDesc());
+        popupStore.setPrice(popupStoreDTO.getPrice());
+        popupStore.setParking(popupStoreDTO.isParking()); // ✅ parking 반영
+        popupStore.setDeleted(popupStoreDTO.isDeleted());
+
+        // 기존 이미지 비우고 새로 추가
+        popupStore.clearImages();
+        List<String> uploadFileUrls = popupStoreDTO.getUploadFileNames();
+        if (uploadFileUrls != null && !uploadFileUrls.isEmpty()) {
+            uploadFileUrls.forEach(url -> {
+                popupStore.addImage(BoardImage.builder()
+                        .originalName(url)
+                        .storedName(url)
+                        .folder("popup")
+                        .url(url)
+                        .sortOrder(popupStore.getImageList().size())
+                        .build());
+            });
+        }
+
+        popupStoreRepository.save(popupStore);
+    }
+
+    // 🔹 단건 조회 (조회수 증가 포함)
+    @Override
+    @Transactional
+    public PopupStoreDTO get(Long id) {
+        Optional<PopupStore> result = popupStoreRepository.findById(id);
+        PopupStore popupStore = result.orElseThrow();
+
+        // 조회수 증가
+        popupStore.setView(popupStore.getView() == null ? 1 : popupStore.getView() + 1);
+        popupStoreRepository.save(popupStore);
+
+        return entityToDTO(popupStore);
+    }
+
+    // 엔티티 → DTO
+    private PopupStoreDTO entityToDTO(PopupStore popupStore) {
+        PopupStoreDTO popupStoreDTO = PopupStoreDTO.builder()
+                .id(popupStore.getId())
+                .storeName(popupStore.getStoreName())
+                .address(popupStore.getAddress())
+                .startDate(popupStore.getStartDate())
+                .endDate(popupStore.getEndDate())
+                .desc(popupStore.getDesc())
+                .price(popupStore.getPrice())
+                .parking(popupStore.isParking())   // ✅ boolean getter 사용
+                .deleted(popupStore.isDeleted())
+                .build();
+
+        List<BoardImage> imageList = popupStore.getImageList();
+        if (imageList != null && !imageList.isEmpty()) {
+            List<String> urlList = imageList.stream()
+                    .map(BoardImage::getUrl)
+                    .toList();
+            popupStoreDTO.setUploadFileNames(urlList);
+        }
+
+        return popupStoreDTO;
+    }
+
+    // DTO → 엔티티
+    private PopupStore dtoEntity(PopupStoreDTO popupStoreDTO) {
+        PopupStore popupStore = PopupStore.builder()
+                .id(popupStoreDTO.getId())
+                .storeName(popupStoreDTO.getStoreName())
+                .address(popupStoreDTO.getAddress())
+                .startDate(popupStoreDTO.getStartDate())
+                .endDate(popupStoreDTO.getEndDate())
+                .desc(popupStoreDTO.getDesc())
+                .price(popupStoreDTO.getPrice())
+                .parking(popupStoreDTO.isParking())   // ✅ boolean getter 사용
+                .deleted(popupStoreDTO.isDeleted())
+                .build();
+
+        List<String> uploadFileUrls = popupStoreDTO.getUploadFileNames();
+        if (uploadFileUrls != null) {
+            uploadFileUrls.forEach(url -> {
+                popupStore.addImage(BoardImage.builder()
+                        .originalName(url)
+                        .storedName(url)
+                        .folder("popup")
+                        .url(url)
+                        .sortOrder(popupStore.getImageList().size())
+                        .build());
+            });
+        }
+        return popupStore;
+    }
+
+    // 🔹 등록
+    @Override
+    public Long register(PopupStoreDTO popupStoreDTO) {
+        PopupStore popupStore = dtoEntity(popupStoreDTO);
+        PopupStore result = popupStoreRepository.save(popupStore);
+        return result.getId();
+    }
+
+    // 🔹 삭제 (Soft Delete)
+    @Override
+    public void remove(Long id) {
+        popupStoreRepository.updateToDelete(id, true);
+    }
+
+    // 🔹 목록 조회
+    @Override
+    public PageResponseDTO<PopupStoreDTO> getList(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+                pageRequestDTO.getPage() - 1,
+                pageRequestDTO.getSize(),
+                Sort.by("id").descending());
+
+        Page<Object[]> result = popupStoreRepository.selectList(pageable);
+
+        List<PopupStoreDTO> dtoList = result.get().map(arr -> {
+            PopupStore popupStore = (PopupStore) arr[0];
+            BoardImage image = (BoardImage) arr[1];
+
+            PopupStoreDTO popupStoreDTO = entityToDTO(popupStore);
+
+            if (image != null) {
+                popupStoreDTO.setUploadFileNames(List.of(image.getUrl())); // 대표 이미지 1개
+            }
+
+            return popupStoreDTO;
+        }).collect(Collectors.toList());
+
+        long totalCount = result.getTotalElements();
+
+        return PageResponseDTO.<PopupStoreDTO>withAll()
+                .dtoList(dtoList)
+                .totalCount(totalCount)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
+    }
 }

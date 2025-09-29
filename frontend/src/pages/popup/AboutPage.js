@@ -1,33 +1,78 @@
 import BasicMenu from "../../components/BasicMenu";
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import BasicInfo from "../../components/popup/detail/BasicInfo";
 import DetailImages from "../../components/popup/detail/DetailImages";
 import MapInfo from "../../components/popup/detail/MapInfo";
 import ReserveInfo from "../../components/popup/detail/ReserveInfo";
 import ReviewInfo from "../../components/popup/detail/ReviewInfo";
-
-import Sanrio from "../../assets/img/Sanrio MediaArt_1.jpeg";
+import { getOne } from "../../api/popupstoreApi";
+import { getAllTimes } from "../../api/reservationApi";
 
 import { PiHeartBold } from "react-icons/pi";
-import { FaRegBookmark } from "react-icons/fa6";
+import { FaRegBookmark, FaHeart } from "react-icons/fa6";
 import { IoShareSocialOutline } from "react-icons/io5";
+import PopupRecommendComponent from "../../components/popup/recommend/PopupRecommendComponent";
+import PopupBookmarkComponent from "../../components/popup/bookmark/PopupBookmarkComponent";
 
 const AboutPage = () => {
-  const [activeTab, setActiveTab] = useState("basic"); // 기본 탭: 기본정보
+  const [activeTab, setActiveTab] = useState("basic");
+  const [popupStore, setPopupStore] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+
+  const popupStoreId = id;
+
+  useEffect(() => {
+    const fetchStoreData = async () => {
+      try {
+        const data = await getOne(popupStoreId);
+
+        const timeSlotsData = await getAllTimes(popupStoreId);
+
+        setPopupStore({
+          ...data,
+          timeSlots: timeSlotsData || [],
+        });
+      } catch (error) {
+        console.error("데이터 불러오기 실패", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStoreData();
+  }, [popupStoreId]);
+
+  if (loading) {
+    return <div>로딩중</div>;
+  }
+
+  if (!popupStore) {
+    return <div>데이터가 없습니다</div>;
+  }
 
   return (
     <div>
       {/* 이미지 삽입 및 여백 지정 */}
       <div className="flex justify-center mt-10">
-        <img src={Sanrio} height="400px" width="400px"></img>
-        {/* <Link to={'/about'}></Link> */}
+        {/* 수정된 코드 */}
+        {popupStore &&
+          popupStore.uploadFileNames &&
+          popupStore.uploadFileNames.length > 0 && (
+            <img
+              src={`http://localhost:8080/uploads/${popupStore.uploadFileNames[0]}`}
+              height="600px"
+              width="600px"
+              alt="팝업 스토어 이미지"
+            />
+          )}
       </div>
 
       {/* 아이콘 버튼 */}
       <div className="flex justify-end items-center mt-5 mr-8 gap-3">
-        <PiHeartBold className="heart" size={24} />
-        <FaRegBookmark className="bookmark" size={20} />
+        <PopupRecommendComponent popupId={popupStoreId} />
+        <PopupBookmarkComponent popupId={popupStoreId} />
         <IoShareSocialOutline className="share" size={23} />
       </div>
 
@@ -87,11 +132,13 @@ const AboutPage = () => {
 
       {/* 내용 영역 */}
       <div className="p-6">
-        {activeTab === "basic" && <BasicInfo />}
-        {activeTab === "image" && <DetailImages />}
-        {activeTab === "map" && <MapInfo />}
-        {activeTab === "reserve" && <ReserveInfo />}
-        {activeTab === "review" && <ReviewInfo />}
+        {activeTab === "basic" && <BasicInfo popupStore={popupStore} />}
+        {activeTab === "image" && (
+          <DetailImages uploadFileNames={popupStore.uploadFileNames} />
+        )}
+        {activeTab === "map" && <MapInfo popupStore={popupStore} />}
+        {activeTab === "reserve" && <ReserveInfo popupStore={popupStore} />}
+        {activeTab === "review" && <ReviewInfo popupStore={popupStore} />}
       </div>
     </div>
   );

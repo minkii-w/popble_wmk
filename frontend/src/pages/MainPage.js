@@ -14,6 +14,9 @@ import { SwiperSlide } from "swiper/react";
 import CustomSwiper from "../components/common/CustomSwiper";
 import PopularPopupComponent from "../components/popup/popular/PopularPopupComponent";
 
+import { FaHeart } from "react-icons/fa";
+import { PiEyesFill } from "react-icons/pi";
+
 const MainPage = () => {
   const navigate = useNavigate();
   //검색어
@@ -95,39 +98,53 @@ const MainPage = () => {
           </div>
         </div>
 
-      {/* 인기순?? 추천순?? */}
-      <div className="justify-stretch w-11/12 mx-auto mb-16">
-        <div className="flex justify-between items-center mb-4 px-2">
-          <h2 className="text-2xl font-bold">9월 인기 팝업</h2>
+        {/* 인기순?? 추천순?? */}
+        <div className="justify-stretch w-11/12 mx-auto my-16">
+          <div className="flex justify-between items-center mb-4 px-2">
+            <h2 className="text-2xl font-bold flex flex-row items-center mx-4">
+              9월 인기 팝업
+              <FaHeart className="ml-4" size={30} color="FFB6B9" />
+            </h2>
+          </div>
+          {/* 밑줄 */}
+          <hr className="border-2 border-subSecondColor m-2"></hr>
+          {/* 팝업리스트 */}
+          <CustomSwiper>
+            {popularPopups.map((item, index) => (
+              <SwiperSlide style={{ width: "200px" }} key={item.id}>
+                <PopuplarPopupComponent
+                  item={item}
+                  index={index}
+                  type={"recommend"}
+                />
+              </SwiperSlide>
+            ))}
+          </CustomSwiper>
         </div>
-        {/* 밑줄 */}
-        <hr className="border-2 border-subSecondColor m-2"></hr>
-        {/* 팝업리스트 */}
-        <CustomSwiper>
-          {popularPopups.map((item, index) => (
-            <SwiperSlide style={{ width: "200px" }} key={item.id}>
-              <PopuplarPopupComponent item={item} index={index} />
-            </SwiperSlide>
-          ))}
-        </CustomSwiper>
-      </div>
 
-      {/* 조회순 */}
-      <div className="justify-stretch w-11/12 mx-auto mb-16">
-        <div className="flex justify-between items-center mb-4 px-2">
-          <h2 className="text-2xl font-bold">조회수 많은 팝업</h2>
+        {/* 조회순 */}
+        <div className="justify-stretch w-11/12 mx-auto mb-16">
+          <div className="flex justify-between items-center mb-4 px-2">
+            <h2 className="text-2xl font-bold flex flex-row items-center mx-4">
+              조회수 많은 팝업
+              <PiEyesFill className="ml-4" size={30} />
+            </h2>
+          </div>
+          {/*  */}
+          <hr className="border-2 border-subSecondColor m-2"></hr>
+          {/* 팝업리스트 */}
+          <CustomSwiper>
+            {viewedPopups.map((item, index) => (
+              <SwiperSlide style={{ width: "200px" }} key={item.id}>
+                <PopularPopupComponent
+                  item={item}
+                  index={index}
+                  type={"view"}
+                />
+              </SwiperSlide>
+            ))}
+          </CustomSwiper>
         </div>
-        {/*  */}
-        <hr className="border-2 border-subSecondColor m-2"></hr>
-        {/* 팝업리스트 */}
-        <CustomSwiper>
-          {viewedPopups.map((item, index) => (
-            <SwiperSlide style={{ width: "200px" }} key={item.id}>
-              <PopularPopupComponent item={item} index={index} />
-            </SwiperSlide>
-          ))}
-        </CustomSwiper>
-      </div>
       </div>
     </BasicLayout>
   );

@@ -8,7 +8,7 @@ const ModifyPage = ( ) =>{
     return(
         <div className="p-4 w-full bg-white">
         <div className="text-3xl font-extrabold">
-             Modify Page        
+             작성 글 수정     
             </div>
             <ModifyComponent id ={id}></ModifyComponent>
         </div>
