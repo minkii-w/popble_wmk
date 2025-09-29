@@ -1,5 +1,6 @@
 package com.popble.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.popble.domain.BoardImage;
+import com.popble.domain.Image;
 import com.popble.domain.PopupStore;
 import com.popble.domain.PopupStore.Status;
 import com.popble.domain.SortType;
@@ -91,14 +93,48 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 //                })
 //                .collect(Collectors.toList());
         
-    	List<PopupStoreDTO> dtoList = result.getContent().stream().map(popupStore -> {
-			PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
-			List<String> fileNames = popupStore.getImageList().stream().map(BoardImage::getUrl)
-					.collect(Collectors.toList());
-			dto.setUploadFileNames(fileNames);
-			return dto;
-		}).collect(Collectors.toList());
+//    	List<PopupStoreDTO> dtoList = result.getContent().stream().map(popupStore -> {
+//			PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
+//			List<String> fileNames = popupStore.getImageList().stream().map(BoardImage::getUrl)
+//					.collect(Collectors.toList());
+//			dto.setUploadFileNames(fileNames);
+//			return dto;
+//		}).collect(Collectors.toList());
 
+        List<PopupStoreDTO> dtoList = result.getContent().stream().map(popupStore -> {
+            PopupStoreDTO dto = PopupStoreDTO.builder()
+                .id(popupStore.getId())
+                .storeName(popupStore.getStoreName())
+                .address(popupStore.getAddress())
+                .startDate(popupStore.getStartDate())
+                .endDate(popupStore.getEndDate())
+                .desc(popupStore.getDesc())
+                .price(popupStore.getPrice())
+                .parking(popupStore.isParking())
+                .deleted(popupStore.isDeleted())
+                .bookmarkCount(popupStore.getBookmarkCount())
+                .recommend(popupStore.getRecommend())
+                .view(popupStore.getView())
+                .status(popupStore.getStatus())
+                .build();
+
+            List<String> nasUrls = popupStore.getImages().stream()
+                .sorted(Comparator.comparingInt(Image::getImageTypeCode))
+                .map(Image::getFileName)
+                .collect(Collectors.toList());
+
+            if (!nasUrls.isEmpty()) {
+                dto.setUploadFileNames(nasUrls);
+            } else {
+                List<String> fileNames = popupStore.getImageList().stream()
+                    .map(BoardImage::getUrl)
+                    .collect(Collectors.toList());
+                dto.setUploadFileNames(fileNames);
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+        
         long totalCount = result.getTotalElements();
 
         return PageResponseDTO.<PopupStoreDTO>withAll()
@@ -176,6 +212,15 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                     .map(BoardImage::getUrl)
                     .toList();
             popupStoreDTO.setUploadFileNames(urlList);
+        }
+        
+        List<String> nasUrls = popupStore.getImages().stream()
+                .sorted(Comparator.comparingInt(img -> img.getImageTypeCode()))  // 정렬
+                .map(Image::getFileName) // NAS용은 fileName이 URL 전체임
+                .toList();
+
+        if (!nasUrls.isEmpty()) {
+            popupStoreDTO.setUploadFileNames(nasUrls); // 덮어쓰기 or 병합 선택 가능
         }
 
         return popupStoreDTO;

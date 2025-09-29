@@ -44,7 +44,7 @@ const PopupCard = ({ item }) => {
       </button>
       {/* 팝업간단정보 */}
       <img
-        src={Sanrio_mediaArt_1}
+        src={item.uploadFileNames?.[0]}
         alt={item.title}
         className="w-[150px] h-[150px] object-cover rounded-md flex-shrink-0"
       ></img>

@@ -133,4 +133,21 @@ public class PopupStore {
     public void clearImages() {
         this.imageList.clear();
     }
+    
+    //나스용 이미지
+    @OneToMany(mappedBy = "popupStore",cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @OrderBy("imageTypeCode ASC")
+    private List<Image> images = new ArrayList<>();
+    
+    //편의 메서드
+    public void addNasImage(Image image) {
+    	image.setPopupStore(this);
+    	this.images.add(image);
+    }
+    
+    public void clearNasImages() {
+    	this.images.clear();
+    }
+    
 }

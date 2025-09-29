@@ -61,7 +61,7 @@ const AboutPage = () => {
           popupStore.uploadFileNames &&
           popupStore.uploadFileNames.length > 0 && (
             <img
-              src={`http://localhost:8080/uploads/${popupStore.uploadFileNames[0]}`}
+              src={popupStore.uploadFileNames[0]}
               height="600px"
               width="600px"
               alt="팝업 스토어 이미지"
