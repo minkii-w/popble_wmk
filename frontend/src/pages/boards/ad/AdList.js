@@ -1,6 +1,8 @@
+// src/pages/boards/ad/AdList.jsx
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getAdList, API_SERVER_HOST } from "../../../api/AdBoardApi";
+import { getAdList } from "../../../api/AdBoardApi";
+import { API_SERVER_HOST } from "../../../api/config";
 
 export default function AdList() {
   const [pageData, setPageData] = useState(null); // PageResponseDTO 전체

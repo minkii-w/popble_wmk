@@ -1,5 +1,5 @@
 import jwtAxios from "../utill/jwtUtill";
-import { API_SERVER_HOST } from "./popupstoreApi";
+import { API_SERVER_HOST } from "./config";
 
 const prefix = `${API_SERVER_HOST}/api/popup`;
 

@@ -14,7 +14,7 @@ export default function AdWriteForm() {
     externalUrl: "",
     publishStartDate: "",
     publishEndDate: "",
-    writerId: 1, // ✅ 테스트용 (로그인 연동 후 제거 예정)
+    writerId: "1", // ✅ 테스트용 (로그인 연동 후 제거 예정)
   });
 
   const [files, setFiles] = useState([]);

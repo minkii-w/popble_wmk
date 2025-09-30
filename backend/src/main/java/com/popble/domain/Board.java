@@ -106,6 +106,17 @@ public abstract class Board {
         img.setBoard(null);
     }
 
+    // ✅ 공지글 고정/해제 처리
+    public void setPinnedGlobal(boolean pinnedGlobal) {
+        this.pinnedGlobal = pinnedGlobal;
+        if (pinnedGlobal) {
+            this.pinnedAt = LocalDateTime.now();  // 고정 시점 기록
+        } else {
+            this.pinnedAt = null;                 // 해제 시 제거 (정렬에서 빠짐)
+            this.pinUntil = null;                 // 만료일도 초기화
+        }
+    }
+
     // Auditing 누락/지연 대비
     @PrePersist
     public void prePersist() {

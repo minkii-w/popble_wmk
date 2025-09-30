@@ -69,7 +69,10 @@ public class AdResponse {
     private String address;
     private String description;
 
-    // DTO 내부 클래스들
+    // ✅ 운영 시간대 추가
+    private List<TimeSlotDTO> timeSlots;
+
+    // ── 내부 DTO 클래스들 ──
     @Data
     @Builder
     @NoArgsConstructor
@@ -97,5 +100,15 @@ public class AdResponse {
 
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime createdAt;
+    }
+
+    // ✅ 운영 시간대 DTO
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TimeSlotDTO {
+        private String startTime;
+        private String endTime;
     }
 }

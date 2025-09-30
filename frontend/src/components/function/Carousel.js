@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   EffectCoverflow,
@@ -7,21 +7,71 @@ import {
   Autoplay,
   Mousewheel,
 } from "swiper/modules";
-
-// 이미지 import
-import img1 from "../../assets/img/ShinChan1.png";
-import img2 from "../../assets/img/Kirby1.jpg";
-import img3 from "../../assets/img/forment1.png";
-import img4 from "../../assets/img/lockscreen.png";
-import img5 from "../../assets/img/Sanrio MediaArt_1.jpeg";
+import { getList } from "../../api/searchApi";
+import { useNavigate } from "react-router-dom";
 
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
+import logo from "../../assets/img/POPBLE - P.jpg";
+
+const Number_Of_Images = 10; //랜덤 이미지 개수
+const IMAGE_WIDTH = 280;
+const IMAGE_HEIGHT = 480;
+const MIN_SLIDE_WIDTH = 100;
+
 const Carousel = () => {
-  const images = [img1, img2, img3, img4, img5];
+  const navigate = useNavigate();
+
+  const [popups, setPopups] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPopupImages = async () => {
+      try {
+        //데이터베이스의 전체 목록 조회 (getList 실행)
+        const result = await getList({
+          status: "ACTIVE",
+          sort: "VIEW",
+          pageRequestDTO: { page: 1, size: 50 }, // 넉넉하게 요청
+        });
+
+        const allPopups = result.dtoList || [];
+
+        //배열 복사 후 무작위로 섞기 (랜덤 선택 로직)
+        const shuffled = [...allPopups].sort(() => 0.5 - Math.random());
+
+        //캐러셀에 표시할 개수(10개)만큼 자르기
+        const randomPopups = shuffled.slice(0, Number_Of_Images);
+
+        setPopups(randomPopups);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("캐러셀 불러오기 실패", error);
+        setPopups([]); // 데이터 로드 실패 시 빈 배열로 설정
+        setIsLoading(false);
+      }
+    };
+    fetchPopupImages();
+  }, []);
+
+  //로딩 중이거나 데이터가 없을 때 조건부 렌더링
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: "center", padding: "100px", color: "#fff" }}>
+        데이터를 불러오는 중입니다…
+      </div>
+    );
+  }
+  if (popups.length === 0) {
+    return (
+      <div style={{ textAlign: "center", padding: "100px", color: "#fff" }}>
+        표시할 팝업 이미지가 없습니다.
+      </div>
+    );
+  }
 
   return (
     <div
@@ -37,84 +87,84 @@ const Carousel = () => {
         effect="coverflow"
         grabCursor={true}
         centeredSlides={true}
-        loop={true}     //루프
-        autoplay={{     //자동재생
-          delay: 2500,  //딜레이 시간
+        loop={popups.length > 1} //루프
+        autoplay={{
+          //자동재생
+          delay: 2500, //딜레이 시간
           disableOnInteraction: false,
-          // pauseOnMouseEnter: false, //원하면 hover 멈춤 방지
-          // stopOnLastSlide: false, //autoplay가 마지막에서 멈추는걸 막아줌
-          // waitForTransition: true,  //전환 애니메이션이 끝날때까지 다음 autoplay를 기다리게 함
         }}
         coverflowEffect={{
           rotate: 0, //회전 각도
           stretch: 0, //양옆 벌어진 정도
-          depth: 150,   //깊이감
+          depth: 150, //깊이감
           modifier: 1.2, //효과 강도(위의 전체 효과 강도)
           slideShadows: true, //그림자 효과
         }}
-        pagination={{ clickable: true, }}
+        pagination={{ clickable: true }} //하단의 …..
         navigation={{
           nextEl: ".swiper-button-next-custom",
           prevEl: ".swiper-button-prev-custom",
         }}
-        mousewheel={true}
-        modules={[EffectCoverflow, Pagination, Navigation, Autoplay, Mousewheel]}
+        mousewheel={false}
+        modules={[
+          EffectCoverflow,
+          Pagination,
+          Navigation,
+          Autoplay,
+          Mousewheel,
+        ]}
         className="mySwiper"
         style={{
           width: "100%",
-          // maxWidth: "1200px",
           height: "550px",
-          // margin: "0 auto",
+          paddingBottom: "40px",
           position: "relative", // 버튼 기준점
         }}
-        slidesPerView={"auto"} // 카드 고정 크기를 기준으로 자동 배치
+        slidesPerView={1} // 카드 고정 크기를 기준으로 자동 배치
         breakpoints={{
-          0: {
-            slidesPerView: 1,  // 모바일: 1개씩
-            centeredSlides: true,
-          },
-          768: {
-            slidesPerView: 3,  // 데스크탑: 3개
-            centeredSlides: true,
-          },
-          maxWidth: "1200px",
-          height: "500px",
-          margin: "0 auto",
-          position: "relative", // 버튼 기준점
+          0: { slidesPerView: 1, centeredSlides: false }, // 모바일
+          768: { slidesPerView: 2 }, // 태블릿
+          1024: { slidesPerView: 3 }, // 데스크탑
         }}
+        spaceBetween={20}
       >
-        {images.map((img, i) => (
-            <SwiperSlide    //박스 스타일 지정
-              key={i}
+        {popups.map((item) => (
+          <SwiperSlide //박스 스타일 지정
+            key={item.id}
+            style={{
+              width: `${IMAGE_WIDTH}px`, //박스 크기
+              height: `${IMAGE_HEIGHT}px`,
+              minWidth: `${MIN_SLIDE_WIDTH}px`,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "10px", //박스 rounder 정도
+              overflow: "hidden",
+              background: "#111",
+              boxShadow: "5 5px 10px rgba(0, 0, 0, 0.5)", //섀도우 크기 조절
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer", //클릭 가능
+            }}
+            onClick={() => navigate(`/popup/detail/${item.id}`)} //클릭 시 상세페이지 이동
+          >
+            <img
+              src={item.uploadFileNames?.[0]}
+              alt={item.storeName}
               style={{
-                width: "280px", //박스 크기
-                height: "480px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: "15px",   //박스 rounder 정도
-                overflow: "hidden",
-                background: "#111",
-                boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)", //섀도우 크기 조절
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover", //이미지 꽉 채우기
               }}
-            >
-              <img
-                src={img}
-                alt={`slide-${i}`}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",   //이미지 꽉 채우기
-                }}
-              />
-            </SwiperSlide>
-          )
-        )}
+              // 이미지 로드 실패 시 대체 처리 (옵션)
+              onError={(e) => (e.target.src = logo)} // 이미지 깨질 때 대체 이미지
+              className="w-full h-64 object-cover"
+            />
+          </SwiperSlide>
+        ))}
 
         {/* 커스텀 네비게이션 버튼 */}
+        {/* {popups.length > 1 && ( //(데이터가 2개 이상일 때만 표시 권장)  */}
         <div
           className="swiper-button-prev-custom"
           style={{

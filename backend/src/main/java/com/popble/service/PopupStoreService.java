@@ -1,5 +1,7 @@
 package com.popble.service;
 
+import java.util.List;
+
 import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
 import com.popble.dto.PopupFilterDTO;
@@ -24,4 +26,7 @@ public interface PopupStoreService {
 
     // 🔹 팝업스토어 삭제
     void remove(Long id);
+    
+    // 맵 리스트
+    List<PopupStoreDTO> getMapList();
 }

@@ -6,7 +6,7 @@ import { FaHeadset } from "react-icons/fa6";
 import { LuMessageCircleQuestion } from "react-icons/lu";
 import { GiCancel } from "react-icons/gi";
 
-import profileTest from "../../src/assets/img/1.jpeg";
+import profileTest from "../../src/assets/img/POPBLE - P.jpg";
 
 const BasicLayout = ({ children }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -26,19 +26,19 @@ const BasicLayout = ({ children }) => {
     //메인화면 레이아웃
     <BasicMenu>
       {/* 캐러셀 */}
-      <div style={{ marginTop: "50px", marginBottom: "20px" }}>{children}</div>
+      <div>{children}</div>
 
       {/* 스크롤 버튼 + 실시간 문의 채팅 버튼*/}
       <div className="flex flex-col items-end gap-4">
         <button
-          className="fixed bottom-10 right-10 z-50 p-1 flex justify-center items-center shadow-md rounded-full bg-secondaryAccentColor w-12 h-12"
+          className="fixed bottom-10 right-5 z-50 p-1 flex justify-center items-center shadow-md rounded-full bg-secondaryAccentColor w-12 h-12"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         >
           <IoIosArrowUp className="text-2xl stroke-2" />
         </button>
         <div className="relative">
           <button
-            className="fixed bottom-24 right-10 z-50 p-1 flex justify-center items-center shadow-md rounded-full bg-secondaryAccentColor w-12 h-12"
+            className="fixed bottom-24 right-5 z-50 p-1 flex justify-center items-center shadow-md rounded-full bg-secondaryAccentColor w-12 h-12"
             onClick={() => setIsChatOpen(!isChatOpen)}
           >
             {/* (헤드셋 ↔ X) */}

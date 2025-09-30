@@ -25,8 +25,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 
 public class ReservationTimeController {
-	
-	private final ReservationTimeService reservationTimeService;
+   
+   private final ReservationTimeService reservationTimeService;
 
     // 예약 시간 폼(슬롯) 등록
     @PostMapping("/register")
@@ -48,7 +48,7 @@ public class ReservationTimeController {
             @PathVariable("popupStoreId") Long popupStoreId,
             @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-    	List<ReservationTimeDTO> dtoList = reservationTimeService.getAvailableTimesByDate(popupStoreId, date);
+       List<ReservationTimeDTO> dtoList = reservationTimeService.getAvailableTimesByDate(popupStoreId, date);
         return ResponseEntity.ok(dtoList);
     }
     
@@ -56,9 +56,9 @@ public class ReservationTimeController {
     //팝업스토어의 첫타임,마지막타임 정보 조회(상세보기용)
     @GetMapping("/popup/{popupStoreId}/allTimes")
     public ResponseEntity<List<ReservationTimeDTO>>getAllTimes(
-    		@PathVariable("popupStoreId")Long popupStoreId){
-    	List<ReservationTimeDTO> dtoList = reservationTimeService.getAllTimes(popupStoreId);
-    	return ResponseEntity.ok(dtoList);
+          @PathVariable("popupStoreId")Long popupStoreId){
+       List<ReservationTimeDTO> dtoList = reservationTimeService.getAllTimes(popupStoreId);
+       return ResponseEntity.ok(dtoList);
     }
 
 }

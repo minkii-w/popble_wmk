@@ -34,7 +34,6 @@ public class CustomSecurityConfig {
 
    private final Oauth2AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
    private final UserOauth2Service userOauth2Service;
-//   private final UserServiceImpl userServiceImpl;
 
    private final UserRepository userRepository;
 

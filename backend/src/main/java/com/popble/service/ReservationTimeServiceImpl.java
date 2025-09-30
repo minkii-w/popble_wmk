@@ -25,11 +25,13 @@ public class ReservationTimeServiceImpl implements ReservationTimeService{
     private final PopupStoreRepository popupStoreRepository;
 
  // 여러 개의 시간 슬롯을 한 번에 등록하는 메서드
+    @Override
     public void createReservationTimes(List<ReservationTimeDTO> dtoList) {
         dtoList.forEach(this::createReservationTime);
     }
 
     // 단일 시간 슬롯을 등록하는 메서드
+    @Override
     public Long createReservationTime(ReservationTimeDTO dto) {
         PopupStore popupStore = popupStoreRepository.findById(dto.getPopupStoreId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid popupStoreId: " + dto.getPopupStoreId()));
@@ -47,6 +49,7 @@ public class ReservationTimeServiceImpl implements ReservationTimeService{
     }
     
     // 특정 날짜의 예약 가능한 시간 슬롯 목록을 조회하는 메서드
+    @Override
     public List<ReservationTimeDTO> getAvailableTimesByDate(Long popupStoreId, LocalDate date) {
         List<ReservationTime> times = reservationTimeRepository.findByPopupStoreIdAndDateOrderByStartTimeAsc(
             popupStoreId, date);
@@ -65,6 +68,7 @@ public class ReservationTimeServiceImpl implements ReservationTimeService{
     }
     
     //팝업스토어의 첫타임,마지막타임 정보 조회(상세보기용)
+    @Override
     public List<ReservationTimeDTO>getAllTimes(Long popupStoreId){
     	List<ReservationTime> result = reservationTimeRepository.findAllByPopupStoreId(popupStoreId);
     	return result.stream()

@@ -1,6 +1,7 @@
+// src/pages/boards/AllBoardList.jsx
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { getAll } from "../../api/BoardApi";  // ✅ PageResponseDTO 반환
+import { Link, useNavigate } from "react-router-dom";
+import { getAll } from "../../api/BoardApi"; // ✅ PageResponseDTO 반환
 
 // 게시판 타입 한글 매핑
 const typeLabel = (t) => {
@@ -8,6 +9,7 @@ const typeLabel = (t) => {
     general: "자유",
     qna: "질문",
     notice: "공지",
+    ad: "홍보",
   };
   return map[String(t).toLowerCase()] || t;
 };
@@ -16,16 +18,17 @@ const typeLabel = (t) => {
 const toTypeSlug = (t) => (t ? String(t).toLowerCase() : "general");
 
 export default function AllBoardList() {
-  const [pageData, setPageData] = useState(null); // ✅ PageResponseDTO 전체
+  const [pageData, setPageData] = useState(null);
   const [order, setOrder] = useState("date");
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
 
-  // ==========================
+  const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken"); // ✅ 로그인 여부 확인
+
   // 서버 호출
-  // ==========================
   useEffect(() => {
     let ignore = false;
     (async () => {
@@ -33,7 +36,7 @@ export default function AllBoardList() {
         setLoading(true);
         setError("");
 
-        const data = await getAll({ order, page, size: 10 }); // ✅ size=10 고정
+        const data = await getAll({ order, page, size: 10 });
         if (!ignore) setPageData(data);
       } catch (e) {
         if (!ignore) setError(e?.message || "불러오기 실패");
@@ -46,14 +49,11 @@ export default function AllBoardList() {
     };
   }, [order, page]);
 
-  // ==========================
-  // 검색 + pinned 처리
-  // ==========================
+  // 검색 + pinned
   const filtered = useMemo(() => {
     const list = pageData?.dtoList ?? [];
     const q = keyword.trim().toLowerCase();
 
-    // 검색어 적용
     let result = q
       ? list.filter((p) => {
           const title = (p.title ?? "").toLowerCase();
@@ -62,7 +62,6 @@ export default function AllBoardList() {
         })
       : list;
 
-    // pinnedGlobal → 1페이지일 때만 상단 고정
     if (page === 1) {
       result = [...result].sort((a, b) => {
         if (a.pinnedGlobal && !b.pinnedGlobal) return -1;
@@ -74,133 +73,149 @@ export default function AllBoardList() {
     return result;
   }, [pageData, keyword, page]);
 
-  // ==========================
-  // 렌더링
-  // ==========================
   return (
-    <div className="p-6 w-full bg-white">
-      {/* 상단 검색/정렬 */}
-      <div className="flex items-center justify-between mb-4 gap-3">
-        <h1 className="text-2xl font-bold">전체 게시글</h1>
+    <div className="min-h-screen bg-[#fdfbf7] p-8">
+      {/* 상단 */}
+      <div className="flex items-center justify-between mb-6 gap-4">
+        {/* 게시판 이동 드롭다운 */}
+        <select
+          className="border rounded px-3 py-2 shadow-sm"
+          value="all"
+          onChange={(e) => navigate(`/boards/${e.target.value}`)}
+        >
+          <option value="all">전체게시판</option>
+          <option value="general">자유게시판</option>
+          <option value="notice">공지게시판</option>
+          <option value="qna">질문게시판</option>
+          <option value="ad">홍보게시판</option>
+        </select>
 
-        <div className="ml-auto flex items-center gap-2">
+        {/* 검색 */}
+        <div className="flex items-center border rounded px-3 py-2 bg-white shadow-sm ml-auto">
           <input
             type="text"
-            placeholder="검색어를 입력하세요"
+            placeholder="검색할 내용을 입력하세요"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            className="border rounded px-3 py-1 w-48"
+            className="outline-none w-64 text-sm"
           />
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">정렬:</label>
-            <select
-              className="border rounded px-2 py-1"
-              value={order}
-              onChange={(e) => setOrder(e.target.value)}
-            >
-              <option value="date">일자(최신)</option>
-              <option value="oldest">일자(과거)</option>
-              <option value="view">조회수</option>
-              <option value="recommend">추천</option>
-            </select>
-          </div>
+          <button className="ml-2">🔍</button>
         </div>
+
+        {/* 정렬 드롭다운 */}
+        <select
+          className="border rounded px-2 py-1 shadow-sm"
+          value={order}
+          onChange={(e) => setOrder(e.target.value)}
+        >
+          <option value="date">최신순</option>
+          <option value="oldest">과거순</option>
+          <option value="view">조회수순</option>
+          <option value="recommend">추천순</option>
+        </select>
       </div>
 
-      {loading && <div>불러오는 중...</div>}
-      {error && <div className="text-red-600">에러: {error}</div>}
-
-      {/* 표 형식 게시판 */}
-      <table className="table-auto w-full border-collapse border border-gray-300 mt-2">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border border-gray-300 px-4 py-2 w-16">번호</th>
-            <th className="border border-gray-300 px-4 py-2 w-28">게시판</th>
-            <th className="border border-gray-300 px-4 py-2">제목</th>
-            <th className="border border-gray-300 px-4 py-2 w-32">작성자</th>
-            <th className="border border-gray-300 px-4 py-2 w-36">작성일</th>
+      {/* 게시판 테이블 */}
+      <table className="w-full border-t border-gray-300 text-sm">
+        <thead>
+          <tr className="bg-white">
+            <th className="py-3 border-b border-gray-300 w-16">번호</th>
+            <th className="py-3 border-b border-gray-300 text-left">제목</th>
+            <th className="py-3 border-b border-gray-300 w-32">작성자</th>
+            <th className="py-3 border-b border-gray-300 w-40">작성일자</th>
+            <th className="py-3 border-b border-gray-300 w-24">조회수</th>
           </tr>
         </thead>
         <tbody>
-          {!loading && filtered.length === 0 ? (
+          {loading && (
             <tr>
-              <td colSpan={5} className="border px-4 py-6 text-center">
+              <td colSpan={5} className="py-6 text-center">
+                불러오는 중...
+              </td>
+            </tr>
+          )}
+          {error && (
+            <tr>
+              <td colSpan={5} className="py-6 text-center text-red-600">
+                에러: {error}
+              </td>
+            </tr>
+          )}
+          {!loading && filtered.length === 0 && (
+            <tr>
+              <td colSpan={5} className="py-6 text-center">
                 게시글이 없습니다.
               </td>
             </tr>
-          ) : (
-            filtered.map((post, idx) => {
-              const isPinned = !!post.pinnedGlobal;
-              return (
-                <tr
-                  key={`${toTypeSlug(post.type)}-${post.id}-${idx}`}
-                  className={`hover:bg-gray-50 ${
-                    isPinned && page === 1 ? "bg-purple-50" : ""
-                  }`}
-                >
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {post.id}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {typeLabel(post.type)}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <Link
-                      to={`/boards/${toTypeSlug(post.type)}/${post.id}`}
-                      className="inline-flex items-center gap-1 text-blue-600 hover:underline max-w-full"
-                    >
-                      {isPinned && page === 1 && (
-                        <span title="고정 공지">📌</span>
-                      )}
-                      <span className="truncate">{post.title}</span>
-                      {post.images?.length > 0 && (
-                        <span title="이미지 포함">🖼️</span>
-                      )}
-                    </Link>
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {post.writer ?? post.writerName ?? "-"}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {post.createTime?.slice(0, 10) ?? "-"}
-                  </td>
-                </tr>
-              );
-            })
           )}
+          {filtered.map((post, idx) => {
+            const isPinned = !!post.pinnedGlobal;
+            return (
+              <tr
+                key={`${toTypeSlug(post.type)}-${post.id}-${idx}`}
+                className={`hover:bg-gray-50 ${
+                  isPinned ? "bg-red-50 font-semibold" : ""
+                }`}
+              >
+                <td className="py-3 text-center border-b border-gray-200">
+                  {post.id}
+                </td>
+                <td className="py-3 border-b border-gray-200">
+                  <Link
+                    to={`/boards/${toTypeSlug(post.type)}/${post.id}`}
+                    className="hover:underline"
+                  >
+                    {isPinned && (
+                      <span className="mr-1 px-2 py-0.5 bg-red-300 text-xs rounded">
+                        필독
+                      </span>
+                    )}
+                    {post.title}
+                  </Link>
+                </td>
+                <td className="py-3 text-center border-b border-gray-200">
+                  {post.writer ?? post.writerName ?? "-"}
+                </td>
+                <td className="py-3 text-center border-b border-gray-200">
+                  {post.createTime?.slice(0, 10) ?? "-"}
+                </td>
+                <td className="py-3 text-center border-b border-gray-200">
+                  {post.viewCount ?? 0}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
       {/* 페이지네이션 */}
       {pageData && (
-        <div className="flex justify-center mt-6 gap-2 flex-wrap">
+        <div className="flex justify-center mt-6 gap-2">
           {pageData.prev && (
             <button
               onClick={() => setPage(pageData.prevPage)}
-              className="px-3 py-1 rounded border bg-gray-100 hover:bg-gray-200"
+              className="px-3 py-1 rounded border bg-white hover:bg-gray-100"
             >
               이전
             </button>
           )}
-
           {pageData.pageNumList?.map((num) => (
             <button
               key={num}
               onClick={() => setPage(num)}
               className={`px-3 py-1 rounded border ${
                 num === pageData.current
-                  ? "bg-blue-500 text-white"
+                  ? "bg-blue-400 text-white"
                   : "bg-white hover:bg-gray-100"
               }`}
             >
               {num}
             </button>
           ))}
-
           {pageData.next && (
             <button
               onClick={() => setPage(pageData.nextPage)}
-              className="px-3 py-1 rounded border bg-gray-100 hover:bg-gray-200"
+              className="px-3 py-1 rounded border bg-white hover:bg-gray-100"
             >
               다음
             </button>
@@ -208,13 +223,23 @@ export default function AllBoardList() {
         </div>
       )}
 
-      <div className="mt-4 flex justify-end">
-        <Link
-          to="/boards/write"
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-        >
-          글쓰기
-        </Link>
+      {/* 글쓰기 버튼 */}
+      <div className="mt-6 flex justify-end">
+        {token ? (
+          <Link
+            to="/boards/write"
+            className="px-6 py-2 bg-blue-300 text-black rounded hover:bg-blue-400"
+          >
+            글 등록
+          </Link>
+        ) : (
+          <button
+            onClick={() => navigate("/user/login")} // ✅ 로그인 페이지로 이동
+            className="px-6 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+          >
+            로그인 후 글쓰기
+          </button>
+        )}
       </div>
     </div>
   );

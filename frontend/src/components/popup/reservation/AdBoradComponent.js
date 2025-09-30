@@ -1,20 +1,21 @@
-import { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { createPopupStore } from "../../../api/popupstoreApi";
 import { createAdWithImages } from "../../../api/AdBoardApi";
 
 const initState = {
   storeName: "",
   address: "",
-  startDate: "",
-  endDate: "",
   desc: "",
   price: 0,
+  startDate: "", // ✅ 운영 시작일
+  endDate: "", // ✅ 운영 종료일
   files: [],
 };
 
 const FormRow = ({ label, children }) => (
   <div className="flex justify-center">
-    <div className="relative mb-4 w-full flex items-center">
+    <div className="relative mb-6 w-full flex items-center">
       <div className="w-1/5 p-3 font-bold text-left">{label}</div>
       <div className="w-4/5">{children}</div>
     </div>
@@ -26,25 +27,17 @@ const AdBoardComponent = () => {
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [thumbnailIdx, setThumbnailIdx] = useState(0);
-  const [popupStoreId, setPopupStoreId] = useState(null);
 
   const fileRef = useRef(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // ✅ PopupStore 등록에서 넘어온 ID 받기
-  useEffect(() => {
-    if (location.state?.popupStoreId) {
-      console.log("받은 popupStoreId:", location.state.popupStoreId);
-      setPopupStoreId(location.state.popupStoreId);
-    }
-  }, [location.state]);
-
+  // 입력값 변경
   const handleChange = (e) => {
     const { name, value } = e.target;
     setAdBoard((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 파일 업로드
   const handleFileChange = (e) => {
     const selected = Array.from(e.target.files);
     setFiles(selected);
@@ -52,6 +45,7 @@ const AdBoardComponent = () => {
     setThumbnailIdx(0);
   };
 
+  // 이미지 삭제
   const handleRemoveImage = (idx) => {
     const newFiles = files.filter((_, i) => i !== idx);
     const newPreviews = previews.filter((_, i) => i !== idx);
@@ -72,8 +66,8 @@ const AdBoardComponent = () => {
     }
   };
 
-  // ✅ 등록
-  const handleClickRegister = async () => {
+  // 등록
+  const handleSubmit = async () => {
     if (!adBoard.storeName.trim()) {
       alert("제목을 입력하세요.");
       return;
@@ -82,32 +76,52 @@ const AdBoardComponent = () => {
       alert("내용을 입력하세요.");
       return;
     }
-    if (!popupStoreId) {
-      alert("팝업스토어 ID가 없습니다. 먼저 팝업스토어를 등록하세요.");
+    if (!adBoard.startDate || !adBoard.endDate) {
+      alert("운영 시작일과 종료일을 입력하세요.");
       return;
     }
 
     try {
-      const adData = {
+      const popupPayload = {
+        storeName: adBoard.storeName,
+        address: adBoard.address,
+        desc: adBoard.desc,
+        price: adBoard.price,
+        startDate: adBoard.startDate, // ✅ 운영 시작일
+        endDate: adBoard.endDate, // ✅ 운영 종료일
+      };
+
+      const popupResult = await createPopupStore(popupPayload, files);
+
+      if (!popupResult?.id) {
+        alert("팝업 등록 실패: ID 없음");
+        return;
+      }
+
+      const adPayload = {
         title: adBoard.storeName,
         content: adBoard.desc,
         contact: "010-0000-0000",
         externalUrl: adBoard.address,
-        writerId: 1,
-        publishStartDate: adBoard.startDate,
-        publishEndDate: adBoard.endDate,
+        writerId: 1, // TODO: 로그인 연동
         price: adBoard.price,
         thumbnailIndex: thumbnailIdx,
-        popupStoreId, // ✅ 연동
+        popupStoreId: popupResult.id,
       };
 
-      const result = await createAdWithImages(adData, files);
+      const adResult = await createAdWithImages(adPayload, files);
 
-      if (result) {
-        alert("홍보글 등록 성공!");
-        navigate(`/boards/ad/${result}/reservation`);
+      if (adResult?.id) {
+        alert(adResult.message || "홍보글 등록 성공!");
+        navigate(`/boards/ad/${adResult.id}/reservation`, {
+          state: {
+            popupStoreId: popupResult.id,
+            startDate: adBoard.startDate, // ✅ state로 전달
+            endDate: adBoard.endDate, // ✅ state로 전달
+          },
+        });
       } else {
-        alert("등록은 됐지만 ID를 찾을 수 없습니다.");
+        alert("홍보글 등록은 됐지만 ID 없음");
         navigate("/boards/ad");
       }
     } catch (e) {
@@ -117,11 +131,13 @@ const AdBoardComponent = () => {
   };
 
   return (
-    <div className="border-2 border-sky-200 mt-10 p-4 rounded">
+    <div className="max-w-4xl mx-auto p-8 bg-white rounded shadow-md mt-10">
+      <h2 className="text-3xl font-bold mb-8 border-b pb-4">홍보글 등록</h2>
+
       {/* 제목 */}
       <FormRow label="제목">
         <input
-          className="w-full p-3 rounded border border-neutral-500 shadow-md"
+          className="w-full p-3 rounded-2xl border border-gray-300 shadow-sm focus:ring focus:ring-blue-300"
           name="storeName"
           type="text"
           value={adBoard.storeName}
@@ -133,7 +149,7 @@ const AdBoardComponent = () => {
       {/* 주소 */}
       <FormRow label="주소">
         <input
-          className="w-full p-3 rounded border border-neutral-500 shadow-md"
+          className="w-full p-3 rounded-2xl border border-gray-300 shadow-sm focus:ring focus:ring-blue-300"
           name="address"
           type="text"
           value={adBoard.address}
@@ -142,10 +158,10 @@ const AdBoardComponent = () => {
         />
       </FormRow>
 
-      {/* 행사 시작일 */}
-      <FormRow label="행사 시작일">
+      {/* 운영 시작일 */}
+      <FormRow label="운영 시작일">
         <input
-          className="w-full p-3 rounded border border-neutral-500 shadow-md"
+          className="w-full p-3 rounded-2xl border border-gray-300"
           name="startDate"
           type="date"
           value={adBoard.startDate}
@@ -153,10 +169,10 @@ const AdBoardComponent = () => {
         />
       </FormRow>
 
-      {/* 행사 종료일 */}
-      <FormRow label="행사 종료일">
+      {/* 운영 종료일 */}
+      <FormRow label="운영 종료일">
         <input
-          className="w-full p-3 rounded border border-neutral-500 shadow-md"
+          className="w-full p-3 rounded-2xl border border-gray-300"
           name="endDate"
           type="date"
           value={adBoard.endDate}
@@ -167,18 +183,19 @@ const AdBoardComponent = () => {
       {/* 가격 */}
       <FormRow label="입장 가격">
         <input
-          className="w-full p-3 rounded border border-neutral-500 shadow-md"
+          className="w-full p-3 rounded-2xl border border-gray-300 shadow-sm focus:ring focus:ring-blue-300"
           name="price"
           type="number"
           value={adBoard.price}
           onChange={handleChange}
+          placeholder="가격을 입력하세요"
         />
       </FormRow>
 
       {/* 내용 */}
       <FormRow label="내용">
         <textarea
-          className="w-full p-3 rounded border border-neutral-500 shadow-md h-64"
+          className="w-full p-3 rounded-2xl border border-gray-300 shadow-sm h-48 focus:ring focus:ring-blue-300"
           name="desc"
           value={adBoard.desc}
           onChange={handleChange}
@@ -188,18 +205,21 @@ const AdBoardComponent = () => {
 
       {/* 이미지 업로드 */}
       <FormRow label="이미지 첨부">
-        <div className="flex flex-col gap-4 w-full">
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            ref={fileRef}
-            onChange={handleFileChange}
-            className="w-48"
-          />
+        <div className="w-full flex flex-col gap-4">
+          <label className="w-32 h-32 flex items-center justify-center border-2 border-dashed border-gray-400 rounded-2xl cursor-pointer hover:bg-gray-50">
+            <span className="text-3xl text-gray-500">＋</span>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              ref={fileRef}
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </label>
 
           {previews.length > 0 && (
-            <div className="flex gap-4 flex-wrap border-b border-gray-300 pb-4">
+            <div className="flex gap-4 flex-wrap">
               {previews.map((src, idx) => (
                 <div
                   key={idx}
@@ -209,12 +229,12 @@ const AdBoardComponent = () => {
                   <img
                     src={src}
                     alt={`preview-${idx}`}
-                    className={`w-32 h-32 object-cover border rounded ${
+                    className={`w-32 h-32 object-cover border rounded-2xl ${
                       idx === thumbnailIdx ? "ring-4 ring-blue-500" : ""
                     }`}
                   />
                   {idx === thumbnailIdx && (
-                    <span className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded">
+                    <span className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full">
                       대표
                     </span>
                   )}
@@ -224,7 +244,7 @@ const AdBoardComponent = () => {
                       e.stopPropagation();
                       handleRemoveImage(idx);
                     }}
-                    className="absolute top-1 right-1 bg-gray-700 text-white text-xs px-1 rounded hover:bg-black"
+                    className="absolute top-1 right-1 bg-gray-700 text-white text-xs px-1 rounded-full hover:bg-black"
                   >
                     ✕
                   </button>
@@ -235,12 +255,19 @@ const AdBoardComponent = () => {
         </div>
       </FormRow>
 
-      {/* 등록 버튼 */}
-      <div className="flex justify-end">
+      {/* 버튼 */}
+      <div className="flex justify-between border-t pt-6">
         <button
           type="button"
-          className="rounded p-4 w-36 bg-blue-500 text-xl text-white hover:bg-blue-600"
-          onClick={handleClickRegister}
+          className="rounded-2xl px-6 py-3 bg-gray-200 hover:bg-gray-300"
+          onClick={() => navigate(-1)}
+        >
+          이전
+        </button>
+        <button
+          type="button"
+          className="rounded-2xl px-6 py-3 bg-blue-500 text-white hover:bg-blue-600"
+          onClick={handleSubmit}
         >
           등록
         </button>

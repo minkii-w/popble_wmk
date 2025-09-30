@@ -1,6 +1,7 @@
 package com.popble.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,13 @@ public class PopupStoreDTO {
 	
 	//추천수
 	private Integer recommend;
+	
+	// ✅ 오픈/마감 시간 추가
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime openTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime closeTime;
 
 	private List<ReservationTimeDTO> reservationTimes;
 

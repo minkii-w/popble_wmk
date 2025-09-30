@@ -22,6 +22,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     // ===== 동적 정렬 지원 =====
     List<Board> findByType(Board.Type type, Sort sort);
     List<Board> findAll(Sort sort);
+    
+ // ✅ 페이지네이션 지원 (추가)
+    Page<Board> findByType(Board.Type type, Pageable pageable);
 
     // ===== 상세 조회 (이미지/작성자 fetch join) =====
     @Query("""

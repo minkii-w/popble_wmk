@@ -1,11 +1,9 @@
 package com.popble.service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import com.popble.domain.BoardImage;
-import com.popble.domain.Image;
 import com.popble.domain.PopupStore;
 import com.popble.domain.PopupStore.Status;
 import com.popble.domain.SortType;
@@ -24,6 +21,7 @@ import com.popble.dto.PageRequestDTO;
 import com.popble.dto.PageResponseDTO;
 import com.popble.dto.PopupFilterDTO;
 import com.popble.dto.PopupStoreDTO;
+import com.popble.dto.ReservationTimeDTO;
 import com.popble.repository.PopupStoreRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +34,6 @@ import lombok.extern.log4j.Log4j2;
 public class PopupStoreServiceImpl implements PopupStoreService {
 
     private final PopupStoreRepository popupStoreRepository;
-    private final ModelMapper modelMapper;
 
     // 🔹 필터 조회
     @Override
@@ -86,55 +83,10 @@ public class PopupStoreServiceImpl implements PopupStoreService {
 
         Page<PopupStore> result = popupStoreRepository.findAll(specification, pageable);
 
-//        List<PopupStoreDTO> dtoList = result.getContent().stream()
-//                .map(popupStore -> {
-//                    PopupStoreDTO dto = entityToDTO(popupStore);
-//                    return dto;
-//                })
-//                .collect(Collectors.toList());
-        
-//    	List<PopupStoreDTO> dtoList = result.getContent().stream().map(popupStore -> {
-//			PopupStoreDTO dto = modelMapper.map(popupStore, PopupStoreDTO.class);
-//			List<String> fileNames = popupStore.getImageList().stream().map(BoardImage::getUrl)
-//					.collect(Collectors.toList());
-//			dto.setUploadFileNames(fileNames);
-//			return dto;
-//		}).collect(Collectors.toList());
-
-        List<PopupStoreDTO> dtoList = result.getContent().stream().map(popupStore -> {
-            PopupStoreDTO dto = PopupStoreDTO.builder()
-                .id(popupStore.getId())
-                .storeName(popupStore.getStoreName())
-                .address(popupStore.getAddress())
-                .startDate(popupStore.getStartDate())
-                .endDate(popupStore.getEndDate())
-                .desc(popupStore.getDesc())
-                .price(popupStore.getPrice())
-                .parking(popupStore.isParking())
-                .deleted(popupStore.isDeleted())
-                .bookmarkCount(popupStore.getBookmarkCount())
-                .recommend(popupStore.getRecommend())
-                .view(popupStore.getView())
-                .status(popupStore.getStatus())
-                .build();
-
-            List<String> nasUrls = popupStore.getImages().stream()
-                .sorted(Comparator.comparingInt(Image::getImageTypeCode))
-                .map(Image::getFileName)
+        List<PopupStoreDTO> dtoList = result.getContent().stream()
+                .map(this::entityToDTO)
                 .collect(Collectors.toList());
 
-            if (!nasUrls.isEmpty()) {
-                dto.setUploadFileNames(nasUrls);
-            } else {
-                List<String> fileNames = popupStore.getImageList().stream()
-                    .map(BoardImage::getUrl)
-                    .collect(Collectors.toList());
-                dto.setUploadFileNames(fileNames);
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
-        
         long totalCount = result.getTotalElements();
 
         return PageResponseDTO.<PopupStoreDTO>withAll()
@@ -154,11 +106,13 @@ public class PopupStoreServiceImpl implements PopupStoreService {
         popupStore.setAddress(popupStoreDTO.getAddress());
         popupStore.setStartDate(popupStoreDTO.getStartDate());
         popupStore.setEndDate(popupStoreDTO.getEndDate());
- 
         popupStore.setDesc(popupStoreDTO.getDesc());
         popupStore.setPrice(popupStoreDTO.getPrice());
-        popupStore.setParking(popupStoreDTO.isParking()); // ✅ parking 반영
+        popupStore.setParking(popupStoreDTO.isParking());
         popupStore.setDeleted(popupStoreDTO.isDeleted());
+        // ✅ 오픈/마감 시간 반영
+        popupStore.setOpenTime(popupStoreDTO.getOpenTime());
+        popupStore.setCloseTime(popupStoreDTO.getCloseTime());
 
         // 기존 이미지 비우고 새로 추가
         popupStore.clearImages();
@@ -182,8 +136,9 @@ public class PopupStoreServiceImpl implements PopupStoreService {
     @Override
     @Transactional
     public PopupStoreDTO get(Long id) {
-        Optional<PopupStore> result = popupStoreRepository.findById(id);
-        PopupStore popupStore = result.orElseThrow();
+        // ✅ fetch join 사용
+        PopupStore popupStore = popupStoreRepository.findByIdWithTimes(id)
+                .orElseThrow(() -> new RuntimeException("PopupStore not found"));
 
         // 조회수 증가
         popupStore.setView(popupStore.getView() == null ? 1 : popupStore.getView() + 1);
@@ -202,25 +157,37 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .endDate(popupStore.getEndDate())
                 .desc(popupStore.getDesc())
                 .price(popupStore.getPrice())
-                .parking(popupStore.isParking())   // ✅ boolean getter 사용
+                .parking(popupStore.isParking())
                 .deleted(popupStore.isDeleted())
+                // ✅ 오픈/마감 시간 DTO에 매핑
+                .openTime(popupStore.getOpenTime())
+                .closeTime(popupStore.getCloseTime())
                 .build();
 
+        // ✅ 예약 시간대 매핑
+        if (popupStore.getReservationTimes() != null && !popupStore.getReservationTimes().isEmpty()) {
+            popupStoreDTO.setReservationTimes(
+                popupStore.getReservationTimes().stream()
+                        .map(rt -> ReservationTimeDTO.builder()
+                                .id(rt.getId())
+                                .date(rt.getDate())
+                                .startTime(rt.getStartTime())
+                                .endTime(rt.getEndTime())
+                                .maxCount(rt.getMaxCount())
+                                .remainingSeats(rt.getMaxCount() - rt.getCurrentCount())
+                                .popupStoreId(popupStore.getId())
+                                .build())
+                        .toList()
+            );
+        }
+
+        // 이미지 매핑
         List<BoardImage> imageList = popupStore.getImageList();
         if (imageList != null && !imageList.isEmpty()) {
             List<String> urlList = imageList.stream()
                     .map(BoardImage::getUrl)
                     .toList();
             popupStoreDTO.setUploadFileNames(urlList);
-        }
-        
-        List<String> nasUrls = popupStore.getImages().stream()
-                .sorted(Comparator.comparingInt(img -> img.getImageTypeCode()))  // 정렬
-                .map(Image::getFileName) // NAS용은 fileName이 URL 전체임
-                .toList();
-
-        if (!nasUrls.isEmpty()) {
-            popupStoreDTO.setUploadFileNames(nasUrls); // 덮어쓰기 or 병합 선택 가능
         }
 
         return popupStoreDTO;
@@ -236,8 +203,11 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .endDate(popupStoreDTO.getEndDate())
                 .desc(popupStoreDTO.getDesc())
                 .price(popupStoreDTO.getPrice())
-                .parking(popupStoreDTO.isParking())   // ✅ boolean getter 사용
+                .parking(popupStoreDTO.isParking())
                 .deleted(popupStoreDTO.isDeleted())
+                // ✅ 오픈/마감 시간 엔티티에 매핑
+                .openTime(popupStoreDTO.getOpenTime())
+                .closeTime(popupStoreDTO.getCloseTime())
                 .build();
 
         List<String> uploadFileUrls = popupStoreDTO.getUploadFileNames();
@@ -300,4 +270,22 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .pageRequestDTO(pageRequestDTO)
                 .build();
     }
+        
+      //전체 목록 불러오기(페이징 없이) - 카카오맵 사용
+        public List<PopupStoreDTO> getMapList(){
+        	List<PopupStore> storeList =  popupStoreRepository.findAll();
+        	return storeList.stream().
+        			map(store -> PopupStoreDTO.builder()
+        						.id(store.getId())
+        						.storeName(store.getStoreName())
+        						.address(store.getAddress())
+        						.latitude(store.getLatitude())
+        						.longitude(store.getLongitude())
+        						.build())
+        						.toList();
+    }
 }
+    
+    
+    					
+   

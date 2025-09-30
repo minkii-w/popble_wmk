@@ -1,6 +1,7 @@
 // src/components/common/board/ReadComponent.jsx
 import { useEffect, useState } from "react";
-import { getOne, API_SERVER_HOST } from "../../../api/BoardApi";
+import { getOne } from "../../../api/BoardApi";
+import { API_SERVER_HOST } from "../../../api/config";
 
 export default function ReadComponent({ id, moveToModify, moveToList }) {
   const [board, setBoard] = useState(null);
@@ -9,7 +10,7 @@ export default function ReadComponent({ id, moveToModify, moveToList }) {
   useEffect(() => {
     (async () => {
       try {
-        const data = await getOne(id);   // 백엔드가 images 포함해서 내려와야 함
+        const data = await getOne(id); // 백엔드가 images 포함해서 내려와야 함
         setBoard(data);
       } catch (e) {
         console.error("getOne 실패:", e);
@@ -45,8 +46,12 @@ export default function ReadComponent({ id, moveToModify, moveToList }) {
       )}
 
       <div className="flex gap-2">
-        <button className="px-3 py-1 border rounded" onClick={moveToModify}>수정</button>
-        <button className="px-3 py-1 border rounded" onClick={moveToList}>목록</button>
+        <button className="px-3 py-1 border rounded" onClick={moveToModify}>
+          수정
+        </button>
+        <button className="px-3 py-1 border rounded" onClick={moveToList}>
+          목록
+        </button>
       </div>
     </div>
   );

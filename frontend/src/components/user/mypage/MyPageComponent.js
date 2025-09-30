@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import MyPageMenuComponent from "../mypage/MyPageMenuComponent";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { API_SERVER_HOST } from "../../../api/popupstoreApi";
+import { API_SERVER_HOST } from "../../../api/config";
 import { getUserProfileByUserId } from "../../../api/userProfileApi";
 
 const MyPageComponent = () => {

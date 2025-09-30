@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
-import Sanrio_mediaArt_1 from "../../assets/img/Sanrio MediaArt_1.jpeg";
 import { useEffect, useState } from "react";
 import { addBookmark, deleteBookmark } from "../../api/bookmarkApi";
 import { GoBookmark } from "react-icons/go";
 import { FcBookmark } from "react-icons/fc";
-import { useSelector } from "react-redux";
 
 const PopupCard = ({ item }) => {
   const [isBookmark, setIsBookmark] = useState(item.isBookmark);

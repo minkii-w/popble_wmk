@@ -1,10 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
-import { PiEyesFill } from "react-icons/pi";
 import { FaRegEye } from "react-icons/fa";
-
-//임시용 이미지
-import img3 from "../../../assets/img/1.jpeg";
 
 const PopularPopupComponent = ({ item, index, type }) => {
   return (
@@ -18,21 +14,21 @@ const PopularPopupComponent = ({ item, index, type }) => {
       {/* 숫자표시 */}
       <div
         className="absolute top-2 left-2  text-white text-6xl font-bold
-      w-10 h-10 z-20 flex items-center justify-center rounded-full"
+                  w-10 h-10 z-20 flex items-center justify-start rounded-full"
         style={{ transform: "rotate(2deg)" }}
       >
         {index + 1}
       </div>
       {/* 인기 또는 조회 수 */}
-      <div className="absolute top-3 right-2 text-white text-sm w-6 h-6 z-20 items-center justify-center">
+      <div className="absolute top-3 right-5 text-white text-sm w-6 h-6 z-20 flex items-center justify-center">
         {type === "recommend" ? (
-          <>
-            <FaHeart size={20} className="mb-1" /> {item.recommend}
-          </>
+          <div className="flex items-center gap-1">
+            <FaHeart size={15} /> {item.recommend}
+          </div>
         ) : (
-          <>
-            <FaRegEye size={20} className="mb-1" /> {item.view}
-          </>
+          <div className="flex items-center gap-1">
+            <FaRegEye size={15} /> {item.view}
+          </div>
         )}
       </div>
       {/* 팝업 이미지 */}
@@ -43,16 +39,18 @@ const PopularPopupComponent = ({ item, index, type }) => {
       ></img>
 
       {/* 오버레이 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/30 to-black/90 bg-opacity-50 z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/80 bg-opacity-50 z-10"></div>
 
       {/* 카드 내용 */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 p-3 flex flex-col justify-end h-[90px] items-end text-right">
-        <h3 className="font-bold text-base text-gray-100">{item.storeName}</h3>
-        <p className="text-sm text-gray-100">{item.address}</p>
-        <p className="text-sm text-gray-100">
-          <span className="text-end">{item.startDate}</span>
-          <br />
-          <span>{item.endDate}</span>
+      <div className="absolute bottom-0 left-0 right-0 z-20 p-3 flex flex-col justify-end h-[90px] items-start text-left gap-1">
+        <h3 className="font-medium text-base text-gray-100">
+          {item.storeName}
+        </h3>
+        <p className="text-xs text-gray-100">{item.address}</p>
+        <p className="text-xs text-gray-100">
+          <span className="text-end">
+            {item.startDate} ~ {item.endDate}
+          </span>
         </p>
       </div>
     </Link>

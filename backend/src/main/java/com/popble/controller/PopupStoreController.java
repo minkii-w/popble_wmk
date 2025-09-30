@@ -132,5 +132,12 @@ public class PopupStoreController {
         fileUtil.deleteFile(oldFileNames);
         return Map.of("결과", "성공");
     }
+    
+    // 카카오 맵 리스트
+    @GetMapping("/mapList")
+	public ResponseEntity<List<PopupStoreDTO>> getMapList(){
+    	List<PopupStoreDTO> storeList = popupStoreService.getMapList();
+    	return ResponseEntity.ok(storeList);
+    }
 
 }

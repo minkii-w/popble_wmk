@@ -1,7 +1,5 @@
 package com.popble.service;
 
-import com.popble.dto.UserDTO;
-
 public interface PopupRecommendService {
 
 	void recommend(Long userId, Long popupId);

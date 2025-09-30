@@ -1,7 +1,8 @@
 import axios from "axios";
+import jwtAxios from "../utill/jwtUtill";
 
 // 스프링부트 서버 주소
-export const API_SERVER_HOST = "http://localhost:8080";
+import { API_SERVER_HOST } from "./config";
 const prefix = `${API_SERVER_HOST}/api/popup`;
 
 // ===== 목록 조회 =====
@@ -17,7 +18,7 @@ export const createPopupStore = async (payload, imageFile) => {
     if (imageFile) {
       const fd = new FormData();
       fd.append(
-        "popup",
+        "dto",
         new Blob([JSON.stringify(payload)], { type: "application/json" })
       );
       fd.append("images", imageFile);

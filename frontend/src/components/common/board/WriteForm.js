@@ -14,25 +14,14 @@ const initState = {
   title: "",
   content: "",
   writerId: "",
-  popupStoreId: "",
 };
-
-// 공통 Row 컴포넌트 (좌측 정렬)
-const FormRow = ({ label, children }) => (
-  <div className="flex justify-center">
-    <div className="relative mb-4 w-full flex items-center">
-      <div className="w-1/5 p-3 font-bold text-left">{label}</div>
-      <div className="w-4/5">{children}</div>
-    </div>
-  </div>
-);
 
 const WriteForm = () => {
   const [board, setBoard] = useState({ ...initState });
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [thumbnailIdx, setThumbnailIdx] = useState(0); // ✅ 대표 이미지 인덱스
-  const [result, setResult] = useState(null); // ✅ 등록 결과
+  const [thumbnailIdx, setThumbnailIdx] = useState(0); // ✅ 대표 이미지
+  const [result, setResult] = useState(null);
   const fileRef = useRef(null);
 
   // 입력 변경
@@ -46,32 +35,38 @@ const WriteForm = () => {
     const selected = Array.from(e.target.files);
     setFiles(selected);
 
-    // 미리보기
-    const previewList = selected.map((file) =>
-      URL.createObjectURL(file)
-    );
+    const previewList = selected.map((file) => URL.createObjectURL(file));
     setPreviews(previewList);
 
-    // 새로 선택하면 첫 번째 파일을 대표로 지정
-    setThumbnailIdx(0);
+    setThumbnailIdx(0); // 새 업로드 시 첫 번째가 대표
   };
 
-  // 등록 버튼
+  // 이미지 삭제
+  const handleRemoveImage = (idx) => {
+    const newFiles = files.filter((_, i) => i !== idx);
+    const newPreviews = previews.filter((_, i) => i !== idx);
+
+    setFiles(newFiles);
+    setPreviews(newPreviews);
+
+    if (fileRef.current) {
+      fileRef.current.value = "";
+      const dataTransfer = new DataTransfer();
+      newFiles.forEach((file) => dataTransfer.items.add(file));
+      fileRef.current.files = dataTransfer.files;
+    }
+
+    if (thumbnailIdx === idx) {
+      setThumbnailIdx(0); // 대표가 지워지면 0번으로
+    } else if (thumbnailIdx > idx) {
+      setThumbnailIdx((prev) => prev - 1);
+    }
+  };
+
+  // 등록
   const handleClickAdd = async () => {
-    if (!board.type) {
-      alert("게시판을 선택하세요.");
-      return;
-    }
-    if (!board.title.trim()) {
-      alert("제목을 입력하세요.");
-      return;
-    }
-    if (!board.content.trim()) {
-      alert("내용을 입력하세요.");
-      return;
-    }
-    if (!board.writerId) {
-      alert("작성자 ID를 입력하세요.");
+    if (!board.type || !board.title.trim() || !board.content.trim()) {
+      alert("필수 항목을 모두 입력하세요.");
       return;
     }
 
@@ -86,7 +81,7 @@ const WriteForm = () => {
               title: board.title,
               content: board.content,
               writerId: Number(board.writerId),
-              thumbnailIndex: thumbnailIdx, // ✅ 대표 이미지 인덱스 같이 전달
+              thumbnailIndex: thumbnailIdx,
             }),
           ],
           { type: "application/json" }
@@ -96,21 +91,15 @@ const WriteForm = () => {
       files.forEach((file) => formData.append("images", file));
 
       const res = await postAddWithImages(formData);
-      const createId =
-        typeof res === "number"
-          ? res
-          : res?.id ?? res?.boardId ?? res?.tno ?? null;
+      const createId = typeof res === "number" ? res : res?.id ?? null;
 
-      // 모달 표시
       setResult({ id: createId, title: board.title });
 
-      // 1.5초 뒤 자동 이동
       setTimeout(() => {
         window.location.href = "/popble/boards/all";
       }, 1500);
 
-      // 초기화
-      setBoard((prev) => ({ ...initState, type: prev.type }));
+      setBoard({ ...initState });
       setFiles([]);
       setPreviews([]);
       setThumbnailIdx(0);
@@ -121,156 +110,134 @@ const WriteForm = () => {
     }
   };
 
-  // 이미지 삭제
-  const handleRemoveImage = (idx) => {
-    const newFiles = files.filter((_, i) => i !== idx);
-    const newPreviews = previews.filter((_, i) => i !== idx);
-
-    setFiles(newFiles);
-    setPreviews(newPreviews);
-
-    if (fileRef.current) {
-      fileRef.current.value = "";
-
-      // 남은 파일 다시 세팅
-      const dataTransfer = new DataTransfer();
-      newFiles.forEach((file) => dataTransfer.items.add(file));
-      fileRef.current.files = dataTransfer.files;
-    }
-
-    // ✅ 삭제 후 대표 이미지 인덱스 보정
-    if (thumbnailIdx === idx) {
-      setThumbnailIdx(0); // 대표 지워지면 0번으로 변경
-    } else if (thumbnailIdx > idx) {
-      setThumbnailIdx((prev) => prev - 1); // 뒤쪽 인덱스 당겨오기
-    }
-  };
-
   return (
-    <div className="border-2 border-sky-200 mt-10 p-4 rounded">
-      {/* 등록 성공 모달 */}
-      {result && (
-        <ResultModal
-          title="글 등록"
-          content={`[${result.id}]번 글 '${result.title}'이 등록되었습니다.`}
-          callbackFn={() => {}} // 자동 이동되므로 클릭 콜백 불필요
-        />
-      )}
-
-      {/* 게시판 선택 */}
-      <FormRow label="게시판">
-        <select
-          className="w-full p-3 rounded border border-neutral-500 shadow-md"
-          name="type"
-          value={board.type}
-          onChange={handleChange}
-        >
-          <option value="">게시판을 선택하세요.</option>
-          {BOARD_TYPES.map((t) => (
-            <option key={t.value} value={t.value}>
-              {t.label}
-            </option>
-          ))}
-        </select>
-      </FormRow>
-
-      {/* 제목 */}
-      <FormRow label="제목">
-        <input
-          className="w-full p-3 rounded border border-neutral-500 shadow-md"
-          name="title"
-          type="text"
-          value={board.title}
-          onChange={handleChange}
-          maxLength={200}
-        />
-      </FormRow>
-
-      {/* 내용 */}
-      <FormRow label="내용">
-        <textarea
-          className="w-full p-3 rounded border border-neutral-500 shadow-md h-64"
-          name="content"
-          value={board.content}
-          onChange={handleChange}
-          placeholder="내용을 입력하세요."
-        />
-      </FormRow>
-
-      {/* 작성자 ID */}
-      <FormRow label="작성자 ID">
-        <input
-          className="w-full p-3 rounded border border-neutral-500 shadow-md"
-          name="writerId"
-          type="number"
-          value={board.writerId}
-          onChange={handleChange}
-          placeholder="작성자 UserProfile ID"
-        />
-      </FormRow>
-
-      {/* 이미지 업로드 + 미리보기 */}
-      <FormRow label="이미지 첨부">
-        <div className="flex flex-col gap-4 w-full">
-          {/* 파일 선택 버튼 */}
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            ref={fileRef}
-            onChange={handleFileChange}
-            className="w-48"
+    <div className="min-h-screen bg-[#fdfbf7]">
+      <div className="max-w-4xl mx-auto mt-10 p-6">
+        {result && (
+          <ResultModal
+            title="글 등록"
+            content={`[${result.id}]번 글 '${result.title}'이 등록되었습니다.`}
+            callbackFn={() => {}}
           />
+        )}
 
-          {/* 이미지 미리보기 */}
-          {previews.length > 0 && (
-            <div className="flex gap-4 flex-wrap border-b border-gray-300 pb-4">
-              {previews.map((src, idx) => (
-                <div
-                  key={idx}
-                  className="relative cursor-pointer"
-                  onClick={() => setThumbnailIdx(idx)} // ✅ 클릭으로 대표 변경
-                >
-                  <img
-                    src={src}
-                    alt={`preview-${idx}`}
-                    className={`w-32 h-32 object-cover border rounded ${
-                      idx === thumbnailIdx ? "ring-4 ring-blue-500" : ""
-                    }`}
-                  />
-                  {/* 대표 이미지 표시 */}
-                  {idx === thumbnailIdx && (
-                    <span className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded">
-                      대표
-                    </span>
-                  )}
-                  {/* 제거 버튼 */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation(); // 삭제 클릭 시 대표 변경 막음
-                      handleRemoveImage(idx);
-                    }}
-                    className="absolute top-1 right-1 bg-gray-700 text-white text-xs px-1 rounded hover:bg-black"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+        <h2 className="text-2xl font-bold mb-8">게시글 등록</h2>
+        <hr className="mb-8" />
+
+        {/* 카테고리 */}
+        <div className="flex items-center mb-6">
+          <label className="w-1/5 font-medium">카테고리</label>
+          <select
+            name="type"
+            value={board.type}
+            onChange={handleChange}
+            className="border rounded p-2 w-2/5"
+          >
+            <option value="">게시판 선택</option>
+            {BOARD_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
         </div>
-      </FormRow>
 
-      {/* 등록 버튼 */}
-      <div className="flex justify-end">
-        <button
-          type="button"
-          className="rounded p-4 w-36 bg-blue-500 text-xl text-white hover:bg-blue-600"
-          onClick={handleClickAdd}
-        >
-          등록
-        </button>
+        {/* 제목 */}
+        <div className="flex items-center mb-6">
+          <label className="w-1/5 font-medium">제목</label>
+          <input
+            type="text"
+            name="title"
+            value={board.title}
+            onChange={handleChange}
+            className="border rounded p-2 w-4/5"
+          />
+        </div>
+
+        {/* 내용 */}
+        <div className="flex items-start mb-6">
+          <label className="w-1/5 font-medium mt-2">내용</label>
+          <textarea
+            name="content"
+            value={board.content}
+            onChange={handleChange}
+            className="border rounded p-2 w-4/5 h-48 resize-none"
+          />
+        </div>
+
+        {/* 첨부 이미지 */}
+        <div className="flex items-start mb-8">
+          <label className="w-1/5 font-medium mt-2">첨부 이미지</label>
+          <div className="w-4/5 flex flex-col gap-4">
+            <label className="w-24 h-32 border flex items-center justify-center cursor-pointer rounded">
+              <span className="text-3xl">+</span>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                ref={fileRef}
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
+
+            {/* 미리보기 */}
+            {previews.length > 0 && (
+              <div className="flex gap-4 flex-wrap">
+                {previews.map((src, idx) => (
+                  <div
+                    key={idx}
+                    className="relative cursor-pointer"
+                    onClick={() => setThumbnailIdx(idx)}
+                  >
+                    <img
+                      src={src}
+                      alt={`preview-${idx}`}
+                      className={`w-24 h-24 object-cover border rounded ${
+                        idx === thumbnailIdx ? "ring-4 ring-blue-500" : ""
+                      }`}
+                    />
+                    {idx === thumbnailIdx && (
+                      <span className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded">
+                        대표
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveImage(idx);
+                      }}
+                      className="absolute top-1 right-1 bg-gray-700 text-white text-xs px-1 rounded hover:bg-black"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <hr className="mb-8" />
+
+        {/* 버튼 */}
+        <div className="flex justify-center gap-4">
+          <button
+            type="button"
+            onClick={() => (window.location.href = "/popble/boards/all")}
+            className="w-28 py-2 border rounded bg-white hover:bg-gray-100"
+          >
+            이전
+          </button>
+          <button
+            type="button"
+            onClick={handleClickAdd}
+            className="w-28 py-2 rounded bg-blue-300 text-black hover:bg-blue-400"
+          >
+            등록
+          </button>
+        </div>
       </div>
     </div>
   );

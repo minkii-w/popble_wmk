@@ -2,6 +2,7 @@ package com.popble.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +70,13 @@ public class PopupStore {
 	//추천수
 	@Column(name = "recommend", nullable = false)
 	private Integer recommend = 0;
+	
+    // ✅ 오픈/마감 시간
+    @Column(name = "open_time")
+    private LocalTime openTime;
+
+    @Column(name = "close_time")
+    private LocalTime closeTime;
 	
 	//예약시간 오전/오후 기업이 나눌수 있게
 	

@@ -1,11 +1,7 @@
 package com.popble.controller;
 
 import com.popble.domain.Board;
-import com.popble.dto.BoardCreateRequest;
-import com.popble.dto.BoardResponse;
-import com.popble.dto.BoardUpdateRequest;
-import com.popble.dto.PageRequestDTO;
-import com.popble.dto.PageResponseDTO;
+import com.popble.dto.*;
 import com.popble.service.BoardService;
 import jakarta.validation.Valid;
 import lombok.Data;
@@ -54,13 +50,20 @@ public class BoardController {
         return ResponseEntity.ok(boardService.get(id));
     }
 
-    /** ✅ 게시판 타입별 목록 */
+    /** ✅ 게시판 타입별 목록 (페이지네이션 적용) */
     @GetMapping
-    public ResponseEntity<List<BoardResponse>> list(
+    public ResponseEntity<PageResponseDTO<BoardResponse>> list(
             @RequestParam("type") Board.Type type,
-            @RequestParam(name = "order", defaultValue = "date") String order
+            @RequestParam(name = "order", defaultValue = "date") String order,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(boardService.listByType(type, order));
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        return ResponseEntity.ok(boardService.listByType(type, pageRequestDTO, order));
     }
 
     /** ✅ 전체 게시글 (페이지네이션 + pinned 공지 상단) */

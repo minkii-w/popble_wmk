@@ -1,6 +1,7 @@
 import axios from "axios";
+import jwtAxios from "../utill/jwtUtill";
+import { API_SERVER_HOST } from "./config";
 
-export const API_SERVER_HOST = "http://localhost:8080";
 const prefix = `${API_SERVER_HOST}/api/boards`;
 
 // =======================
@@ -45,7 +46,9 @@ export const getList = async ({ type, order = "date" }) => {
 // ✅ 전체 게시물 목록 (페이지네이션 + pinned 상단)
 //    → 백엔드에서 PageResponseDTO 구조 반환
 export const getAll = async ({ order = "date", page = 1, size = 10 } = {}) => {
-  const res = await axios.get(`${prefix}/all`, { params: { order, page, size } });
+  const res = await axios.get(`${prefix}/all`, {
+    params: { order, page, size },
+  });
   const data = res.data;
 
   // dtoList의 이미지 경로 보정
@@ -65,22 +68,25 @@ export const getAllList = getAll;
 
 // ✅ 게시글 등록 (JSON 전송: 이미지 없을 때 사용)
 export const postAdd = async (boardObj) => {
-  const res = await axios.post(`${prefix}`, boardObj);
+  const res = await jwtAxios.post(`${prefix}`, boardObj);
   return res.data; // 생성된 게시글 id
 };
 
 // ✅ 게시글 등록 (이미지 포함: 멀티파트 전송)
 export const postAddWithImages = async (boardObj, files = []) => {
   if (!files || files.length === 0) {
-    const res = await axios.post(`${prefix}`, boardObj);
+    const res = await jwtAxios.post(`${prefix}`, boardObj);
     return res.data;
   }
   const form = new FormData();
-  form.append("board", new Blob([JSON.stringify(boardObj)], { type: "application/json" }));
+  form.append(
+    "board",
+    new Blob([JSON.stringify(boardObj)], { type: "application/json" })
+  );
   for (const f of files) form.append("images", f); // @RequestPart("images")
 
   // ⚠️ headers 지정하지 말 것 → axios가 boundary 자동 처리
-  const res = await axios.post(`${prefix}`, form);
+  const res = await jwtAxios.post(`${prefix}`, form);
   return res.data;
 };
 
@@ -90,7 +96,7 @@ export const postAddWithImages = async (boardObj, files = []) => {
 
 // ✅ 게시글 본문 수정
 export const patchOne = async (id, boardObj) => {
-  await axios.patch(`${prefix}/${id}`, boardObj);
+  await jwtAxios.patch(`${prefix}/${id}`, boardObj);
   return true;
 };
 
@@ -99,13 +105,13 @@ export const patchImages = async (id, keepIds = [], files = []) => {
   const form = new FormData();
   keepIds.forEach((k) => form.append("keepIds", k));
   files.forEach((f) => form.append("newImages", f));
-  await axios.patch(`${prefix}/${id}/images`, form);
+  await jwtAxios.patch(`${prefix}/${id}/images`, form);
   return true;
 };
 
 // ✅ 핀(공지 고정/해제)
 export const patchPin = async (id, { pinned, pinUntil = null }) => {
-  await axios.patch(`${prefix}/${id}/pin`, { pinned, pinUntil });
+  await jwtAxios.patch(`${prefix}/${id}/pin`, { pinned, pinUntil });
   return true;
 };
 
@@ -115,6 +121,6 @@ export const patchPin = async (id, { pinned, pinUntil = null }) => {
 
 // ✅ 게시글 삭제
 export const deleteOne = async (id) => {
-  await axios.delete(`${prefix}/${id}`);
+  await jwtAxios.delete(`${prefix}/${id}`);
   return true;
 };

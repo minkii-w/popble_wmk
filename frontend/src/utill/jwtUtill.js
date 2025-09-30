@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getCookie, setCookie } from "./cookieUtill";
-import { API_SERVER_HOST } from "../api/popupstoreApi";
+import { API_SERVER_HOST } from "../api/config";
 import store from "../store";
 import { refreshTokenSuccess, logout } from "../slice/authSlice";
 

@@ -51,6 +51,13 @@ public interface PopupStoreRepository extends JpaRepository<PopupStore, Long>, J
     @EntityGraph(attributePaths = "imageList")
     @Query("select p from PopupStore p where p.id = :id")
     Optional<PopupStore> selectOne(@Param("id") Long id);
+    
+    // ===== 예약 시간대 포함 단건 조회 (fetch join) =====
+    @Query("select distinct p from PopupStore p " +
+           "left join fetch p.reservationTimes " +
+           "left join p.imageList " +
+           "where p.id = :id")
+    Optional<PopupStore> findByIdWithTimes(@Param("id") Long id);
 
     // ===== 소프트 삭제 처리 =====
     @Modifying

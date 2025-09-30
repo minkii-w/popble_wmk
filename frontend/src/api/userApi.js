@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_SERVER_HOST } from "./popupstoreApi";
+import { API_SERVER_HOST } from "./config";
 import jwtAxios from "../utill/jwtUtill";
 
 const host = `${API_SERVER_HOST}/api/user`;

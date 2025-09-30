@@ -1,20 +1,8 @@
 package com.popble.service;
 
-
-import com.popble.domain.AdBoard;
-import com.popble.domain.Board;
-import com.popble.domain.GeneralBoard;
-import com.popble.domain.NoticeBoard;
-import com.popble.domain.QnaBoard;
-import com.popble.domain.UserProfile;
-import com.popble.dto.BoardCreateRequest;
-import com.popble.dto.BoardResponse;
-import com.popble.dto.BoardUpdateRequest;
-
 import com.popble.domain.*;
 import com.popble.dto.*;
 import com.popble.repository.BoardImageRepository;
-
 import com.popble.repository.BoardRepository;
 import com.popble.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,11 +60,9 @@ public class BoardServiceImpl implements BoardService {
 
         Board entity = switch (req.getType()) {
             case GENERAL -> new GeneralBoard();
-
             case QNA -> new QnaBoard();
             case NOTICE -> new NoticeBoard();
             case AD -> new AdBoard();
-
         };
 
         UserProfile profile = null;
@@ -116,49 +101,24 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BoardResponse> listLatest(Board.Type type) {
-        return boardRepository.findByTypeOrderByCreateTimeDesc(type)
-                .stream().map(this::toResponse).collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<BoardResponse> list(Board.Type type) {
-        return boardRepository.findByType(type)
-                .stream().map(this::toResponse).collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<BoardResponse> listByType(Board.Type type, String order) {
+    public PageResponseDTO<BoardResponse> listByType(Board.Type type, PageRequestDTO pageRequestDTO, String order) {
         Sort sort = resolveSort(order);
-        return boardRepository.findByType(type, sort)
-                .stream().map(this::toResponse).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), sort);
+
+        Page<Board> result = boardRepository.findByType(type, pageable);
+
+        List<BoardResponse> dtoList = result.getContent()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+
+        return PageResponseDTO.<BoardResponse>withAll()
+                .dtoList(dtoList)
+                .pageRequestDTO(pageRequestDTO)
+                .totalCount(result.getTotalElements())
+                .build();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<BoardResponse> listAllLatest() {
-        return listAll("latest");
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<BoardResponse> listAll(String order) {
-        var now = java.time.LocalDateTime.now();
-        Sort pinnedSort = Sort.by(Sort.Order.desc("pinnedAt"), Sort.Order.desc("createTime"), Sort.Order.desc("id"));
-        var pinned = boardRepository.findPinnedNotices(now, pinnedSort);
-
-        Sort restSort = resolveSort(order);
-        var rest = boardRepository.findRestForAll(now, restSort);
-
-        var result = new ArrayList<BoardResponse>(pinned.size() + rest.size());
-        pinned.stream().map(this::toResponse).forEach(result::add);
-        rest.stream().map(this::toResponse).forEach(result::add);
-        return result;
-    }
-
-    // ✅ 새 listAll (Page 기반) → AD 제외 + 항상 size 만큼 채움
     @Override
     @Transactional(readOnly = true)
     public PageResponseDTO<BoardResponse> listAll(PageRequestDTO pageRequestDTO, String order) {
@@ -201,7 +161,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (req.getTitle() != null) e.setTitle(req.getTitle());
         if (req.getContent() != null) e.setContent(req.getContent());
-        if (req.getType() != null) e.setType(req.getType()); // ✅ 게시판 종류 수정 반영
+        if (req.getType() != null) e.setType(req.getType());
     }
 
     @Override

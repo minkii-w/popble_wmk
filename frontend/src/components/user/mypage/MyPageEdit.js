@@ -10,7 +10,7 @@ import {
   getUserProfileById,
   updateUserProfile,
 } from "../../../api/userProfileApi";
-import { API_SERVER_HOST } from "../../../api/popupstoreApi";
+import { API_SERVER_HOST } from "../../../api/config";
 
 const MyPageEdit = () => {
   const dispatch = useDispatch();
