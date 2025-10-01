@@ -6,12 +6,12 @@ import LoadingComponent from "../../common/LoadingComponent";
 import axios from "axios";
 import { getRemaining } from "../../../api/reservationApi";
 
-const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack }) => {
+const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack, user }) => {
 
     const navigate = useNavigate();
 
-    const [userName, setUserName] = useState("우민경");
-    const [phonenumber, setPhonenumber] = useState("010-1111-1111");
+    const [userName, setUserName] = useState();
+    const [phonenumber, setPhonenumber] = useState();
     const [reservationId, setReservationId] = useState(null);
     const [showLoadingPayment, setShowLoadingPayment] = useState(false);
     const [showPayment, setShowPayment] = useState(false);
@@ -73,6 +73,8 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
     
     //핸드폰 번호 자동으로 '-'넣기
     const formatPhone = (value) => {
+        if(!value) return ""
+        
         const digits = value.replace(/\D/g, "");
         if (digits.length < 4) return digits;
         if (digits.length < 8) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
@@ -83,6 +85,33 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
     useEffect(() => {
         fetchRemainingSeats();
     }, [selected.date, selected.time, popupStore.id]);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            if (!userProfileId) return;
+
+            try {
+                const res = await axios.get(`http://localhost:8080/api/user/${userProfileId}`);
+                const userData = res.data;
+
+                const fetchedName = userData.name || ""
+                const fetchedPhone = userData.phonenumber || ""
+
+          
+                setUserName(fetchedName);
+                setPhonenumber(fetchedPhone);
+
+              
+                setEditedName(fetchedName);
+                setEditedPhone(fetchedPhone.replace(/\D/g, ""));
+            } catch (error) {
+                console.error("사용자 정보 조회 실패:", error);
+              
+            }
+        };
+
+        fetchUserProfile();
+    }, [userProfileId]);
 
     useEffect(() => {
         if (remainingSeats !== null && selected.count) {
@@ -268,7 +297,7 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
                                     className="border border-gray-300 rounded px-3 bg-backgroundColor"
                                     onClick={() => {
                                         setEditedName(userName);
-                                        setEditedPhone(phonenumber.replace(/\D/g, ""));
+                                        setEditedPhone((phonenumber || "").replace(/\D/g, ""));
                                         setEditMode(true);
                                     }}
                                 >

@@ -20,7 +20,8 @@ public class BookmarkDTO {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private int bookmarkCount;
-	private List<String> imageFileNames;
+	private List<String> uploadFileNames;
 	private boolean isBookmark;
 	private Status status;
+
 }

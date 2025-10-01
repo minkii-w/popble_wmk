@@ -109,18 +109,18 @@ const BasicInfo = ({ popupStore }) => {
       {/* 위치, 시간, 러닝타임 */}
       <div className="mt-10 mb-4 text-lg flex flex-col gap-3">
         <div className="flex items-center gap-2">
-          <FiMapPin size={17} />
+          <FiMapPin size={20} />
           <span>{popupStore.address || "주소 정보 없음"}</span>
         </div>
         <div className="flex items-start gap-2">
-          <MdOutlineWatchLater className="mt-0.5" size={17} />
+          <MdOutlineWatchLater className="mt-1.5" size={20} />
           <div className="flex flex-col gap-1">
             <span>첫 타임 : {firstTime || "첫 타임 데이터 없음"}</span>
             <span>마지막 타임 : {lastTime || "마지막 타임 데이터 없음"}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <LuTimerReset size={17} />
+          <LuTimerReset size={22} />
           <span>러닝타임 : 약 60 분</span>
         </div>
       </div>
@@ -158,8 +158,8 @@ const BasicInfo = ({ popupStore }) => {
       </div>
 
       {/* 콘텐츠 */}
-      <h3 className="flex text-r font-semibold mt-5 mb-3 gap-2">
-        <BsStars size={20} />
+      <h3 className="flex items-center text-r font-semibold mt-5 mb-3 gap-2">
+        <BsStars size={20}/>
         콘텐츠
       </h3>
       <p className="leading-2 mb-5">
@@ -179,7 +179,7 @@ const BasicInfo = ({ popupStore }) => {
         관람 유의사항
       </h3>
 
-      <p className="leading-6 mb-5">
+      <p className="leading-6 mb-10">
         • 외부 음식물 및 음료는 반입이 불가합니다.
         <br />
         • 쾌적한 관람 환경을 위해 개인 촬영 장비(ex.액션캠, DSLR, 삼각대,

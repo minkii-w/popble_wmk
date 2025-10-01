@@ -32,7 +32,7 @@ export const getAdOne = async (id) => {
 
 // 🔹 등록 (JSON)
 export const createAd = async (payload) => {
-  const res = await jwtAxios.post(prefix, payload, {
+  const res = await axios.post(prefix, payload, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -55,7 +55,7 @@ export const createAdWithImages = async (
   );
   files.forEach((file) => fd.append("images", file));
 
-  const res = await jwtAxios.post(`${prefix}/with-images`, fd, {
+  const res = await axios.post(`${prefix}/with-images`, fd, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -66,7 +66,7 @@ export const createAdWithImages = async (
 
 // 🔹 수정 (JSON)
 export const updateAd = async (id, payload) => {
-  const res = await jwtAxios.put(`${prefix}/${id}`, payload, {
+  const res = await axios.put(`${prefix}/${id}`, payload, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -92,7 +92,7 @@ export const updateAdWithImages = async (
   files.forEach((f) => fd.append("images", f));
   keepImages.forEach((k) => fd.append("keepImages", k));
 
-  const res = await jwtAxios.put(`${prefix}/${id}/with-images`, fd, {
+  const res = await axios.put(`${prefix}/${id}/with-images`, fd, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

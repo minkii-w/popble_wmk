@@ -50,6 +50,15 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
   const [amTimes, setAmTimes] = useState([]);
   const [pmTimes, setPmTimes] = useState([]);
   const [isTimesLoading, setIsTimesLoading] = useState(false);
+  const [currentTimeKey, setCurrentTimeKey] = useState(Date.now())
+
+  useEffect(()=>{
+    const timer = setInterval(()=>{
+      setCurrentTimeKey(Date.now());
+    }, 60000)
+
+    return () => clearInterval(timer)
+  },[])
 
   const isPastDate = (date) => {
     const today = new Date();
@@ -59,11 +68,29 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
 
   const isPastTime = (timeString, date) => {
     const now = new Date();
+
     const [hour, minute] = timeString.split(":").map(Number);
-    const timeToCheck = new Date(date); 
-    timeToCheck.setHours(hour, minute, 0, 0);
-    return timeToCheck < now;
+
+    const timeToCheck = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      hour,
+      minute,
+      0,
+      0
+
+    )
+
+    const isPast = timeToCheck.getTime() < now.getTime();
+       
+    return isPast;
   };
+
+  const isSelectedTimePast = selected.date && selected.time 
+    ? isPastTime(selected.time.startTime, selected.date)
+    : false;
+
 
   const isOffDays = (date) => (popupStore.offDays || []).includes(date.getDay());
 
@@ -105,7 +132,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
     };
 
     fetchAvailableTimes();
-  }, [popupStore.id, selected.date]);
+  }, [popupStore.id, selected.date, currentTimeKey]);
 
   return (
     <div className="flex justify-start w-full mx-0">
@@ -144,8 +171,12 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                 <div>
                   {amTimes.length > 0 ? (
                     amTimes.map((t) => {
+                      const today = new Date();
                       const isToday =
-                        selected.date.toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10);
+                        selected.date.getFullYear() === today.getFullYear() &&
+                        selected.date.getMonth() === today.getMonth() &&
+                        selected.date.getDate() === today.getDate();
+
                       const isPastSlot = isToday && isPastTime(t.startTime, selected.date);
                       const isDisabled = t.remainingSeats <= 0 || isPastSlot;
                       return (
@@ -171,8 +202,11 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                 <div>
                   {pmTimes.length > 0 ? (
                     pmTimes.map((t) => {
-                      const isToday =
-                        selected.date.toISOString().slice(0, 10) === new Date().toISOString().slice(0, 10);
+                      const today = new Date();
+                      const isToday =
+                        selected.date.getFullYear() === today.getFullYear() &&
+                        selected.date.getMonth() === today.getMonth() &&
+                        selected.date.getDate() === today.getDate();
                       const isPastSlot = isToday && isPastTime(t.startTime, selected.date);
                       const isDisabled = t.remainingSeats <= 0 || isPastSlot;
                       return (
@@ -214,7 +248,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
                   <button
                     className="py-2 px-4 bg-primaryColor text-xl rounded text-black"
                     onClick={onNext}
-                    disabled={!selected.date || !selected.time || selected.count === 0}
+                    disabled={!selected.date || !selected.time || selected.count === 0 || isSelectedTimePast}
                   >
                     다음
                   </button>

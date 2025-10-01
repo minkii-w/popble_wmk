@@ -1,6 +1,7 @@
 package com.popble.service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.popble.domain.Bookmark;
+import com.popble.domain.Image;
 import com.popble.domain.PopupStore;
 import com.popble.domain.UserProfile;
 import com.popble.dto.BookmarkDTO;
@@ -98,13 +100,9 @@ public class BookmarkServiceImpl implements BookmarkService {
 								.bookmarkCount(popupStore.getBookmarkCount())
 								.status(popupStore.getStatus())
 								.build();
+
 			
-// 			List<String> fileNames = popupStore.getImageList().stream()
-// 									.map(image -> image.getUrl()) //안되면 get originalName, storedName시도
-// 									.collect(Collectors.toList());
-// 			dto.setImageFileNames(fileNames);
-			
-      List<String> fileUrls = popupStore.getImageList().stream()
+			List<String> fileUrls = popupStore.getImageList().stream()
                     .map(image -> {
                         if (image.getUrl() != null && !image.getUrl().isBlank()) {
                             return image.getUrl(); // DB에 직접 저장된 URL
@@ -115,7 +113,16 @@ public class BookmarkServiceImpl implements BookmarkService {
                         }
                         return "/files/" + folder + image.getStoredName();
                     }).toList();
-      
+			
+			 List<String> nasUrls = popupStore.getImages().stream()
+				        .sorted(Comparator.comparingInt(img -> img.getImageTypeCode()))
+				        .map(Image::getFileName) // NAS 이미지용 전체 URL
+				        .toList();
+
+				    if (!nasUrls.isEmpty()) {
+				        dto.setUploadFileNames(nasUrls);  // BookmarkDTO에 세팅
+				    }
+			
 			return dto;
 		});
 	}

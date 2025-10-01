@@ -149,7 +149,7 @@ const MyPageReservation = () => {
   };
 
   return (
-    <div className="flex flex-col w-[700px]">
+    <div className="flex flex-col w-full">
       <div className="flex flex-row overflow-x-auto space-x-4 p-2">
         {reservations.length > 0 ? (
           <CustomSwiper>

@@ -161,6 +161,8 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .price(popupStore.getPrice())
                 .parking(popupStore.isParking())
                 .deleted(popupStore.isDeleted())
+                .bookmarkCount(popupStore.getBookmarkCount())
+                .recommend(popupStore.getRecommend())
                 // ✅ 오픈/마감 시간 DTO에 매핑
                 .openTime(popupStore.getOpenTime())
                 .closeTime(popupStore.getCloseTime())
@@ -218,6 +220,8 @@ public class PopupStoreServiceImpl implements PopupStoreService {
                 .price(popupStoreDTO.getPrice())
                 .parking(popupStoreDTO.isParking())
                 .deleted(popupStoreDTO.isDeleted())
+                .bookmarkCount(popupStoreDTO.getBookmarkCount()!= null ? popupStoreDTO.getBookmarkCount() : 0)
+                .recommend(popupStoreDTO.getRecommend()!= null ? popupStoreDTO.getBookmarkCount() : 0)
                 // ✅ 오픈/마감 시간 엔티티에 매핑
                 .openTime(popupStoreDTO.getOpenTime())
                 .closeTime(popupStoreDTO.getCloseTime())

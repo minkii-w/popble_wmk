@@ -23,12 +23,12 @@ export const createPopupStore = async (payload, imageFile) => {
       );
       fd.append("images", imageFile);
 
-      const res = await axios.post(`${prefix}`, fd, {
+      const res = await jwtAxios.post(`${prefix}/`, fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return res.data;
     } else {
-      const res = await axios.post(`${prefix}`, payload);
+      const res = await jwtAxios.post(`${prefix}`, payload);
       return res.data;
     }
   } catch (err) {
@@ -92,7 +92,7 @@ export const deleteOne = async (id) => {
 
 //팝업스토어 홍보 게시판 등록하기(사진첨부)
 export const postAdd = async (formData) => {
-  const res = await axios.post(`${prefix}/`, formData, {
+  const res = await jwtAxios.post(`${prefix}/`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

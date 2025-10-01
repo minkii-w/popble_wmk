@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 import { addBookmark, deleteBookmark } from "../../api/bookmarkApi";
 import { GoBookmark } from "react-icons/go";
 import { FcBookmark } from "react-icons/fc";
+import getImageSrc from "../function/getImageSrc";
 
 const PopupCard = ({ item }) => {
   const [isBookmark, setIsBookmark] = useState(item.isBookmark);
-
-  // const userId = useSelector((state) => state.auth?.user?.id);
 
   useEffect(() => {
     setIsBookmark(item.isBookmark ?? false);
@@ -42,7 +41,7 @@ const PopupCard = ({ item }) => {
       </button>
       {/* 팝업간단정보 */}
       <img
-        src={item.uploadFileNames?.[0]}
+        src={getImageSrc(item.uploadFileNames?.[0])}
         alt={item.title}
         className="w-[150px] h-[150px] object-cover rounded-md flex-shrink-0"
       ></img>

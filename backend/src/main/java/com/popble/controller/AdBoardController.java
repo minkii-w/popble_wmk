@@ -64,6 +64,7 @@ public class AdBoardController {
             @AuthenticationPrincipal UserDTO user,
             @RequestPart("board") AdCreateRequest req,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
+    	  log.info("userId from AuthenticationPrincipal: {}", user != null ? user.getId() : "null");
 
         req.setWriterId(user.getId()); // ✅ JWT에서 사용자 ID 세팅
         Long id = adBoardService.create(req, images);

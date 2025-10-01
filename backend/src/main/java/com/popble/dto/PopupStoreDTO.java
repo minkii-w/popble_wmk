@@ -85,7 +85,7 @@ public class PopupStoreDTO {
 	private List<PopupCategory> categories = new ArrayList<>();
 	
 	//북마크수
-	private int bookmarkCount = 0;
+	private Integer bookmarkCount;
 	
 	//이미지
 	@Builder.Default

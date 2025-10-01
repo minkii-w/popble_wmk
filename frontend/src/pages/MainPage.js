@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BasicLayout from "../layout/BasicLayout";
 import Carousel from "../components/function/Carousel";
 import SearchBar from "../components/common/SearchBar";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import FullMap from "../components/common/kakaoMap/FullMap";
 
 import { FiMapPin } from "react-icons/fi";
@@ -19,12 +19,15 @@ import { PiEyesFill } from "react-icons/pi";
 
 const MainPage = () => {
   const navigate = useNavigate();
+    const location = useLocation();
   //검색어
   const [keyword, setKeyword] = useState("");
   //인기순(추천)
   const [popularPopups, setPopularPopups] = useState([]);
   //조회수
   const [viewedPopups, setViewedPopups] = useState([]);
+  // FullMap 섹션 ref
+  const mapSectionRef = useRef(null);
 
   useEffect(() => {
     const fetchPopuplarAndViewed = async () => {
@@ -63,51 +66,41 @@ const MainPage = () => {
       navigate(`/search?keyword=${encodeURIComponent(keyword.trim())}`);
     }
   };
+
+  // URL 쿼리 파라미터로 스크롤 처리
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("scroll") === "fullmap") {
+      mapSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [location]);
+
   return (
     <BasicLayout>
       {/* 캐러셀 */}
       <Carousel />
 
       {/* 검색창 */}
-      <div className="flex justify-center m-10 p-10">
+      <div className="flex justify-center m-">
         <SearchBar
-          className="w-[900px] h-[40px] flex-wrap items-center justify-center mb-10"
+          className="w-full max-w-5xl h-[40px] flex-wrap items-center"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onSearch={handleSearch}
         />
       </div>
 
-      {/* 메인 지도 */}
-      <div className="mt-5 flex flex-col items-center w-full">
-        {/* 아이콘+부제목+라인 */}
-        <div className="w-full max-w-4xl flex flex-col items-start px-4">
-          {/* 아이콘+부제목 */}
-          <div className="flex items-center font-semibold text-2xl gap-2">
-            <FiMapPin className="text-3xl mb-1" />
-            전체 팝업 지도
-          </div>
-          {/* 라인 */}
-          <div className="w-full border-t-2 border-black mt-2"></div>
-        </div>
-
-        {/* 지도 컨테이너 */}
-        <div className="mt-5 w-full max-w-4xl px-4">
-          <div className="border border-hashTagColor rounded-xl overflow-hidden shadow-sm w-full aspect-[16/9]">
-            <FullMap />
-          </div>
-        </div>
-
-        {/* 인기순?? 추천순?? */}
-        <div className="justify-stretch w-11/12 mx-auto my-16">
-          <div className="flex justify-between items-center mb-4 px-2">
-            <h2 className="text-2xl font-bold flex flex-row items-center mx-4">
-              9월 인기 팝업
-              <FaHeart className="ml-4" size={30} color="FFB6B9" />
-            </h2>
-          </div>
+      <div className="flex flex-col items-center w-full">
+        {/* 인기순 */}
+        <div className="w-full mx-auto mt-5 ml-5">
+          <div className="flex flex-col justify-start text-2xl font-bold">
+            <div className="flex items-center gap-3 mb-2">
+              <FaHeart className="ml-5" size={30} color="FFB6B9" />
+              {`${new Date().getMonth() +1}월 인기 팝업`}
+            </div>
           {/* 밑줄 */}
-          <hr className="border-2 border-subSecondColor m-2"></hr>
+          <hr className="w-full border-t-2 border-black ml-2"></hr>
+          </div>
           {/* 팝업리스트 */}
           <CustomSwiper>
             {popularPopups.map((item, index) => (
@@ -123,15 +116,15 @@ const MainPage = () => {
         </div>
 
         {/* 조회순 */}
-        <div className="justify-stretch w-11/12 mx-auto mb-16">
-          <div className="flex justify-between items-center mb-4 px-2">
-            <h2 className="text-2xl font-bold flex flex-row items-center mx-4">
+        <div className="w-full mx-auto mt-5 ml-5">
+          <div className="flex flex-col justify-start mb-2 text-2xl font-bold">
+            <h2 className="flex items-center gap-3">              
+              <PiEyesFill className="ml-5" size={30} />
               조회수 많은 팝업
-              <PiEyesFill className="ml-4" size={30} />
             </h2>
           </div>
           {/*  */}
-          <hr className="border-2 border-subSecondColor m-2"></hr>
+          <hr className="w-full border-t-2 border-black ml-2"></hr>
           {/* 팝업리스트 */}
           <CustomSwiper>
             {viewedPopups.map((item, index) => (
@@ -144,6 +137,25 @@ const MainPage = () => {
               </SwiperSlide>
             ))}
           </CustomSwiper>
+        </div>
+
+        {/* 메인 지도 */}
+        {/* 아이콘+부제목+라인 */}
+        <div className="mt-5 ml-5 mr-5 w-full flex flex-col justify-start px-4" ref={mapSectionRef}>
+          {/* 아이콘+부제목 */}
+          <div className="flex items-center font-semibold text-2xl">
+            <FiMapPin className="text-3xl ml-3 gap-3" />
+            전체 팝업 지도
+          </div>
+          {/* 라인 */}
+          <div className="w-full border-t-2 border-black mt-3"></div>
+        </div>
+
+        {/* 지도 컨테이너 */}
+        <div className="m-5 w-full max-w-7xl px-4">
+          <div className="border border-hashTagColor rounded-xl overflow-hidden shadow-sm w-full aspect-[16/9]">
+            <FullMap />
+          </div>
         </div>
       </div>
     </BasicLayout>

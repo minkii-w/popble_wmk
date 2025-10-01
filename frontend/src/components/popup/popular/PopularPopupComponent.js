@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FaHeart } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa";
+import getImageSrc from "../../function/getImageSrc";
 
 const PopularPopupComponent = ({ item, index, type }) => {
   return (
@@ -33,7 +34,7 @@ const PopularPopupComponent = ({ item, index, type }) => {
       </div>
       {/* 팝업 이미지 */}
       <img
-        src={item.uploadFileNames?.[0]}
+        src={getImageSrc(item.uploadFileNames?.[0])}
         alt={item.title}
         className="absolute inset-0 w-full h-full object-cover"
       ></img>
