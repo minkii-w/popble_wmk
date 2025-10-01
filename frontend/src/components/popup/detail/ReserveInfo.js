@@ -8,7 +8,7 @@ import ReservationCheckComponent from "../../popup/reservation/ReservationCheckC
 const ReserveInfo = () => {
   const { id } = useParams();
 
-  const currentUserId = 1;
+  const currentUserId = 2;
 
   const [popupStore, setPopupStore] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
