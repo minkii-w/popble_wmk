@@ -1,12 +1,12 @@
 const PageComponent = ({ serverData, movePage }) => {
   return (
-    <div className="m-6 flex justify-center">
+    <div className="m-6 flex justify-center items-center">
       {serverData.prev ? (
         <div
-          className="m-2 p-2 w-16 text-center rounded-2xl shadow-md bg-secondaryAccentColor font-bold text-white"
+          className="m-2 p-2 w-16 text-center font-bold text-black"
           onClick={() => movePage({ page: serverData.prevPage })}
         >
-          이전
+          ◀ 이전
         </div>
       ) : (
         <></>
@@ -14,11 +14,11 @@ const PageComponent = ({ serverData, movePage }) => {
       {serverData.pageNumList.map((pageNum) => (
         <div
           key={pageNum}
-          className={`m-2 p-2 w-10 text-center rounded-full shadow-md text-white border-secondaryAccentColor border-2
+          className={`m-2 p-2 w-10 text-center text-black
                     ${
                       serverData.current === pageNum
-                        ? "bg-secondaryAccentColor"
-                        : "bg-secondaryColor"
+                        ? "rounded-3xl bg-secondaryAccentColor shadow-md font-bold"
+                        : ""
                     }`}
           onClick={() => movePage({ page: pageNum })}
         >
@@ -27,10 +27,10 @@ const PageComponent = ({ serverData, movePage }) => {
       ))}
       {serverData.next ? (
         <div
-          className="m-2 p-2 w-16 text-center rounded-2xl shadow-md bg-secondaryAccentColor font-bold text-white"
+          className="m-2 p-2 w-16 text-center font-bold text-black"
           onClick={() => movePage({ page: serverData.nextPage })}
         >
-          다음
+          다음 ▶
         </div>
       ) : (
         <></>

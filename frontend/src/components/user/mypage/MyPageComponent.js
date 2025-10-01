@@ -8,7 +8,7 @@ import { getUserProfileByUserId } from "../../../api/userProfileApi";
 const MyPageComponent = () => {
   const { menu } = useParams();
   const navigate = useNavigate();
-  // const [selectedMenu, setSelectedMenu] = useState();
+  const [selectedMenu, setSelectedMenu] = useState(menu || "edit");
 
   const user = useSelector((state) => state.auth?.user);
   //현재 userProfile이 undefined로 나옴
@@ -37,32 +37,46 @@ const MyPageComponent = () => {
   }, [user]);
 
   const handleMenuClick = (key) => {
+    setSelectedMenu(key); 
     navigate(`/user/mypage/${key}`);
   };
 
+   useEffect(() => {
+      setSelectedMenu(menu || null);
+  }, [menu]);
+
   return (
     <div className="bg-gradient-to-b from-backgroundColor min-h-screen">
-      <div className="flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-start">
         {/* 프로필사진 이메일 */}
-        <div className="flex flex-row justify-center items-center p-4 mb-6">
-          <div className="size-[150px] shadow-md m-3 p-2 rounded-full text-center">
-            <img
-              src={profileImgUrl}
-              alt="프로필사진"
-              className="object-cover h-full w-full rounded-full"
-            ></img>
+        <div className="flex flex-row justify-start p-4 ml-5 mb-5 mt-5">
+          <div className={`size-[150px] shadow-md m-3 rounded-full flex items-center justify-center text-white text-4xl font-bold
+              ${profileImgUrl ? "bg-transparent border border-hashTagColor" : "bg-secondaryAccentColor"}`}
+          >
+            {profileImgUrl ? (
+              <img
+                src={profileImgUrl}
+                alt="프로필사진"
+                className="object-cover h-full w-full rounded-full"
+              />
+            ) : (
+              // 이미지 없을경우 닉네임 앞글자+배경색
+              <span>
+                {nickname ? nickname.charAt(0).toUpperCase() : "?"}
+              </span>
+            )}
           </div>
-          <div className="m-3 p-3">
-            <h2 className="text-5xl font-bold p-2 m-2 tracking-widest">
+          <div className="m-2 p-3">
+            <h2 className="text-5xl font-bold p-2 m-2">
               {nickname}
             </h2>
-            <p className="text-2xl p-2 m-2 tracking-wide">{email}</p>
+            <p className="text-2xl p-2 m-2">{email}</p>
           </div>
         </div>
         {/* 프로필사진 이메일 끝 */}
         {/* 마이페이지 메뉴 시작*/}
         <MyPageMenuComponent
-          selectedMenu={menu || "default"}
+          selectedMenu={selectedMenu}
           onMenuClick={handleMenuClick}
         ></MyPageMenuComponent>
         {/* 마이페이지 메뉴 끝 */}

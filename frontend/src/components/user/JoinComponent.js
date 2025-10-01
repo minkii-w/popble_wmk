@@ -224,7 +224,7 @@ const JoinComponent = () => {
         {/* 가입하기 버튼 */}
         <button
           onClick={handleSubmit(onSubmit)}
-          className="w-full h-[55px] bg-secondaryAccentColor text-white font-bold text-lg rounded-md"
+          className="w-full h-[55px] bg-secondaryAccentColor text-black font-bold text-lg rounded-md"
         >
           가입하기
         </button>
@@ -237,7 +237,7 @@ const JoinComponent = () => {
         </div>
 
         {/* 구분선 */}
-        <div className="w-full h-[1px] bg-black" />
+        <div className="w-full h-[2px] bg-black" />
 
         {/* 소셜 로그인 버튼들 */}
         <div className="flex justify-center gap-9">

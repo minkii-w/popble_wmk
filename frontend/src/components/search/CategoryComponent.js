@@ -68,16 +68,16 @@ const CategoryComponent = ({ onSelect }) => {
     // 카테고리
     <div>
       {/* 상단카테고리 */}
-      <div className="flex space-x-4 text-sm">
-        <h2 className="text-2xl font-bold">카테고리</h2>
+      <div className="flex items-center space-x-4 text-sm">
+        <h2 className="text-xl font-bold">카테고리</h2>
         {["STATUS", "MAIN", "LOCALE", "THEME"].map((top) => (
           <button
             key={top}
             onClick={() => handleTopSelect(top)}
-            className={`p-1 m-1 rounded-3xl shadow-md border-gray-400 border-2 text-sm ${
+            className={`p-1 pl-3 pr-3 m-1 rounded-3xl shadow-md border-hashTagColor border text-sm ${
               selectedTop === top
-                ? "bg-subButtonAccentColor text-white"
-                : "bg-subButtonColor"
+                ? "bg-subButtonColor text-black"
+                : "border borer-black text-black"
             }`}
           >
             {categoryLabel[top] || top}
@@ -87,14 +87,14 @@ const CategoryComponent = ({ onSelect }) => {
 
       {/* 하단카테고리 */}
       {subList.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-w-[500px] mx-auto">
+        <div className="mt-1 ml-20 sm:grid-cols-3 md:grid-cols-4 gap-2 max-w-[500px] mx-auto">
           {subList.map((sub) => (
             <button
               key={sub.id || sub.key}
-              className={`p-1 m-1 rounded-3xl shadow-md border-gray-400 border-2 text-sm ${
+              className={`p-1 m-1 text-sm ${
                 selectedBottom === sub
-                  ? "bg-subButtonAccentColor text-white"
-                  : "bg-subButtonColor"
+                  ? "text-black font-bold"
+                  : "text-hashTagColor"
               }`}
               onClick={() => handleBottomSelect(sub)}
             >

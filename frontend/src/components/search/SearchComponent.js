@@ -110,7 +110,7 @@ const SearchComponent = () => {
         <div className="flex flex-col items-center p-4">
           {/* 검색창 */}
           <SearchBar
-            className="w-[750px] h-[40px] mb-16 flex-wrap items-stretch"
+            className="w-full max-w-4xl h-[40px] flex-wrap items-center"
             onSearch={(keyword) => {
               setFilter((prev) => ({
                 ...prev,
@@ -156,11 +156,11 @@ const SearchComponent = () => {
           </div>
           {/* 카테고리정렬 끝 */}
           {/* 구분선 */}
-          <div className="w-[900px] ">
-            <hr className="my-4 border-t-2 border-subSecondColor"></hr>
+          <div className="flex justify-center w-full mt-2 mb-5">
+            <hr className="border-t-2 border-black w-full max-w-5xl" />
           </div>
           {/* 카드 시작 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {serverData.dtoList.map((item) => (
               <PopupCard
                 key={item.id}

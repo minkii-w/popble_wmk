@@ -73,9 +73,9 @@ const LoginComponent = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center ">
+    <div className="min-h-screen flex flex-col items-center justify-center">
       <form className="w-full max-w-[480px] bg-white p-6 rounded shadow space-y-4">
-        <div className="w-[430px] h-[170px] absolute top-[240px] bg-primaryColor flex justify-center items-center ">
+        <div className="w-[430px] h-[170px] top-[200px] bg-primaryColor flex justify-center items-center ">
           <PopbleImage src={PopbleImg} />
         </div>
         {/* 닉네임 */}
@@ -148,19 +148,19 @@ const LoginComponent = () => {
         {/* 아이디/비밀번호 재설정/회원가입 링크 */}
         <div className="text-right text-sm">
           <Link to="/user/login" className="text-black-500 hover:underline">
-            아이디/
+            아이디 /
           </Link>
           <Link to="/user/login" className="text-black-500 hover:underline">
-            비밀번호 재설정
+            &nbsp; 비밀번호 재설정
           </Link>
-
+          &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
           <Link to="/user/signup" className="text-black-500 hover:underline">
-            /회원가입
+            회원가입
           </Link>
         </div>
 
         {/* 구분선 */}
-        <div className="w-full h-[1px] bg-black" />
+        <div className="w-full h-[2px] bg-black" />
 
         {/* 소셜 로그인 버튼 */}
         <div className="flex justify-center gap-9">

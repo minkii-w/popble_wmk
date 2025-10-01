@@ -17,16 +17,16 @@ const SortComponent = ({ onSort }) => {
   };
   return (
     <div>
-      <div className="flex space-x-4 text-sm">
-        <h2 className="text-2xl font-bold">정렬</h2>
+      <div className="flex items-center space-x-4 text-sm">
+        <h2 className="text-xl font-bold">정렬</h2>
         {sortList.map((sort) => (
           <button
             key={sort.value}
             onClick={() => handleSelect(sort.value)}
-            className={`p-1 m-1 rounded-3xl shdow-md border-gray-400 border-2 text-sm shadow-md ${
+            className={`p-1 pl-3 pr-3 m-1 rounded-3xl shadow-md border-hashTagColor border text-sm ${
               selectedSort === sort.value
-                ? "bg-subButtonAccentColor text-white"
-                : "bg-subButtonColor"
+                ? "bg-subButtonColor text-black"
+                : "border borer-black text-black"
             }`}
           >
             {sort.label}

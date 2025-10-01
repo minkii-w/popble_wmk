@@ -136,18 +136,19 @@ const MyPageEdit = () => {
   };
 
   return (
-    <div className="flex flex-col w-[700px]">
-      {/* 헤더 */}
-      <div className="text-2xl flex flex-row">
-        <FaUserEdit size={25} className="m-2" />
-        <p className="m-2 text-2xl">회원정보 수정/탈퇴</p>
+    <div className="flex flex-col justify-center w-full">
+
+      {/* 정렬 */}
+      <div className="mt-2 w-full flex flex-center items-center gap-2">
+        <FaUserEdit size={25} className="ml-8" />
+        <p className="m-1 text-2xl">회원정보 수정 / 탈퇴</p>
       </div>
-      <hr className="border-subSecondColor border-2 m-4"></hr>
-      <div className="flex flex-row space-x-16 justify-center my-4">
+      <hr className="min-w-[300px] border border-black border-l-2 m-2"></hr>
+      <div className="flex flex-row space-x-16 justify-center m-10">
         {/* 프로필사진 추가 편집 */}
         <div className="flex flex-col items-center space-y-6 mb-8">
           {/* 원형 */}
-          <div className="w-20 h-20 rounded-full border-2 border-gray-400 flex overflow-hidden items-center justify-center">
+          <div className="w-20 h-20 rounded-full border-2 border-hashTagColor flex overflow-hidden items-center justify-center">
             {profileImage ? (
               <img
                 src={profileImage}
@@ -155,7 +156,7 @@ const MyPageEdit = () => {
                 className="object-cover w-full h-full"
               ></img>
             ) : (
-              <span className="text-gray-400 text-sm">프로필 사진</span>
+              <span className="text-gray-500 text-sm">프로필 사진</span>
             )}
           </div>
           <input
@@ -166,27 +167,27 @@ const MyPageEdit = () => {
             id="profileImageUpload"
           ></input>
           <label
-            className="px-3 py-1 rounded-xl border-2 border-gray-400 cursor-pointer"
+            className="px-3 py-1 rounded-lg border-2 border-hashTagColor bg-white cursor-pointer"
             htmlFor="profileImageUpload"
           >
             편집
           </label>
         </div>
         {/* 내용 */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <div className="flex items-center">
             <label className="w-32 font-medium">아이디</label>
             <input
               disabled
               value={user.loginId}
-              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              className="flex-1 p-2 rounded-lg border-2 border-subSecondColor"
             ></input>
           </div>
           <div className="flex items-center">
             <span className="w-32 font-medium">이름</span>
             <input
               disabled
-              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              className="flex-1 p-2 rounded-lg border-2 border-subSecondColor"
               value={userForm.name}
               onChange={handleUserChange}
               name="name"
@@ -195,7 +196,7 @@ const MyPageEdit = () => {
           <div className="flex items-center">
             <span className="w-32 font-medium">닉네임</span>
             <input
-              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              className="flex-1 p-2 rounded-lg border-2 border-subSecondColor"
               value={profileForm.nickname}
               onChange={handleProfileChange}
               name="nickname"
@@ -205,7 +206,7 @@ const MyPageEdit = () => {
             <span className="w-32 font-medium">비밀번호</span>
             <input
               disabled={isSocial}
-              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              className="flex-1 p-2 rounded-lg border-2 border-subSecondColor"
               value={userForm.password}
               onChange={handleUserChange}
               name="password"
@@ -217,7 +218,7 @@ const MyPageEdit = () => {
             {/* Todo: 비밀번호 재확인할 password2 필요? */}
             <input
               disabled={isSocial}
-              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              className="flex-1 p-2 rounded-lg border-2 border-subSecondColor"
               value={userForm.passwordConfirm}
               onChange={handleUserChange}
               name="passwordConfirm"
@@ -227,7 +228,7 @@ const MyPageEdit = () => {
           <div className="flex items-center">
             <span className="w-32 font-medium">이메일</span>
             <input
-              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              className="flex-1 p-2 rounded-lg border-2 border-subSecondColor"
               value={userForm.email}
               onChange={handleUserChange}
               name="email"
@@ -237,7 +238,7 @@ const MyPageEdit = () => {
           <div className="flex items-center">
             <span className="w-32 font-medium">전화번호</span>
             <input
-              className="flex-1 p-2 rounded-xl border-2 border-subFirstColor"
+              className="flex-1 p-2 rounded-lg border-2 border-subSecondColor"
               value={userForm.phonenumber}
               onChange={handleUserChange}
               name="phonenumber"
@@ -246,17 +247,17 @@ const MyPageEdit = () => {
           </div>
         </div>
       </div>
-      <hr className="border-subSecondColor border-2 m-4"></hr>
+      <hr className="min-w-[300px] border border-black border-l-2 m-2"></hr>
       {/* 버튼 */}
-      <div className="flex justify-end space-x-4 mt-6">
+      <div className="flex justify-end space-x-4 m-5 mr-20">
         <button
-          className="w-[120px] h-[40px] rounded-2xl text-gray-700 bg-primaryColor border-blue-300 border-2 hover:opacity-90 shadow-md"
+          className="w-[220px] h-[40px] rounded-lg text-black bg-primaryColor border-blue-300 border-2 hover:opacity-90 shadow-md"
           onClick={handleUpdate}
         >
           수정
         </button>
         <button
-          className="text-sm w-[120px] h-[40px] rounded-2xl text-gray-700 bg-subButtonAccentColor border-red-300 border-2 hover:opacity-90 shadow-md"
+          className="text-sm w-[120px] h-[40px] rounded-lg text-black bg-subButtonAccentColor border-red-300 border-2 hover:opacity-90 shadow-md"
           onClick={handleDelete}
         >
           회원탈퇴

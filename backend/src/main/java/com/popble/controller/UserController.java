@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.popble.dto.UserDTO;
 import com.popble.service.UserService;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 

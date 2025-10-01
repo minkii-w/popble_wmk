@@ -41,43 +41,14 @@ const MyPageBookmark = () => {
   }, [userId]);
 
   return (
-    <div className="flex flex-col w-[700px]">
-      {/* 헤더 */}
-      <div className="text-2xl flex flex-row">
-        <FaBookmark size={25} color="red" className="m-2" />
-        <p className="m-2 text-2xl">북마크</p>
-      </div>
-      <hr className="border-subSecondColor border-2 m-4"></hr>
-      {/* 예정 카드 시작 */}
-      <div className="mb-8">
-        <button className="p-2 m-2 mb-5 rounded-3xl shadow-md border-gray-400 border-2 text-sm flex flex-row">
-          <FaBookmark size={20} color="#FFD6A5"></FaBookmark>
-          예정
-        </button>
-        <hr className="border-2 border-gray-400 m-2"></hr>
-        <CustomSwiper>
-          {scheduled.length > 0 ? (
-            scheduled.map((item) => (
-              <SwiperSlide style={{ width: "400px" }} key={item.popupId}>
-                <PopupCard item={{ ...item, isBookmark: true }}></PopupCard>
-              </SwiperSlide>
-            ))
-          ) : (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-2xl font-semibold">
-                북마크한 팝업이 없습니다.
-              </p>
-            </div>
-          )}
-        </CustomSwiper>
-      </div>
+    <div className="flex flex-col justify-center w-full">
       {/* 진행중 */}
-      <div className="mb-8">
-        <button className="p-2 m-2 mb-5 rounded-3xl shadow-md border-gray-400 border-2 text-sm flex flex-row">
-          <FaBookmark size={20} color="#FFB6B9"></FaBookmark>
+      <div className="m-1">
+        <button className="mt-2 w-full flex items-center text-2xl gap-2">
+          <FaBookmark size={25} className="ml-5" color="#FFB6B9"></FaBookmark>
           진행중
         </button>
-        <hr className="border-2 border-gray-400 m-2"></hr>
+        <hr className="min-w-[300px] border border-black border-l-2 m-2"></hr>
         <CustomSwiper>
           {active.length > 0 ? (
             active.map((item) => (
@@ -94,13 +65,37 @@ const MyPageBookmark = () => {
           )}
         </CustomSwiper>
       </div>
+      {/* 예정 카드 시작 */}
+      <div className="m-1">
+        <p className="mt-2 w-full flex items-center text-2xl gap-2">
+          <FaBookmark size={25} className="ml-5" color="#FFD6A5"></FaBookmark>
+          예정
+        </p>
+        <hr className="min-w-[300px] border border-black border-l-2 m-2"></hr>
+        <CustomSwiper>
+          {scheduled.length > 0 ? (
+            scheduled.map((item) => (
+              <SwiperSlide style={{ width: "400px" }} key={item.popupId}>
+                <PopupCard item={{ ...item, isBookmark: true }}></PopupCard>
+              </SwiperSlide>
+            ))
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-2xl font-semibold">
+                북마크한 팝업이 없습니다.
+              </p>
+            </div>
+          )}
+        </CustomSwiper>
+      </div>
+      
       {/* 종료 */}
-      <div className="mb-8">
-        <button className="p-2 m-2 mb-5 rounded-3xl shadow-md border-gray-400 border-2 text-sm flex flex-row">
-          <FaBookmark size={20} color="gray"></FaBookmark>
-          종료된 팝업
+      <div className="m-1">
+        <button className="mt-2 w-full flex items-center text-2xl gap-2">
+          <FaBookmark size={25} className="ml-5" color="#757575"></FaBookmark>
+          종료
         </button>
-        <hr className="border-2 border-gray-400 m-2"></hr>
+        <hr className="min-w-[300px] border border-black border-l-2 m-2"></hr>
         <CustomSwiper>
           {ended.length > 0 ? (
             ended.map((item) => (
