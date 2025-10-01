@@ -1,5 +1,3 @@
-import BasicMenu from "../../components/BasicMenu";
-import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import BasicInfo from "../../components/popup/detail/BasicInfo";
@@ -10,11 +8,11 @@ import ReviewInfo from "../../components/popup/detail/ReviewInfo";
 import { getOne } from "../../api/popupstoreApi";
 import { getAllTimes } from "../../api/reservationApi";
 
-import { PiHeartBold } from "react-icons/pi";
-import { FaRegBookmark, FaHeart } from "react-icons/fa6";
+
 import { IoShareSocialOutline } from "react-icons/io5";
 import PopupRecommendComponent from "../../components/popup/recommend/PopupRecommendComponent";
 import PopupBookmarkComponent from "../../components/popup/bookmark/PopupBookmarkComponent";
+import LoadingComponent from "../../components/common/LoadingComponent";
 
 const AboutPage = () => {
   const [activeTab, setActiveTab] = useState("basic");
@@ -45,7 +43,7 @@ const AboutPage = () => {
   }, [popupStoreId]);
 
   if (loading) {
-    return <div>로딩중</div>;
+    return <div><LoadingComponent/></div>;
   }
 
   if (!popupStore) {

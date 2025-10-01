@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import CopyrightFooter from "./CopyrightFooter";
@@ -79,7 +79,7 @@ const Overlay = styled.div`
 /* 사이드바 (우측에서 슬라이드) */
 const DivSidebar = styled.div`
   width: 270px;
-  max-width: 86%;
+  max-width: 100%;
   height: 100vh;
   background-color: #fff; /* 배경 */
   position: fixed; /* 화면 오른쪽 고정*/
@@ -336,8 +336,8 @@ const NavBar = () => {
           <MenuItem
             className="submenu"
             onClick={() => {
-              navigate("/popup");
               setOpen(false);
+              navigate("/?scroll=fullmap");
             }}
           >
             <div className="left">주변 팝업 보기</div>

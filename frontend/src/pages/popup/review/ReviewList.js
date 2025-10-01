@@ -45,7 +45,7 @@ const ReviewList = () => {
     <div className="flex flex-col justify-center items-center w-full">
 
       {/* 정렬 */}
-      <div className="mt-5 flex flex-center flex-col items-center gap-2">
+      <div className="mt-5 w-full flex flex-center flex-col items-center gap-2">
         <div className="w-full border border-black border-l-2"/>
         <div className="flex ml-auto">
           <FiFilter className="w-5 h-5"/>

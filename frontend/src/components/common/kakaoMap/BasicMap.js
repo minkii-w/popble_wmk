@@ -5,9 +5,10 @@ import  useKakaoLoader  from "../../../hooks/useKakaoLoader";
 import { useParams } from "react-router-dom";
 
 import Car from "../../../assets/img/icon_car.png"
+import { MdHotel } from "react-icons/md";
+import { IoMdRestaurant } from "react-icons/io";
 
-
-export default function BasicMap() {
+export default function BasicMap({onLoad}) {
   const loaded = useKakaoLoader(process.env.REACT_APP_KAKAOMAP_KEY);
   
   const [popupLocation, setPopupLocation] = useState([])  // 팝업 데이터 저장
@@ -61,14 +62,13 @@ export default function BasicMap() {
 
         if (safeData.length > 0) {
           setMapCenter({ lat: safeData[0].latitude, lng: safeData[0].longitude });
+          if (onLoad) onLoad(safeData[0].address); // 주소 전달
         }
-
         console.log("팝업 좌표 확인:", safeData);
       } catch (error) {
         console.error("팝업 데이터 로딩 중 오류 발생:", error);
       }
-    };
-
+    }
     fetchPopup();
   }, [popupId]);
           
@@ -142,7 +142,7 @@ export default function BasicMap() {
           }
           style={getButtonStyle("식당")}
         >
-          🍽️ 식당
+          <IoMdRestaurant size={20}/> 식당
         </button>
 
         <button
@@ -151,7 +151,7 @@ export default function BasicMap() {
           }
           style={getButtonStyle("숙박")}
         >
-          🏨 숙박
+          <MdHotel size={20}/> 숙박
         </button>
       </div>
       {/* {mapCenter && Array.isArray(filteredPopup) && (
@@ -175,7 +175,15 @@ export default function BasicMap() {
             title={popup.storeName}  > 
             {/* MapMarker의 자식을 넣어줌으로 해당 자식이 InfoWindow로 만들어지게 합니다 */}
             {/* 인포윈도우에 표출될 내용으로 HTML 문자열이나 React Component가 가능합니다 */}
-            <div style={{ padding: "5px", color: "#000" }}>
+            <div style={{ 
+              padding: "10px",
+              backgroundColor: "white",
+              border: "1px solid",
+              minWidth: "150px",
+              textAlign: "left",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+              lineHeight: "1.4",
+             }}>
               <strong>{popup.storeName} </strong>
               <br />
               {popup.address}
@@ -202,13 +210,13 @@ export default function BasicMap() {
           ))}
 
           {/* 카테고리 선택 시 마커 표시 */}
-          {/* {selectedCategory &&
+          {selectedCategory &&
             locations[selectedCategory].map((loc, idx) => (
               <MapMarker key={`${selectedCategory}-${idx}`} //고유 key
                         position={{ lat: loc.lat, lng: loc.lng }}>
                 <div style={{ padding: "5px", fontSize: "12px" }}>{loc.name}</div>
               </MapMarker>
-          ))} */}
+          ))}
         </Map>
       {/* )} */}
     </div>

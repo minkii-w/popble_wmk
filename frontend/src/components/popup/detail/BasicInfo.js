@@ -95,19 +95,19 @@ const BasicInfo = ({ popupStore }) => {
             </div> */}
 
       {/* 조회수 */}
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-1">
         <FaRegEye size={25} className="mr-2" />
-        {popupStore.view}
+        {popupStore.recommend || 0}
       </div>
 
       {/* 이름, 기간 */}
       <h2 className="text-3xl font-bold mb-2">{popupStore.storeName || ""}</h2>
-      <h3 className="text-r font-semibold mb-2">
+      <h3 className="text-lg font-semibold mb-2">
         {popupStore.startDate || ""} ~ {popupStore.endDate || ""}
       </h3>
 
       {/* 위치, 시간, 러닝타임 */}
-      <div className="mt-10 mb-4 text-sm flex flex-col gap-3">
+      <div className="mt-10 mb-4 text-lg flex flex-col gap-3">
         <div className="flex items-center gap-2">
           <FiMapPin size={17} />
           <span>{popupStore.address || "주소 정보 없음"}</span>
@@ -126,7 +126,7 @@ const BasicInfo = ({ popupStore }) => {
       </div>
 
       {/* 주차, 입장료 */}
-      <div className="mt-5 mb-4 ml-6 text-sm flex items-center gap-20">
+      <div className="mt-5 mb-10 ml-6 text-sm flex items-center gap-20">
         <div className="flex flex-col items-center gap-2">
           {parkingIcon ? (
             <img src={Car} alt="주차 가능" style={{ width: 60, height: 60 }} />
@@ -158,11 +158,11 @@ const BasicInfo = ({ popupStore }) => {
       </div>
 
       {/* 콘텐츠 */}
-      <h3 className="flex text-r font-semibold mt-5 mb-5 gap-2">
+      <h3 className="flex text-r font-semibold mt-5 mb-3 gap-2">
         <BsStars size={20} />
         콘텐츠
       </h3>
-      <p className="leading-6 mb-5">
+      <p className="leading-2 mb-5">
         {formattedDesc.length > 0
           ? formattedDesc.map((line, index) => (
               <React.Fragment key={index}>
@@ -174,7 +174,7 @@ const BasicInfo = ({ popupStore }) => {
       </p>
 
       {/* 관람 유의사항 */}
-      <h3 className="flex text-r font-semibold mt-10 mb-5 gap-2">
+      <h3 className="flex text-r font-semibold mt-10 mb-3 gap-2">
         <RiAlarmWarningLine size={20} />
         관람 유의사항
       </h3>
@@ -196,29 +196,6 @@ const BasicInfo = ({ popupStore }) => {
         방문시 양해(고려) 부탁드립니다.
         <br />
       </p>
-
-      {/* sns 아이콘 */}
-      <div className="mt-5 mb-5 text-sm flex items-center gap-3">
-        <FiInstagram size={25} />
-        <MdOutlineEmail size={27} />
-        <FiPhone size={25} />
-      </div>
-
-      {/* 해시태그 */}
-      <div className="flex items-center mb-4 gap-3">
-        <span className="inline-block px-3 py-1 rounded-3xl bg-hashTagColor shadow-md text-center text-black text-xs">
-          # 산리오
-        </span>
-        <span className="inline-block px-3 py-1 rounded-3xl bg-hashTagColor shadow-md text-center text-black text-xs">
-          # 캐릭터
-        </span>
-        <span className="inline-block px-3 py-1 rounded-3xl bg-hashTagColor shadow-md text-center text-black text-xs">
-          # 여의도
-        </span>
-        <span className="inline-block px-3 py-1 rounded-3xl bg-hashTagColor shadow-md text-center text-black text-xs">
-          # FC몰
-        </span>
-      </div>
     </div>
   );
 };
