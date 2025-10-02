@@ -105,7 +105,7 @@ export default function FullMap() {
             <br />
             <div className="mt-1">
               <a
-                href={`/popups/${selected.id}`}
+                href={`https://map.kakao.com/link/map/${encodeURIComponent(selected.storeName)},${selected.latitude},${selected.longitude}`}
                 style={{ color: "blue" }}
                 target="_blank"
                 rel="noreferrer"

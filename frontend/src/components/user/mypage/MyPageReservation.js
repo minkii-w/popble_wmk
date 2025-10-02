@@ -8,6 +8,7 @@ import { getOne } from "../../../api/popupstoreApi";
 import CustomSwiper from "../../common/CustomSwiper";
 import { SwiperSlide } from "swiper/react";
 import { useSelector } from "react-redux";
+import AlertModal from "../../common/AlertModal";
 
 const MyPageReservation = () => {
   const navigate = useNavigate();
@@ -25,13 +26,18 @@ const MyPageReservation = () => {
   });
 
   const [modal, setModal] = useState({
-    isOpen: false,
-    title: "",
-    message: "",
-    onConfirm: () => setModal({ ...modal, isOpen: false }),
-    onCancel: null,
-    confirmText: "확인",
-  });
+        isOpen: false,
+        title: "",
+        message: "",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })), 
+    });
+    
+    const handleCloseModal = () => {
+        setModal(prev => ({
+            ...prev,
+            isOpen: false,
+        }));
+    };
 
   const fetchPopupStores = useCallback(async (popupStoreId) => {
     try {
@@ -64,10 +70,8 @@ const MyPageReservation = () => {
       console.error("예약 리스트 불러오기 실패", error);
       setModal({
         isOpen: true,
-        title: "오류",
         message: "예약 목록을 불러올 수 없습니다.",
-        onConfirm: () => setModal({ ...modal, isOpen: false }),
-        onCancel: null,
+        onClose: handleCloseModal,
       });
     } finally {
       setIsLoading(false);
@@ -92,58 +96,39 @@ const MyPageReservation = () => {
     }
   }, [userProfileId, fetchReservations, fetchUserProfile]);
 
-  // 예약 취소 핸들러 함수
-
-  // const cancelHandler = (id) => {
-  //   if (window.confirm(`예약 번호 ${id}번을 정말로 취소하시겠습니까?`)) {
-  //     cancelReservation(id)
-  //       .then(() => {
-  //         alert("예약이 성공적으로 취소되었습니다.");
-  //         fetchReservations();
-  //       })
-  //       .catch(() => {
-  //         alert("예약 취소에 실패했습니다.");
-  //       });
-  //   }
-  // };
   const cancelHandler = (id) => {
-    setModal({
-      isOpen: true,
-      title: "예약 취소 확인",
-      message: `예약 번호 ${id}번을 정말로 취소하시겠습니까?`,
-      onConfirm: async () => {
-        setModal({ ...modal, isOpen: false });
-        try {
-          await cancelReservation(id);
-          setModal({
-            isOpen: true,
-            title: "취소 완료",
-            message: "예약이 성공적으로 취소되었습니다.",
-            onConfirm: () => {
-              setModal({ ...modal, isOpen: false });
-              fetchReservations();
-            },
-            onCancel: null,
-          });
-        } catch (error) {
-          console.error("예약 취소 실패:", error);
-          setModal({
-            isOpen: true,
-            title: "취소 실패",
-            message: "예약 취소에 실패했습니다.",
-            onConfirm: () => setModal({ ...modal, isOpen: false }),
-            onCancel: null,
-          });
-        }
-      },
-      onCancel: () => setModal({ ...modal, isOpen: false }),
-      confirmText: "예약 취소",
-    });
-  };
+    setModal({
+        isOpen: true,
+        message: `예약 번호 ${id}번을 정말로 취소하시겠습니까?`,
+        onClose: async () => {
+
+            setModal(prev => ({...prev, isOpen: false})); 
+            
+            try {
+                await cancelReservation(id);
+                setModal({
+                    isOpen: true,
+                    message: "예약이 성공적으로 취소되었습니다.",
+                    onClose: () => {
+                        handleCloseModal();
+                        fetchReservations(); 
+                    },
+                });
+            } catch (error) {
+                console.error("예약 취소 실패:", error);
+                setModal({
+                    isOpen: true,
+                    message: "예약 취소에 실패했습니다.",
+                    onClose: handleCloseModal,
+                });
+            }
+        },
+    });
+  };
 
   //후기 작성 핸들러
   const reviewHandler = async (reservationId, popupStoreId) => {
-    navigate(`/popup/review/${reservationId}`, {
+    navigate(`/popup/review/${popupStoreId}/${reservationId}`, {
       state: { popupStoreId, reservationId },
     });
   };
@@ -208,7 +193,7 @@ const MyPageReservation = () => {
                       onClick={() =>
                         reviewHandler(item.reservationId, item.popupStoreId)
                       }
-                    >
+                      >
                       후기작성
                     </button>
                   </div>
@@ -223,6 +208,12 @@ const MyPageReservation = () => {
           </div>
         )}
       </div>
+      {modal.isOpen && (
+        <AlertModal
+        message={modal.message}
+        onClose={modal.onClose}
+        />
+      )}
     </div>
   );
 };

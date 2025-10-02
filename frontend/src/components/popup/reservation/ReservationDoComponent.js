@@ -135,7 +135,7 @@ const ReservationDoComponent = ({ popupStore, selected, setSelected, onNext }) =
   }, [popupStore.id, selected.date, currentTimeKey]);
 
   return (
-    <div className="flex justify-start w-full mx-0">
+    <div className="flex flex-col md:flex-row gap-6">
       <div className="calendar-container w-full pr-10 flex">
         <DatePicker
           inline

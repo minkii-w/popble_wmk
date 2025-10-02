@@ -1,48 +1,93 @@
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
-
-const fetchLoggedInUserNickname = async () => {
-    //더미 닉넴
-    return {id: 25, nickname: "25"}
-}
+import AlertModal from "../../../components/common/AlertModal";
+import { getOne } from "../../../api/popupstoreApi";
+import { useSelector } from "react-redux";
 
 const ReviewPage = () => {
-    const [rating, setRating] = useState(0);    //사용자가 선택한 별점(1~5)
-    const [hover, setHover] = useState(null)    //마우스 올렸을때의 심시 색상 표시
-    const [nickname, setNickname] = useState("");
-    const [userId, setUserId] = useState(null);
-    const [content, setContent] = useState("");
-    const [image, setImage] = useState([]); //이미지파일 배열
+const currentUserId = useSelector(state => state.auth?.user?.id);
+const currentUserNickname = "user";
 
-    const navigate = useNavigate()
-    const {popupId} = useParams()   //팝업 id url에서 추출
+console.log("Currnet User Id:", currentUserId)
+console.log("Current User Nickname:", currentUserNickname)
+console.log("Auth State(전체):",useSelector(state => state.auth))
+const [rating, setRating] = useState(0);    //사용자가 선택한 별점(1~5)
+const [hover, setHover] = useState(null)    //마우스 올렸을때의 심시 색상 표시
+const [content, setContent] = useState("");
+const [image, setImage] = useState([]); //이미지파일 배열
+const [popupStoreInfo, setPopupStoreInfo] = useState(null);
+const [loading, setLoading] = useState(true);
+const [alertModal, setAlertModal] = useState({
+        show: false,
+        message: "",
+        action: () => { }, 
+    });
+
+const navigate = useNavigate()
+const {popupId} = useParams()   //팝업 id url에서 추출
+
+const closeAlertModal = () => {
+        if (alertModal.action && typeof alertModal.action === 'function') {
+            alertModal.action();
+        }
+        setAlertModal({ show: false, message: "", action: () => { } });
+    }
+
+const showAlert = (message, action = () => { }) => {
+        setAlertModal({ show: true, message, action });
+    }
 
     //회원 닉네임 가져옴
     useEffect(() => {
-        const loadNickname = async () => {
-            const userData = await fetchLoggedInUserNickname()
-            setNickname(userData.nickname) 
-            setUserId(userData.id) 
+        const loadData = async () => {
+            setLoading(true);
+
+            if(currentUserId === undefined || currentUserNickname === undefined){
+                return;
+            }
+
+            if(!currentUserId || !currentUserNickname){
+                showAlert("로그인 정보가 유효하지 않습니다",()=>navigate('/user/login'))
+                setLoading(false)
+                return;
+            }
+
+            if (!popupId) {
+                showAlert("리뷰를 등록할 팝업스토어가 없습니다.", () => navigate(-1));
+                setLoading(false);
+                return; 
+            }
+            
+            try {
+                const detail = await getOne(popupId)
+                setPopupStoreInfo(detail);
+            } catch (error) {
+                console.error("팝업스토어 정보 로드 실패함", error)
+                showAlert("팝업 정보를 불러오지 못했습니다. 다시 시도해 주세요.", () => {})
+            }
+            
+            setLoading(false);
         }
-        loadNickname()
-    }, [])
+        
+        loadData()
+    }, [popupId, currentUserId, currentUserNickname, navigate])
 
     // 리뷰 등록 요청
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if(!popupId){
-            alert("팝업 정보가 없어 리뷰를 등록할 수 없습니다")
-            return;
+      
+        if(!popupId || !popupStoreInfo || !currentUserId || !currentUserNickname){
+            showAlert("사용자 또는 팝업 정보가 없어 리뷰를 등록할 수 없습니다", () => {})
+            return
         }
 
         const formData = new FormData();
 
         const reviewRequest = {
             popupId: Number(popupId), 
-            userId: userId,             
-            nickname: nickname,      
+            userId: currentUserId,            
+            nickname: currentUserNickname,    
             content: content,
             rating: parseFloat(rating),
         }
@@ -59,18 +104,19 @@ const ReviewPage = () => {
             });
 
             if (res.ok) {
-                alert("리뷰 등록 완료");
-                //성공 시 상태 초기화 및 페이지 이동
-                setContent("");
-                setRating(0);
-                setImage([]);
-                navigate(`/detail/${popupId}`)
+                 const successAction = () => {
+                    setContent("");
+                    setRating(0);
+                    setImage([]);
+                    navigate(`/popup/detail/${popupId}`)
+                };
+                showAlert("리뷰 등록 완료", successAction);
             } else {
-                alert("리뷰 등록 실패");
+                showAlert("리뷰 등록 실패", () => {});
             }
         } catch (err) {
         console.error("Fetch Error:", err);
-        alert("에러 발생");
+        showAlert("에러 발생", () => {});
         }
     };
 
@@ -84,6 +130,12 @@ const ReviewPage = () => {
 
     return(
         <form onSubmit={handleSubmit} className="p-4 space-y-4">
+            {alertModal.show && (
+                <AlertModal
+                    message={alertModal.message}
+                    onClose={closeAlertModal} 
+                />
+            )}
         <h2 className="text-2xl font-semibold">리뷰 등록</h2>
         <div className="w-full flex border border-black"></div>
 
@@ -91,7 +143,7 @@ const ReviewPage = () => {
         <div>
             <label className="block mb-1">작성자</label>
             <div className="border p-2 w-full rounded select-none bg-subSecondColor">
-            {nickname}</div>
+            {currentUserNickname}</div>
         </div>
 
         {/* 평점 */}

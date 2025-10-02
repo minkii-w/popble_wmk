@@ -42,7 +42,7 @@ public class Users{
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @Column(name = "login_id", unique = true, nullable = false)
+    @Column(name = "login_id", nullable = false)
     private String loginId;
 
     @Column(name = "password", nullable = false)

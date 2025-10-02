@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { getOne, patchOne, patchImages } from "../../../api/BoardApi";
+import AlertModal from "../../common/AlertModal";
+
 
 // 공통 Row
 const FormRow = ({ label, children }) => (
@@ -28,6 +30,20 @@ const ModifyComponent = ({ id }) => {
   const [allImages, setAllImages] = useState([]);       // 전체 표시용
   const [thumbnailIdx, setThumbnailIdx] = useState(0);  // 대표 이미지 인덱스
   const fileRef = useRef(null);
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalMessage("");
+  };
+
+  const showAlertModal = (message) => {
+      setModalMessage(message);
+      setShowModal(true);
+  }
+
 
   // 게시글 불러오기
   useEffect(() => {
@@ -130,7 +146,7 @@ const ModifyComponent = ({ id }) => {
       navigate(`/boards/${typeSlug}/${id}`);
     } catch (err) {
       console.error("수정 실패:", err);
-      alert("수정에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+      showAlertModal("수정에 실패했습니다. 잠시 후 다시 시도해 주세요.");
     }
   };
 
@@ -250,6 +266,9 @@ const ModifyComponent = ({ id }) => {
           저장
         </button>
       </div>
+      {showModal && (
+          <AlertModal message={modalMessage} onClose={handleCloseModal} />
+      )}
     </div>
   );
 };

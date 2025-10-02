@@ -6,6 +6,7 @@ import {
   deleteRecommend,
 } from "../../../api/popupRecommendApi";
 import { useSelector } from "react-redux";
+import AlertModal from "../../common/AlertModal";
 
 //팝업 전용 추천 컴포넌트
 const PopupRecommendComponent = ({ popupId }) => {
@@ -13,6 +14,13 @@ const PopupRecommendComponent = ({ popupId }) => {
 
   const [isRecommended, setIsRecommended] = useState(false);
   const [Loading, setLoading] = useState(false);
+
+  const [modal, setModal] = useState({
+        isOpen: false,
+        message: "",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+        onConfirm: null,
+    });
 
   useEffect(() => {
     if (!userId) return;
@@ -29,7 +37,12 @@ const PopupRecommendComponent = ({ popupId }) => {
 
   const handleClick = async () => {
     if (!userId) {
-      alert("로그인 후 추천 가능합니다");
+      setModal({
+            isOpen: true,
+            message: "로그인 후 추천 가능합니다",
+            onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+            onConfirm: null,
+        });
       return;
     }
     setLoading(true);
@@ -42,17 +55,22 @@ const PopupRecommendComponent = ({ popupId }) => {
         setIsRecommended(true);
       }
     } catch (e) {
+       let errorMessage = "추천 오류 발생";
       if (e.response?.data?.message) {
-        alert(e.response.data.message);
-      } else {
-        alert("추천 오류 발생");
-      }
+        errorMessage = e.response.data.message;
+      }setModal({
+            isOpen: true,
+            message: errorMessage,
+            onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+            onConfirm: null,
+      })
     } finally {
       setLoading(false);
     }
   };
 
   return (
+    <>
     <div onClick={handleClick} style={{ cursor: "pointer" }}>
       {isRecommended ? (
         <FaHeart size={25} color="red" />
@@ -60,6 +78,15 @@ const PopupRecommendComponent = ({ popupId }) => {
         <FaRegHeart size={25} />
       )}
     </div>
+    {modal.isOpen && (
+            <AlertModal
+                title={modal.title}
+                message={modal.message}
+                onClose={modal.onClose}
+                onConfirm={modal.onConfirm}
+            />
+        )}
+    </>
   );
 };
 

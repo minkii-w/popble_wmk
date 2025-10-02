@@ -7,12 +7,20 @@ import {
 } from "../../../api/bookmarkApi";
 import { FcBookmark } from "react-icons/fc";
 import { GoBookmark } from "react-icons/go";
+import AlertModal from "../../common/AlertModal";
 
 const PopupBookmarkComponent = ({ popupId }) => {
   const userId = useSelector((state) => state.auth?.user?.id);
 
   const [bookmarked, setBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [modal, setModal] = useState({
+    isOpen: false,
+        title: "",
+        message: "",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+  })
 
   useEffect(() => {
     if (!userId) return;
@@ -29,7 +37,11 @@ const PopupBookmarkComponent = ({ popupId }) => {
 
   const handleClick = async () => {
     if (!userId) {
-      alert("로그인 후 북마크가 가능합니다");
+        setModal({
+            isOpen: true,
+            message: "로그인 후 북마크가 가능합니다",
+            onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+        });
       return;
     }
     if (loading) return;
@@ -43,16 +55,30 @@ const PopupBookmarkComponent = ({ popupId }) => {
         setBookmarked(true);
       }
     } catch (e) {
-      alert("북마크 처리 실패");
+      setModal({
+            isOpen: true,
+            message: "북마크 처리에 실패했습니다.",
+            onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+        });
     } finally {
       setLoading(false);
     }
   };
 
   return (
+    <>
     <div onClick={handleClick} style={{ cursor: "pointer" }}>
       {bookmarked ? <FcBookmark size={25} /> : <GoBookmark size={25} />}
     </div>
+
+    {modal.isOpen && (
+            <AlertModal
+                title={modal.title}
+                message={modal.message}
+                onClose={modal.onClose}
+            />
+        )}
+    </>
   );
 };
 

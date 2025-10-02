@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createAd, createAdWithImages } from "../../../api/AdBoardApi";
+import AlertModal from "../../common/AlertModal";
 
 export default function AdWriteForm() {
   const navigate = useNavigate();
@@ -19,6 +20,19 @@ export default function AdWriteForm() {
 
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalMessage("");
+  };
+
+  const showAlertModal = (message) => {
+      setModalMessage(message);
+      setShowModal(true);
+  }
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -53,7 +67,7 @@ export default function AdWriteForm() {
       navigate(`/boards/ad/${id}`);
     } catch (err) {
       console.error("등록 실패:", err);
-      alert("등록 실패");
+      showAlertModal("게시글 등록에 실패했습니다. 다시 시도해 주세요.");
     }
   };
 
@@ -154,6 +168,9 @@ export default function AdWriteForm() {
       >
         등록
       </button>
+      {showModal && (
+          <AlertModal message={modalMessage} onClose={handleCloseModal} />
+      )}
     </form>
   );
 }

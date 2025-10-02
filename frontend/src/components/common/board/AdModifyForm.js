@@ -5,6 +5,7 @@ import {
   getAdOne,
   updateAdWithImages,
 } from "../../../api/AdBoardApi"; // 🔹 이미지 포함 API만 사용
+import AlertModal from "../../common/AlertModal";
 
 export default function AdModifyForm() {
   const { id } = useParams();
@@ -30,6 +31,19 @@ export default function AdModifyForm() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalMessage("");
+  };
+
+  const showAlertModal = (message) => {
+      setModalMessage(message);
+      setShowModal(true);
+  }
 
   // ===== 기존 데이터 로드 =====
   useEffect(() => {
@@ -127,11 +141,11 @@ export default function AdModifyForm() {
       keepImages.forEach((url) => formData.append("keepImages", url));
 
       await updateAdWithImages(id, formData);
-      alert("수정 완료!");
+      showAlertModal("수정 완료!");
       navigate(`/boards/ad/${id}`);
     } catch (err) {
       console.error(err);
-      alert("수정 실패: " + (err.message || "알 수 없는 오류"));
+      showAlertModal("수정 실패: " + (err.message || "알 수 없는 오류"));
     }
   };
 

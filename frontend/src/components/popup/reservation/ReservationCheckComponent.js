@@ -5,6 +5,7 @@ import TossPayment from "./TossPayment";
 import LoadingComponent from "../../common/LoadingComponent";
 import axios from "axios";
 import { getRemaining } from "../../../api/reservationApi";
+import AlertModal from "../../common/AlertModal";
 
 const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack, user }) => {
 
@@ -23,6 +24,9 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
     const [remainingSeats, setRemainingSeats] = useState(null);
     const [isBookingAvailable, setIsBookingAvailable] = useState(false);
 
+    const [showAlertModal, setShowAlertModal] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+
     const reservationDate = selected.date;
     const reservationTime = selected.time?.startTime;
     const year = reservationDate.getFullYear().toString().slice(-2);
@@ -31,12 +35,12 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
     const [hour, minute] = reservationTime?.split(':') || [];
     const ampm = (hour && hour >= 12) ? '오후' : '오전';
     const displayHour = (hour && hour % 12 === 0) ? 12 : hour % 12;
-    const formattedDateTime = reservationDate && reservationTime 
+    const formattedDateTime = reservationDate && reservationTime
         ? `${year}년 ${month}월 ${day}일 ${ampm} ${displayHour}시 ${minute}분`
         : "";
 
 
-         const fetchRemainingSeats = async () => {
+        const fetchRemainingSeats = async () => {
         if (!selected.date || !selected.time) {
             setRemainingSeats(null);
             return;
@@ -81,37 +85,43 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
         return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
     };
 
+    const openAlertModal = (message) => {
+        setAlertMessage(message);
+        setShowAlertModal(true);
+    };
 
+    
+    
     useEffect(() => {
         fetchRemainingSeats();
     }, [selected.date, selected.time, popupStore.id]);
 
     useEffect(() => {
-        const fetchUserProfile = async () => {
-            if (!userProfileId) return;
+        const fetchUserProfile = async () => {
+            if (!userProfileId) return;
 
-            try {
-                const res = await axios.get(`http://localhost:8080/api/user/${userProfileId}`);
-                const userData = res.data;
+            try {
+                const res = await axios.get(`http://localhost:8080/api/user/${userProfileId}`);
+                const userData = res.data;
 
                 const fetchedName = userData.name || ""
                 const fetchedPhone = userData.phonenumber || ""
 
-          
-                setUserName(fetchedName);
-                setPhonenumber(fetchedPhone);
+            
+                setUserName(fetchedName);
+                setPhonenumber(fetchedPhone);
 
-              
-                setEditedName(fetchedName);
-                setEditedPhone(fetchedPhone.replace(/\D/g, ""));
-            } catch (error) {
-                console.error("사용자 정보 조회 실패:", error);
-              
-            }
-        };
-
-        fetchUserProfile();
-    }, [userProfileId]);
+            
+                setEditedName(fetchedName);
+                setEditedPhone(fetchedPhone.replace(/\D/g, ""));
+            } catch (error) {
+                console.error("사용자 정보 조회 실패:", error);
+                
+            }
+        };
+        
+        fetchUserProfile();
+    }, [userProfileId]);
 
     useEffect(() => {
         if (remainingSeats !== null && selected.count) {
@@ -124,21 +134,21 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
     const handleReservationRegister = async (isPaid = true) => {
         try {
             const { startTime, endTime } = selected.time;
-
+            
             if (!startTime || !endTime) {
-                alert("예약 확정 중 시간 정보가 누락되었습니다. 고객센터에 문의해 주세요");
+                openAlertModal("예약 확정 중 시간 정보가 누락되었습니다. 고객센터에 문의해 주세요");
                 onBack();
                 return;
             }
-
+            
             const cleanedStartTime = startTime.substring(0, 5);
             const cleanedEndTime = endTime.substring(0, 5);
-
+            
             const formattedStartTimeForPayload = cleanedStartTime + ":00";
             const formattedEndTimeForPayload = cleanedEndTime === '00:00'
-                ? '24:00:00'
-                : cleanedEndTime + ":00";
-
+            ? '24:00:00'
+            : cleanedEndTime + ":00";
+            
             const payload = {
                 popupStoreId: popupStore.id,
                 userProfileId,
@@ -148,29 +158,29 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
                 reservationDate: selected.date instanceof Date
                     ? selected.date.toISOString().split("T")[0]
                     : selected.date,
-                startTime: formattedStartTimeForPayload,
+                    startTime: formattedStartTimeForPayload,
                 endTime: formattedEndTimeForPayload,
             };
-
+            
             const res = await axios.post("http://localhost:8080/api/reservation/register", payload);
-
+            
             setReservationId(res.data.id);
             setShowPayment(false);
             setShowLoadingPayment(false);
             setTossCompleted(true); 
-
+            
             await fetchRemainingSeats();
-
+            
         } catch (err) {
             console.error("예약 확정 중 오류 발생:", err);
-            alert("예약 확정 중 오류가 발생했습니다. 고객센터에 문의해주세요.");
+            openAlertModal("예약 확정 중 오류가 발생했습니다. 고객센터에 문의해주세요.");
             setShowPayment(false);
             setShowLoadingPayment(false);
             setTossCompleted(false);
             onBack();
         }
     };
-
+    
     // 토스결제 성공시 (유료 예약)
     const handleTossComplete = async () => {
         
@@ -179,44 +189,53 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
 
     // 토스결제 실패시 (유료 예약)
     const handleTossFail = () => {
-        alert("결제 실패! 예약 화면으로 돌아갑니다.");
+        openAlertModal("결제 실패! 예약 화면으로 돌아갑니다.");
         setShowPayment(false);
         setShowLoadingPayment(false);
         setReservationId(null);
         setTossCompleted(false);
-        onBack();
+        
     };
+    
+    const closeAlertModal = () => {
+        setShowAlertModal(false);
+        setAlertMessage("");
 
+        if (alertMessage.includes("결제 실패")) {
+         onBack(); 
+    }
+    };
+    
+    
     // 예약하기 상태 (메인 버튼 핸들러)
- 
     const handleReservation = async () => {
 
         const totalAmount = popupStore.price * selected.count;
 
         if (!selected.date || !selected.time || !selected.count) {
-            alert("날짜, 시간, 인원을 모두 선택해주세요.");
+            openAlertModal("날짜, 시간, 인원을 모두 선택해주세요.");
             return;
         }
 
         if (remainingSeats === null) {
-            alert("잔여 인원 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+            openAlertModal("잔여 인원 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
             return;
         }
         if (selected.count > remainingSeats) {
-            alert(`예약 가능한 인원은 ${remainingSeats}명입니다. 인원수를 다시 확인해주세요.`);
+            openAlertModal(`예약 가능한 인원은 ${remainingSeats}명입니다. 인원수를 다시 확인해주세요.`);
             return;
         }
         if (selected.count <= 0) {
-            alert("예약 인원은 최소 1명 이상이어야 합니다.");
+            openAlertModal("예약 인원은 최소 1명 이상이어야 합니다.");
             return;
         }
 
-      
+    
         setShowLoadingPayment(true);
 
- 
+    
         if (totalAmount > 0) {
-           
+            
             setTimeout(() => {
                 setShowLoadingPayment(false);
                 setShowPayment(true); 
@@ -226,10 +245,10 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
             
             try {
                 await handleReservationRegister(false); 
-              
+            
             } catch (err) {
-                 
-                 setShowLoadingPayment(false);
+                
+                setShowLoadingPayment(false);
             }
         }
     };
@@ -241,6 +260,9 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
 
     return (
         <div>
+            {showAlertModal && (
+                <AlertModal message={alertMessage} onClose={closeAlertModal} />
+            )}
             {showLoadingPayment && <LoadingComponent />}
             {showPayment && !tossCompleted && (
                 <TossPayment
@@ -339,26 +361,32 @@ const ReservationCheckComponent = ({ popupStore, selected, userProfileId, onBack
                                     <button
                                         className="border rounded px-3 bg-primaryColor text-black"
                                         onClick={async () => {
+                                            const cleanedPhone = editedPhone.replace(/\D/g, "");
+                                            if (!editedName.trim() || cleanedPhone.length < 10) {
+                                                openAlertModal("이름과 올바른 연락처(최소 10자리)를 입력해주세요.");
+                                                return;
+                                            }
+
                                             try {
-                                                const updateURL = `http://localhost:8080/api/userProfile/reservation/${userProfileId}`
+                                                const updateURL = `http://localhost:8080/api/userProfile/reservation/${userProfileId}`;
 
-                                                const params = new URLSearchParams();
-                                                params.append('name', editedName)
-                                                params.append('phonenumber', editedPhone)
-
+                                                
                                                 const res = await axios.patch(
-                                                    `${updateURL}?${params.toString()}`,
+                                                    updateURL, 
                                                     {
                                                         name: editedName,
-                                                        phonenumber: editedPhone,
+                                                        phonenumber: cleanedPhone, // '-'가 없는 번호를 백엔드로 보냄
                                                     }
                                                 );
+                                                
+                                                // 성공 시 상태 업데이트 및 편집 모드 종료
                                                 setUserName(res.data.name);
                                                 setPhonenumber(res.data.phonenumber);
                                                 setEditMode(false);
+
                                             } catch (err) {
-                                                console.error(err);
-                                                alert("변경에 실패했습니다");
+                                                console.error("정보 변경 실패:", err);
+                                                openAlertModal("정보 변경에 실패했습니다. 다시 시도해 주세요.");
                                             }
                                         }}
                                     >

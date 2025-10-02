@@ -9,6 +9,7 @@ import { logout } from "../../slice/authSlice";
 import { RxPerson } from "react-icons/rx";
 import { IoList } from "react-icons/io5";
 import { FiMapPin } from "react-icons/fi";
+import AlertModal from "../common/AlertModal";
 
 //햄버거 버튼 스타일(우상단 고정)
 const DivIcon = styled.div`
@@ -165,8 +166,32 @@ const NavBar = () => {
 
   const [open, setOpen] = useState(false); //사이드바 열림 여부 상태
 
+  const [alertModal, setAlertModal] = useState({
+    show:false,
+    message:"",
+    action:()=>{},
+  })
+
+  const closeAlertModal = () => {
+        const currentAction = alertModal.action;
+        setAlertModal({ show: false, message: "", action: () => { } });
+        if (currentAction && typeof currentAction === 'function') {
+            currentAction();
+        }
+    }
+
+    const showAlert = (message, action = () => { }) => {
+        setAlertModal({ show: true, message, action });
+    }
+
   return (
     <>
+    {alertModal.show && (
+            <AlertModal
+                message={alertModal.message}
+                onClose={closeAlertModal} 
+            />
+        )}
       {/* 햄버거 버튼 토글 -> 열기/닫기 */}
       <DivIcon className={open ? "open" : ""}>
         <label onClick={() => setOpen(!open)}>
@@ -203,8 +228,9 @@ const NavBar = () => {
               onClick={() => {
                 dispatch(logout());
                 setOpen(false);
+                showAlert("로그아웃 되었습니다",() => {
                 navigate("/");
-                alert("로그아웃 되었습니다");
+              });
               }}
             >
               <div className="left">로그아웃</div>

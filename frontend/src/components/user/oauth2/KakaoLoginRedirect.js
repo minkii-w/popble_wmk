@@ -1,23 +1,29 @@
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+
+const makeRedirectUrl = (token, userJson) => {
+  const baseUrl = "http://localhost:3000/oauth2/redirect";
+  const encodedUser = encodeURIComponent(userJson);
+
+  return `${baseUrl}?token=${token}&user=${encodedUser}`;
+};
 
 const KakaoLoginRedirect = () => {
+  const [searchParams] = useSearchParams();
 
-    const params = useParams();
+  const token = searchParams.get("token");
+  const userJson = searchParams.get("user");
 
-    useEffect( () => {
-           localStorage.clear();
-    localStorage.setItem("token", params.token);
-    window.location.replace("/");
+  // 필요하다면 이곳에서 URL 생성 가능
+  const redirectUrl = makeRedirectUrl(token, userJson);
 
-    }, []);
-
-    return <></>;
-
-}
-
-export default KakaoLoginRedirect;
+  return (
+    <div>
+      <p>생성된 리디렉션 URL:</p>
+      <p>{redirectUrl}</p>
+    </div>
+  );
+};
 
 
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/${VERSION}/kakao.min.js"
-  integrity="${INTEGRITY_VALUE}" crossorigin="anonymous"></script>
+
+

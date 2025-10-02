@@ -2,14 +2,15 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPopupStore } from "../../../api/popupstoreApi";
 import { createAdWithImages } from "../../../api/AdBoardApi";
+import AlertModal from "../../common/AlertModal";
 
 const initState = {
   storeName: "",
   address: "",
   desc: "",
   price: 0,
-  startDate: "", // ✅ 운영 시작일
-  endDate: "", // ✅ 운영 종료일
+  startDate: "", 
+  endDate: "", 
   files: [],
 };
 
@@ -30,6 +31,13 @@ const AdBoardComponent = () => {
 
   const fileRef = useRef(null);
   const navigate = useNavigate();
+
+  const [modal, setModal] = useState({
+        isOpen: false,
+        message: "",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+        onConfirm: null,
+    });
 
   // 입력값 변경
   const handleChange = (e) => {
@@ -69,15 +77,27 @@ const AdBoardComponent = () => {
   // 등록
   const handleSubmit = async () => {
     if (!adBoard.storeName.trim()) {
-      alert("제목을 입력하세요.");
+      setModal({
+        isOpen: true,
+        message: "제목을 입력하세요.",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+      });
       return;
     }
     if (!adBoard.desc.trim()) {
-      alert("내용을 입력하세요.");
+      setModal({
+        isOpen: true,
+        message: "내용을 입력하세요.",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+      });
       return;
     }
     if (!adBoard.startDate || !adBoard.endDate) {
-      alert("운영 시작일과 종료일을 입력하세요.");
+      setModal({
+        isOpen: true,
+        message: "운영 시작일과 종료일을 입력하세요.",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+      });
       return;
     }
 
@@ -87,14 +107,18 @@ const AdBoardComponent = () => {
         address: adBoard.address,
         desc: adBoard.desc,
         price: adBoard.price,
-        startDate: adBoard.startDate, // ✅ 운영 시작일
-        endDate: adBoard.endDate, // ✅ 운영 종료일
+        startDate: adBoard.startDate, 
+        endDate: adBoard.endDate, 
       };
 
       const popupResult = await createPopupStore(popupPayload, files);
 
       if (!popupResult?.id) {
-        alert("팝업 등록 실패: ID 없음");
+        setModal({
+          isOpen: true,
+          message: "팝업 등록에 실패했습니다: ID를 가져오지 못했습니다.",
+          onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+        });
         return;
       }
 
@@ -112,23 +136,45 @@ const AdBoardComponent = () => {
       const adResult = await createAdWithImages(adPayload, files);
 
       if (adResult?.id) {
-        alert(adResult.message || "홍보글 등록 성공!");
-        navigate(`/boards/ad/${adResult.id}/reservation`, {
-          state: {
-            popupStoreId: popupResult.id,
-            startDate: adBoard.startDate, // ✅ state로 전달
-            endDate: adBoard.endDate, // ✅ state로 전달
-          },
-        });
+       const successMessage = adResult.message || "홍보글 등록 성공!";
+        
+        setModal({
+          isOpen: true,
+          message: successMessage,
+          onClose: () => {
+                setModal(prev => ({ ...prev, isOpen: false }));
+                navigate(`/boards/ad/${adResult.id}/reservation`, {
+                    state: {
+                      popupStoreId: popupResult.id,
+                      startDate: adBoard.startDate, 
+                      endDate: adBoard.endDate, 
+                    },
+                });
+            },
+          onConfirm: null,
+        });
       } else {
-        alert("홍보글 등록은 됐지만 ID 없음");
-        navigate("/boards/ad");
-      }
+        setModal({
+          isOpen: true,
+          message: "홍보글 등록은 되었지만 ID를 가져오지 못했습니다.",
+          onClose: () => {
+                setModal(prev => ({ ...prev, isOpen: false }));
+                navigate("/boards/ad");
+            },
+          onConfirm: null,
+        });
+      }
     } catch (e) {
       console.error(e);
-      alert("등록 실패");
-    }
-  };
+      setModal({
+        isOpen: true,
+        message: "팝업 홍보글 등록 과정에서 오류가 발생했습니다.",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+        onConfirm: null,
+      });
+    }
+  };
+
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white rounded shadow-md mt-10">
@@ -272,6 +318,14 @@ const AdBoardComponent = () => {
           등록
         </button>
       </div>
+      {modal.isOpen && (
+            <AlertModal
+                title={modal.title}
+                message={modal.message}
+                onClose={modal.onClose}
+                onConfirm={modal.onConfirm}
+            />
+        )}
     </div>
   );
 };

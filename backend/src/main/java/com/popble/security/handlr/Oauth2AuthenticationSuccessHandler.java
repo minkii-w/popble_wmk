@@ -136,7 +136,7 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			socialLoginRepository.save(socialLogin);
 		}
 
-		users = socialLoginRepository.findUsersByProviderId(providerId).orElse(null);
+		// users = socialLoginRepository.findUsersByProviderId(providerId).orElse(null);
 
 		String url = jwtUtill.makeRedirectUrl(jwt, users);
 		System.out.println("url:" + url);

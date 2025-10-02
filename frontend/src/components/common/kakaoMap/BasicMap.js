@@ -189,7 +189,7 @@ export default function BasicMap({onLoad}) {
               {popup.address}
               <br/>
               <a
-                href={`/popups/${popup.id}`}
+                href={`https://map.kakao.com/link/map/${popup.storeName},${popup.latitude},${popup.longitude}`}
                 style={{ color: "blue" }}
                 target="_blank"
                 rel="noreferrer"

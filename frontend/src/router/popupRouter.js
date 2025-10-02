@@ -13,7 +13,7 @@ const ReviewModifyPage = lazy(() =>
 const popupRouter = () => {
   return [
     {
-      path: "/popup/review/:reservationId",
+      path: "/popup/review/:popupId/:reservationId",
       element: (
         <Suspense fallback={<LoadingComponent />}>
           <ReviewPage />

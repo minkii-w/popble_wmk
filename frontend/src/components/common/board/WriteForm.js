@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { postAddWithImages } from "../../../api/BoardApi"; // ✅ 이미지 포함 API
 import ResultModal from "./ResultModal";
+import AlertModal from "../../common/AlertModal";
 
 const BOARD_TYPES = [
   { value: "GENERAL", label: "자유게시판" },
@@ -23,6 +24,36 @@ const WriteForm = () => {
   const [thumbnailIdx, setThumbnailIdx] = useState(0); // ✅ 대표 이미지
   const [result, setResult] = useState(null);
   const fileRef = useRef(null);
+
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorModalMessage, setErrorModalMessage] = useState("");
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successModalMessage, setSuccessModalMessage] = useState("");
+
+  const handleCloseErrorModal = () => {
+    setShowErrorModal(false);
+    setErrorModalMessage("");
+  };
+
+  const showAlertErrorModal = (message) => {
+      setErrorModalMessage(message);
+      setShowErrorModal(true);
+  }
+
+ 
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    setSuccessModalMessage("");
+   
+    window.location.href = "/popble/boards/all"; 
+  };
+
+
+  const showAlertSuccessModal = (message) => {
+      setSuccessModalMessage(message);
+      setShowSuccessModal(true);
+  }
 
   // 입력 변경
   const handleChange = (e) => {
@@ -66,7 +97,7 @@ const WriteForm = () => {
   // 등록
   const handleClickAdd = async () => {
     if (!board.type || !board.title.trim() || !board.content.trim()) {
-      alert("필수 항목을 모두 입력하세요.");
+      showAlertErrorModal("필수 항목을 모두 입력하세요.");
       return;
     }
 
@@ -93,32 +124,30 @@ const WriteForm = () => {
       const res = await postAddWithImages(formData);
       const createId = typeof res === "number" ? res : res?.id ?? null;
 
-      setResult({ id: createId, title: board.title });
-
-      setTimeout(() => {
-        window.location.href = "/popble/boards/all";
-      }, 1500);
+      showAlertSuccessModal(`[${createId}]번 글 '${board.title}'이(가) 등록되었습니다.`);
 
       setBoard({ ...initState });
-      setFiles([]);
-      setPreviews([]);
-      setThumbnailIdx(0);
-      if (fileRef.current) fileRef.current.value = "";
-    } catch (e) {
-      console.error(e);
-      alert("등록 중 오류 발생");
-    }
-  };
+      setFiles([]);
+      setPreviews([]);
+      setThumbnailIdx(0);
+      if (fileRef.current) fileRef.current.value = "";
+    } catch (e) {
+      console.error(e);
+      showAlertErrorModal("등록 중 오류 발생");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#fdfbf7]">
       <div className="max-w-4xl mx-auto mt-10 p-6">
-        {result && (
-          <ResultModal
-            title="글 등록"
-            content={`[${result.id}]번 글 '${result.title}'이 등록되었습니다.`}
-            callbackFn={() => {}}
-          />
+        {showSuccessModal && (
+            <AlertModal 
+              message={`글 등록 완료! ${successModalMessage}`} 
+              onClose={handleCloseSuccessModal}
+            />
+        )}
+        {showErrorModal && (
+            <AlertModal message={errorModalMessage} onClose={handleCloseErrorModal} />
         )}
 
         <h2 className="text-2xl font-bold mb-8">게시글 등록</h2>

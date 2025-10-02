@@ -4,9 +4,28 @@ import BasicMap from "../../common/kakaoMap/BasicMap";
 import { FiMapPin } from "react-icons/fi";
 import { RxCopy } from "react-icons/rx";
 
+import AlertModal from "../../common/AlertModal";
+
 
 const MapInfo = ({popupLocation}) => {
   const [address, setAddress] = useState(""); // BasicMap에서 전달받을 주소
+
+  const [modal, setModal] = useState({
+        isOpen: false,
+        message: "",
+        onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+    });
+
+    const handleCopyAddress = () => {
+        // 주소 복사
+        navigator.clipboard.writeText(address);
+    
+        setModal({
+            isOpen: true,
+            message: "주소가 클립보드에 복사되었습니다.",
+            onClose: () => setModal(prev => ({ ...prev, isOpen: false })),
+        });
+    };
   
   return (
       <>
@@ -21,13 +40,17 @@ const MapInfo = ({popupLocation}) => {
             <FiMapPin/>{address}
             <RxCopy
               className="cursor-pointer"
-              onClick={() => {
-                navigator.clipboard.writeText(address);
-                alert("주소가 복사되었습니다");
-              }}
+              onClick={handleCopyAddress}
             />
           </p>
         </div>
+        {modal.isOpen && (
+            <AlertModal
+                title={modal.title}
+                message={modal.message}
+                onClose={modal.onClose}
+            />
+        )}
       </>
 
   );

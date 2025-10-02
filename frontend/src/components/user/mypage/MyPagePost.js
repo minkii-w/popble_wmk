@@ -40,9 +40,10 @@ const MyPagePost = () => {
       <div className="mt-2 w-full flex flex-center items-center gap-2">
         <MdEditDocument size={25} className="ml-5" />
         <p className="m-1 text-2xl">내 게시글 보기</p>
-      </div>
-      {/* 게시판 선택 selectbox */}
+      </div>      
       <hr className="min-w-[300px] border border-black border-l-2 m-2 mb-4"></hr>
+      
+      {/* 게시판 선택 selectbox */}
       <div className="ml-5 flex items-center space-y-6 mb-4">
         <select
           value={category}
@@ -95,7 +96,7 @@ const MyPagePost = () => {
         </table>
       {/* 답변 */}
       <div className="mt-5 w-full flex items-center text-2xl gap-2">
-        <MdEditDocument size={25} className="m-2" />
+        <MdEditDocument size={25} className="ml-5" />
         <p className="m-2 text-2xl">내 답변글 보기</p>
       </div>
       <hr className="min-w-[300px] border border-black border-l-2 m-2"></hr>

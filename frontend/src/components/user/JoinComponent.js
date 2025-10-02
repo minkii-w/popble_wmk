@@ -162,7 +162,7 @@ const JoinComponent = () => {
               label="비밀번호확인"
               fullWidth
               variant="standard"
-              type="passwrord"
+              type="password"
               InputProps={{
                 disableUnderline: true,
                 inputProps: { style: { paddingLeft: "15px" } },
@@ -236,6 +236,9 @@ const JoinComponent = () => {
           </Link>
         </div>
 
+     
+
+
         {/* 구분선 */}
         <div className="w-full h-[2px] bg-black" />
 
@@ -253,7 +256,7 @@ const JoinComponent = () => {
             <NaverImage src={NaverImg} />
           </NaverLoginButton>
         </div>
-      </form>
+ </form>
     </div>
   );
 };

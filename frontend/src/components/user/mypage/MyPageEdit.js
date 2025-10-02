@@ -2,22 +2,52 @@ import { useState, useEffect } from "react";
 import { getUserById, updateUser, deleteUser } from "../../../api/userApi";
 import { FaUserEdit } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-// import { logout } from "../../../slice/loginSlice";
 import { logout, updateUserProfileRedux } from "../../../slice/authSlice";
 import { useNavigate } from "react-router-dom";
 import {
   getUserProfileByUserId,
-  getUserProfileById,
   updateUserProfile,
 } from "../../../api/userProfileApi";
 import { API_SERVER_HOST } from "../../../api/config";
+import AlertModal from "../../common/AlertModal";
+
+const DummyConfirmModal = ({ message, onConfirm, onCancel }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+      <p className="text-lg mb-4">{message}</p>
+      <div className="flex justify-end space-x-3">
+        <button
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          onClick={onCancel}
+        >
+          취소
+        </button>
+        <button
+          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          onClick={onConfirm}
+        >
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 const MyPageEdit = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth?.user);
 
-  //User부분의 수정
+  const { token, isAuthenticated } = useSelector((state) => state.auth);
+
+  // Modal 상태
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [confirmAction, setConfirmAction] = useState(null);
+
+  // User 폼
   const [userForm, setUserForm] = useState({
     password: "",
     passwordConfirm: "",
@@ -26,14 +56,44 @@ const MyPageEdit = () => {
     phonenumber: "",
   });
 
-  //UserProfile부분의 수정
+  // UserProfile 폼
   const [profileForm, setProfileForm] = useState({
     nickname: "",
     profileImg: null,
   });
   const [isSocial, setIsSocial] = useState(false);
-
   const [profileImage, setProfileImage] = useState(null);
+
+  // --- Modal Helper Functions ---
+  const openAlertModal = (message) => {
+    setAlertMessage(message);
+    setShowAlertModal(true);
+  };
+
+  const closeAlertModal = () => {
+    setShowAlertModal(false);
+    setAlertMessage("");
+  };
+
+  const openConfirmModal = (message, action) => {
+    setConfirmMessage(message);
+    setConfirmAction(() => action);
+    setShowConfirmModal(true);
+  };
+
+  const closeConfirmModal = () => {
+    setShowConfirmModal(false);
+    setConfirmMessage("");
+    setConfirmAction(null);
+  };
+
+  const handleConfirm = () => {
+    if (confirmAction) {
+      confirmAction();
+    }
+    closeConfirmModal();
+  };
+  // ------------------------------
 
   useEffect(() => {
     if (!user || !user.id) return;
@@ -69,15 +129,16 @@ const MyPageEdit = () => {
   const handleUserChange = (e) => {
     setUserForm({ ...userForm, [e.target.name]: e.target.value });
   };
+
   const handleProfileChange = (e) => {
     setProfileForm({ ...profileForm, [e.target.name]: e.target.value });
   };
 
   const handleUpdate = async () => {
     try {
-      //User
+      // User
       if (!isSocial && userForm.password !== userForm.passwordConfirm) {
-        alert("비밀번호가 일치하지 않습니다");
+        openAlertModal("비밀번호가 일치하지 않습니다");
         return;
       }
       await updateUser(user.id, {
@@ -87,7 +148,7 @@ const MyPageEdit = () => {
         phonenumber: userForm.phonenumber,
       });
 
-      //UserProfile
+      // UserProfile
       const updatedProfile = await updateUserProfile(user.id, {
         nickname: profileForm.nickname,
         profileImg: profileForm.profileImg,
@@ -102,27 +163,30 @@ const MyPageEdit = () => {
         })
       );
 
-      alert("회원정보 수정 완료");
+      openAlertModal("회원정보 수정 완료");
     } catch (err) {
-      alert("회원정보 수정 실패:" + err.message);
+      openAlertModal("회원정보 수정 실패:" + err.message);
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("정말로 탈퇴하시겠습니까?")) return;
-
+  const executeDelete = async () => {
     try {
       await deleteUser(user.id);
       dispatch(logout());
-      alert("탈퇴되셨습니다.");
+      openAlertModal("회원 탈퇴가 완료되었습니다.");
       navigate("/");
     } catch (err) {
-      alert("탈퇴에 실패하셨습니다." + err.message);
+      openAlertModal(`회원 탈퇴에 실패했습니다: ${err.message}`);
     }
   };
 
+  const handleDelete = () => {
+    openConfirmModal("정말로 탈퇴하시겠습니까?", executeDelete);
+  };
+  // ---------------------------------------------------
+
   // 프로필 이미지 관리
-  const handleImageChange = async (e) => {
+  const handleImageChange = (e) => { // async 제거
     const file = e.target.files[0];
     if (file) {
       setProfileForm({ ...profileForm, profileImg: file });
@@ -137,6 +201,18 @@ const MyPageEdit = () => {
 
   return (
     <div className="flex flex-col justify-center w-full">
+      {/* Modal 렌더링 */}
+      {showAlertModal && (
+        <AlertModal message={alertMessage} onClose={closeAlertModal} />
+      )}
+
+      {showConfirmModal && (
+        <DummyConfirmModal
+          message={confirmMessage}
+          onConfirm={handleConfirm}
+          onCancel={closeConfirmModal}
+        />
+      )}
 
       {/* 정렬 */}
       <div className="mt-2 w-full flex flex-center items-center gap-2">
@@ -215,7 +291,6 @@ const MyPageEdit = () => {
           </div>
           <div className="flex items-center">
             <span className="w-32 font-medium">비밀번호 재확인</span>
-            {/* Todo: 비밀번호 재확인할 password2 필요? */}
             <input
               disabled={isSocial}
               className="flex-1 p-2 rounded-lg border-2 border-subSecondColor"

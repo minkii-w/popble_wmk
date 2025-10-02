@@ -23,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../slice/loginSlice";
 import { setCookie } from "../../utill/cookieUtill";
 import { loginSuccess } from "../../slice/authSlice";
+import AlertModal from "../common/AlertModal";
 
 const initState = {
   loginId: "",
@@ -46,13 +47,30 @@ const LoginComponent = () => {
 
   const dispatch = useDispatch();
 
+  const [alertModal, setAlertModal] = useState({
+    show:false,
+    message:"",
+    action: () => {},
+  })
+
+  const closeAlertModal = () => {
+  if (alertModal.action && typeof alertModal.action === 'function') {
+        alertModal.action();
+    }
+    setAlertModal({show:false, message:"", action:()=>{}})
+  }
+
+  const showAlert = (message, action = closeAlertModal)=>{
+    setAlertModal({show:true, message, action})
+  }
+
   const handleClickLogin = (e) => {
     const values = getValues();
     loginPost(values).then((data) => {
       console.log(data);
 
       if (data.error) {
-        alert("아이디와 비밀번호를 확인하세요");
+        showAlert("아이디와 비밀번호를 확인하세요");
       } else {
         dispatch(
           loginSuccess({
@@ -66,14 +84,21 @@ const LoginComponent = () => {
         localStorage.setItem("refreshToken", data.refreshToken);
         localStorage.setItem("user", JSON.stringify(data));
         // localStorage.setItem("token", data.token);
-        alert("로그인 성공");
-        moveToPath("/");
+        showAlert("로그인 성공",()=>{
+          moveToPath("/");
+        });
       }
     });
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
+      {alertModal.show && (
+                <AlertModal
+                    message={alertModal.message}
+                    onClose={closeAlertModal}
+                />
+            )}
       <form className="w-full max-w-[480px] bg-white p-6 rounded shadow space-y-4">
         <div className="w-[430px] h-[170px] top-[200px] bg-primaryColor flex justify-center items-center ">
           <PopbleImage src={PopbleImg} />

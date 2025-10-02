@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSearchParams, Navigate, useNavigate } from "react-router-dom";
 import { loginPostAsync } from "../slice/loginSlice";
@@ -9,6 +10,24 @@ const useCustomLogin = () => {
   const loginState = useSelector((state) => state.loginSlice); // 로그인 상태
   const isLogin = loginState.loginId ? true : false; //로그인 여부
 
+  const [alertModal, setAlertModal] = useState({
+        show: false,
+        message: "",
+        action: () => { },
+    });
+
+     const closeAlertModal = () => {
+        if (alertModal.action && typeof alertModal.action === 'function') {
+            alertModal.action();
+        }
+        setAlertModal({ show: false, message: "", action: () => { } });
+    }
+
+    const showAlert = (message, action = () => { }) => {
+        setAlertModal({ show: true, message, action });
+    }
+
+    
   const doLogin = async (loginParam) => {
     // 로그인 함수
 
@@ -44,14 +63,14 @@ const useCustomLogin = () => {
     const errorStr = createSearchParams({ error: errorMsg }).toString();
 
     if (errorMsg === "REQUIRE_LOGIN") {
-      alert("로그인 해야만 합니다");
+      showAlert("로그인 해야만 합니다");
       navigate({ pathname: "/user/login", search: errorStr });
 
       return;
     }
 
     if (ex.response.data.error === "ERROR_ACCESSDENTED")
-      alert("해당 매뉴를 사용할 수 없는 권한이 없습니다.");
+      showAlert("해당 매뉴를 사용할 수 없는 권한이 없습니다.");
     navigate({ pathname: "/user/login", search: errorStr });
   };
   return {
@@ -62,6 +81,9 @@ const useCustomLogin = () => {
     moveToLogin,
     moveToLoginReturn,
     exceptionHandle,
+    alertModal,
+    closeAlertModal,
+    showAlert,
   };
 };
 
