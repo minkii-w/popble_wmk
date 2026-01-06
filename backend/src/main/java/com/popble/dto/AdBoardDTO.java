@@ -11,11 +11,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AdBoardDTO {
-//push test
+
     private Long id;                  // 게시글 번호
     private String title;             // 제목
     private String content;           // 내용
-
     private Long writerId;            // 작성자 ID
     private String writerName;        // 작성자 닉네임
 
